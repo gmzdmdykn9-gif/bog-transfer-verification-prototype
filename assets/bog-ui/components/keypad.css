@@ -1,0 +1,52 @@
+/* ==========================================================================
+   BOG UI — Keypad (Digital Keyboard)
+   Figma: Onboarding › Verification states › passcode (17658:72652). Not in Mobile Components yet.
+
+   <div class="bog-keypad" data-for="passcode-id">
+     <button type="button" class="bog-keypad__key" data-key="1">1</button> … 9
+     <span class="bog-keypad__key" aria-hidden="true"></span>                 empty bottom-left
+     <button type="button" class="bog-keypad__key" data-key="0">0</button>
+     <button type="button" class="bog-keypad__key" data-key="back" aria-label="Delete"><span class="bog-keypad__back"></span></button>
+   </div>
+   data-for points at a .bog-code; bog-ui.js types into it. Desktop number keys and Backspace work too.
+   ========================================================================== */
+
+.bog-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-gap-medium) var(--spacing-gap-default);
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 var(--spacing-padding-default) calc(var(--spacing-padding-default) * 1.5);
+  font-family: var(--font-family-bog);
+}
+.bog-keypad__key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 56px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-default);
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 28px; /* Figma: 28px with Heading/Small line height */
+  line-height: var(--heading-small-line-height);
+  font-weight: var(--heading-small-weight);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: background-color 80ms ease;
+}
+.bog-keypad__key:active { background: var(--layer-alpha-pressed-01); }
+.bog-keypad__key:focus-visible { outline: 2px solid var(--border-selected); outline-offset: -2px; }
+span.bog-keypad__key { cursor: default; }
+.bog-keypad__back {
+  width: 24px;
+  height: 24px;
+  background-color: var(--icon-primary);
+  -webkit-mask: url("../icons/backspace-24.svg") center / contain no-repeat;
+          mask: url("../icons/backspace-24.svg") center / contain no-repeat;
+}

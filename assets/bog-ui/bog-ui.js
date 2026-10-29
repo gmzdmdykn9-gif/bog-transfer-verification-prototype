@@ -608,3 +608,62 @@
   window.BOG.openModal = openModal;
   window.BOG.closeModal = closeModal;
 })();
+
+/* ---- Code Input + Keypad ---------------------------------------------------
+   .bog-code shows a code in cells; with a .bog-code__input it follows the phone
+   keyboard (and SMS autofill), with a .bog-keypad[data-for] it follows the keypad.
+   Fires "codechange" and "codecomplete" (detail.value) on the .bog-code. */
+(function () {
+  function cells(el) { return el.querySelectorAll(".bog-code__cell"); }
+  function render(el, value) {
+    var c = cells(el), masked = el.hasAttribute("data-mask");
+    c.forEach(function (cell, i) {
+      var d = value.charAt(i);
+      cell.textContent = d && !masked ? d : "";
+      cell.toggleAttribute("data-filled", !!d);
+      cell.toggleAttribute("data-active", i === Math.min(value.length, c.length - 1) && value.length < c.length);
+    });
+  }
+  function setCode(el, value) {
+    if (typeof el === "string") el = document.getElementById(el);
+    if (!el) return;
+    var max = cells(el).length;
+    value = String(value || "").replace(/\D/g, "").slice(0, max);
+    var prev = el._code || "";
+    el._code = value;
+    var input = el.querySelector(".bog-code__input");
+    if (input && input.value !== value) input.value = value;
+    if (value.length > prev.length) el.removeAttribute("data-validation");
+    render(el, value);
+    if (value !== prev) {
+      el.dispatchEvent(new CustomEvent("codechange", { bubbles: true, detail: { value: value } }));
+      if (value.length === max) el.dispatchEvent(new CustomEvent("codecomplete", { bubbles: true, detail: { value: value } }));
+    }
+  }
+  document.querySelectorAll(".bog-code").forEach(function (el) { el._code = ""; render(el, ""); });
+  document.addEventListener("input", function (e) {
+    if (e.target.matches(".bog-code__input")) setCode(e.target.closest(".bog-code"), e.target.value);
+  });
+
+  function press(pad, key) {
+    var el = document.getElementById(pad.getAttribute("data-for"));
+    if (!el || el.getAttribute("data-state") === "loading") return;
+    var v = el._code || "";
+    setCode(el, key === "back" ? v.slice(0, -1) : v + key);
+  }
+  document.addEventListener("click", function (e) {
+    var key = e.target.closest(".bog-keypad__key[data-key]");
+    if (key) press(key.closest(".bog-keypad"), key.getAttribute("data-key"));
+  });
+  // Desktop: number keys and Backspace type into the visible keypad
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey || e.target.matches("input, textarea")) return;
+    var key = /^[0-9]$/.test(e.key) ? e.key : e.key === "Backspace" ? "back" : null;
+    if (!key) return;
+    var pad = Array.prototype.find.call(document.querySelectorAll(".bog-keypad"), function (p) { return p.offsetParent !== null && !p.closest("[inert]"); });
+    if (pad) { e.preventDefault(); press(pad, key); }
+  });
+
+  window.BOG = window.BOG || {};
+  window.BOG.setCode = setCode;
+})();

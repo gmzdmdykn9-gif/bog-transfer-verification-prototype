@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Input — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="code-input"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Code Input</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Cells for an SMS code or a passcode. With an input it follows the phone keyboard and SMS autofill; with a Keypad it follows the keypad. Empty cells are from Figma (Onboarding › Verification states); Filled, Active and Error are prototype additions.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;!-- SMS code --&gt;
+&lt;div class=&quot;bog-code&quot; data-size=&quot;medium&quot;&gt;
+  &lt;input class=&quot;bog-code__input&quot; inputmode=&quot;numeric&quot; autocomplete=&quot;one-time-code&quot; maxlength=&quot;4&quot; aria-label=&quot;SMS code&quot;&gt;
+  &lt;span class=&quot;bog-code__cell&quot;&gt;&lt;/span&gt;&lt;span class=&quot;bog-code__cell&quot;&gt;&lt;/span&gt;&lt;span class=&quot;bog-code__cell&quot;&gt;&lt;/span&gt;&lt;span class=&quot;bog-code__cell&quot;&gt;&lt;/span&gt;
+&lt;/div&gt;
+&lt;!-- Passcode, typed on a Keypad --&gt;
+&lt;div class=&quot;bog-code&quot; data-size=&quot;large&quot; data-mask id=&quot;passcode&quot;&gt;&lt;span class=&quot;bog-code__cell&quot;&gt;&lt;/span&gt;&lt;span class=&quot;bog-code__cell&quot;&gt;&lt;/span&gt;&lt;span class=&quot;bog-code__cell&quot;&gt;&lt;/span&gt;&lt;span class=&quot;bog-code__cell&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;!-- data-validation=&quot;error&quot; · data-state=&quot;loading&quot; · events: codechange, codecomplete · BOG.setCode(el, &quot;12&quot;) --&gt;</code></pre>
+
+    <h2>Variants</h2>
+    <h2>Try it</h2><div class="panel" style="display:grid;gap:24px;justify-items:center;width:402px"><div class="bog-code" data-size="medium" id="try-otp"><input class="bog-code__input" inputmode="numeric" autocomplete="one-time-code" maxlength="4" aria-label="SMS code"><span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span></div><p id="try-out" style="margin:0;font-size:13px;color:#515457">Tap the cells and type 4 digits (0000 shows the error)</p></div>
+<h2>Variants</h2><div class="panel" style="display:grid;gap:24px;width:402px" id="variants"></div>
+
+  </main>
+</div>
+<script>
+  const v = document.getElementById("variants"), C = '<span class="bog-code__cell"></span>'.repeat(4);
+  [["Medium · Empty", 'data-size="medium"', ""], ["Medium · Filled 2 (active)", 'data-size="medium" data-active', "12"], ["Large · Masked 3", 'data-size="large" data-mask data-active', "123"], ["Medium · Error", 'data-size="medium" data-validation="error"', "0000"], ["Large · Loading", 'data-size="large" data-mask data-state="loading"', "1234"]]
+    .forEach(([l, a, val], i) => { v.insertAdjacentHTML("beforeend", `<div><div class="row-label"><code>${l}</code></div><div class="bog-code" ${a} id="v${i}">${C}</div></div>`); setTimeout(() => { const e = document.getElementById("v" + i); const err = e.getAttribute("data-validation"); BOG.setCode(e, val); if (err) e.setAttribute("data-validation", err); }); });
+  const t = document.getElementById("try-otp");
+  t.addEventListener("codecomplete", e => { if (e.detail.value === "0000") t.setAttribute("data-validation", "error"); document.getElementById("try-out").textContent = "codecomplete: " + e.detail.value; });
+</script>
+</body>
+</html>

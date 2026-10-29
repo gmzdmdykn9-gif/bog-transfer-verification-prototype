@@ -1,0 +1,39 @@
+/* ==========================================================================
+   BOG UI — Wizard Progress
+   Figma: Wizard Progress (Mobile Components). Thin step bar under the navigation bar.
+
+   Markup — one segment per step
+     <div class="bog-wizard" role="progressbar" aria-valuemin="1" aria-valuemax="2" aria-valuenow="1">
+       <span class="bog-wizard__step" data-state="current"></span>
+       <span class="bog-wizard__step"></span>
+     </div>
+   data-state on a step:  done (full green) · current (half green) · nothing (empty)
+   ========================================================================== */
+
+.bog-wizard {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-padding-small) var(--spacing-padding-default);
+}
+.bog-wizard__step {
+  position: relative;
+  flex: 1 1 0;
+  height: 4px;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--layer-alpha-02);
+}
+.bog-wizard__step::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--status-success-02);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 320ms ease;
+}
+.bog-wizard__step[data-state="current"]::before { transform: scaleX(0.5); }
+.bog-wizard__step[data-state="done"]::before { transform: scaleX(1); }

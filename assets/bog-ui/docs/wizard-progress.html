@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wizard Progress — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="wizard-progress"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Wizard Progress</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Thin step bar under the navigation bar: done steps are full, the current step is half filled.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class=&quot;bog-wizard&quot; role=&quot;progressbar&quot; aria-valuemin=&quot;1&quot; aria-valuemax=&quot;2&quot; aria-valuenow=&quot;1&quot;&gt;
+  &lt;span class=&quot;bog-wizard__step&quot; data-state=&quot;current&quot;&gt;&lt;/span&gt;   &lt;!-- done | current | (empty) --&gt;
+  &lt;span class=&quot;bog-wizard__step&quot;&gt;&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+
+    <h2>Variants</h2>
+    <div class="panel" style="display:grid;gap:16px;width:402px"><div><div class="row-label"><code>2 steps · Step 1</code></div><div class="bog-wizard"><span class="bog-wizard__step" data-state="current"></span><span class="bog-wizard__step"></span></div></div><div><div class="row-label"><code>2 steps · Step 2</code></div><div class="bog-wizard"><span class="bog-wizard__step" data-state="done"></span><span class="bog-wizard__step" data-state="current"></span></div></div><div><div class="row-label"><code>3 steps · Step 2</code></div><div class="bog-wizard"><span class="bog-wizard__step" data-state="done"></span><span class="bog-wizard__step" data-state="current"></span><span class="bog-wizard__step"></span></div></div></div>
+
+  </main>
+</div>
+<script></script>
+</body>
+</html>

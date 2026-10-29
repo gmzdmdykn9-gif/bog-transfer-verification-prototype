@@ -46,6 +46,9 @@ Fonts: `fonts/` holds BOG woff2 files. They are licensed, so they stay out of gi
 | Phone Input | `61708:3382` | ✅ International (country picker → Bottom Sheet) / National × all states |
 | Modal Dialog | `52913:5147` | ✅ Standard, Minimal, Cover (image / illustration), Destructive, Single / Dual · `BOG.openModal()` (Image Only modal not built: needs Slider Indicator) |
 | Radio Card | `22114:3977` | ✅ Left / Right × Enabled, Pressed, Selected, Error, Read-only, Disabled, Skeleton; built-in Radio button |
+| Wizard Progress | `Mobile Components` (instance `17658:72592`) | ✅ done / current / upcoming steps |
+| Code Input | `17658:72586` (Onboarding) | ✅ medium (SMS) / large (passcode), masked, active, error, loading; keyboard + SMS autofill · not in Mobile Components yet |
+| Keypad | `17658:72652` (Onboarding) | ✅ 0–9 + delete, types into a Code Input, desktop keys · not in Mobile Components yet |
 | UI Elements | `54990:3178`  | ✅ Flags, Media Circle/Square/Rectangle, Illustration, Card Placeholder, Icon Placeholder, Counter |
 
 The "iOS Liquid Glass" source variants are intentionally **not** implemented.
@@ -485,6 +488,21 @@ Open with `data-modal-open="confirm"` or `BOG.openModal("confirm")`. Minimal: `d
 </div>
 ```
 Selected = `checked` · Disabled = `disabled` on the input · on `.bog-radio-card`: `data-align="left"`, `data-validation="error"`, `data-state="readonly | skeleton | pressed"`. Same `name` = one group.
+
+### Wizard Progress · Code Input · Keypad
+
+```html
+<div class="bog-wizard"><span class="bog-wizard__step" data-state="done"></span><span class="bog-wizard__step" data-state="current"></span></div>
+
+<div class="bog-code" data-size="medium">                       <!-- SMS code: phone keyboard + autofill -->
+  <input class="bog-code__input" inputmode="numeric" autocomplete="one-time-code" maxlength="4" aria-label="SMS code">
+  <span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span>
+</div>
+
+<div class="bog-code" data-size="large" data-mask id="passcode">…4 cells…</div>   <!-- passcode -->
+<div class="bog-keypad" data-for="passcode">…keys…</div>
+```
+Code Input: `data-validation="error"`, `data-state="loading"`, events `codechange` / `codecomplete` (detail.value), `BOG.setCode(el, value)`. See the docs pages for the full keypad markup.
 
 ### Icons
 

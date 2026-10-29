@@ -51,6 +51,8 @@
   background: var(--_placeholder, none) center / cover no-repeat;
   vertical-align: middle;
 }
+/* A real image replaces the placeholder (otherwise it shows through transparent art) */
+:is(.bog-flag, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art):has(> img) { background-image: none; }
 :is(.bog-flag, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art) > img {
   display: block;
   width: 100%;

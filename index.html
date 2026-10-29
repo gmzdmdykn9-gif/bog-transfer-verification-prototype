@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>სხვასთან გადარიცხვა — BOG prototype</title>
-<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=20261029171623">
-<link rel="stylesheet" href="assets/app.css?v=20261029171623">
-<script src="assets/bog-ui/bog-ui.js?v=20261029171623" defer></script>
-<script src="assets/app.js?v=20261029171623" defer></script>
+<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=20261029174423">
+<link rel="stylesheet" href="assets/app.css?v=20261029174423">
+<script src="assets/bog-ui/bog-ui.js?v=20261029174423" defer></script>
+<script src="assets/app.js?v=20261029174423" defer></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -196,6 +196,106 @@
       <button class="bog-btn" data-type="primary" data-width="fill" id="picker-choose">არჩევა</button>
     </footer>
   </section>
+
+  <!-- ===================== Verification (Figma: Onboarding › Verification states 17658:72570) ===================== -->
+  <!-- SMS code (OTP) -->
+  <section class="screen screen--pushed verify" data-screen="otp" aria-hidden="true">
+    <header class="nav">
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="დახურვა" data-verify-close>
+        <span class="bog-icon" data-icon="close"></span>
+      </button>
+      <span class="nav__title"></span>
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="ჩატი">
+        <span class="bog-icon icon-chat"></span>
+      </button>
+    </header>
+    <div class="bog-wizard" data-wizard><span class="bog-wizard__step"></span><span class="bog-wizard__step"></span></div>
+    <main class="screen__body verify__body">
+      <div class="bog-empty" data-type="custom">
+        <span class="bog-illustration" data-size="132"><img src="assets/img/digipass.svg" alt=""></span>
+        <p class="bog-empty__title">შეიყვანე ვერიფიკაციის კოდი</p>
+        <p class="bog-empty__desc">კოდი გამოგზავნილია ნომერზე <strong>+995 512 345 678</strong></p>
+      </div>
+      <div class="bog-code" data-size="medium" id="otp-code">
+        <input class="bog-code__input" inputmode="numeric" autocomplete="one-time-code" maxlength="4" aria-label="SMS კოდი">
+        <span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span>
+      </div>
+      <p class="verify__hint" id="otp-hint"></p>
+    </main>
+  </section>
+
+  <!-- Passcode -->
+  <section class="screen screen--pushed verify" data-screen="passcode" aria-hidden="true">
+    <header class="nav">
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="უკან" data-verify-back>
+        <span class="bog-icon icon-chevron-left"></span>
+      </button>
+      <span class="nav__title"></span>
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="ჩატი">
+        <span class="bog-icon icon-chat"></span>
+      </button>
+    </header>
+    <div class="bog-wizard" data-wizard><span class="bog-wizard__step"></span><span class="bog-wizard__step"></span></div>
+    <main class="screen__body verify__body">
+      <div class="bog-empty" data-type="custom">
+        <span class="bog-illustration" data-size="132"><img src="assets/img/digipass.svg" alt=""></span>
+        <p class="bog-empty__title">შეიყვანე პასკოდი</p>
+        <p class="bog-empty__desc">შეიყვანე Bogapp-ის პასკოდი</p>
+      </div>
+      <div class="verify__spacer"></div>
+      <div class="bog-code" data-size="large" data-mask data-active id="passcode-code"><span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span></div>
+      <p class="verify__hint" id="passcode-hint"></p>
+    </main>
+    <footer class="verify__keypad">
+      <div class="bog-keypad" data-for="passcode-code">
+        <button type="button" class="bog-keypad__key" data-key="1">1</button><button type="button" class="bog-keypad__key" data-key="2">2</button><button type="button" class="bog-keypad__key" data-key="3">3</button><button type="button" class="bog-keypad__key" data-key="4">4</button><button type="button" class="bog-keypad__key" data-key="5">5</button><button type="button" class="bog-keypad__key" data-key="6">6</button><button type="button" class="bog-keypad__key" data-key="7">7</button><button type="button" class="bog-keypad__key" data-key="8">8</button><button type="button" class="bog-keypad__key" data-key="9">9</button>
+        <span class="bog-keypad__key" aria-hidden="true"></span>
+        <button type="button" class="bog-keypad__key" data-key="0">0</button>
+        <button type="button" class="bog-keypad__key" data-key="back" aria-label="წაშლა"><span class="bog-keypad__back"></span></button>
+      </div>
+    </footer>
+  </section>
+
+  <!-- Passkey -->
+  <section class="screen screen--pushed verify" data-screen="passkey" aria-hidden="true">
+    <header class="nav">
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="დახურვა" data-verify-close>
+        <span class="bog-icon" data-icon="close"></span>
+      </button>
+      <span class="nav__title"></span>
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="ჩატი">
+        <span class="bog-icon icon-chat"></span>
+      </button>
+    </header>
+    <div class="bog-wizard" data-wizard><span class="bog-wizard__step"></span><span class="bog-wizard__step"></span></div>
+    <main class="screen__body verify__body">
+      <div class="bog-empty" data-type="custom">
+        <span class="bog-illustration" data-size="132"><img src="assets/img/digipass.svg" alt=""></span>
+        <p class="bog-empty__title">ვერიფიკაცია</p>
+        <p class="bog-empty__desc">დაადასტურე ინფორმაცია Passkey-ით</p>
+        <div class="bog-empty__actions" id="passkey-retry" hidden><button type="button" class="bog-btn" data-type="neutral">Passkey-ით დადასტურება</button></div>
+      </div>
+    </main>
+  </section>
+
+  <!-- iOS system passkey sheet (mock of the OS dialog, not a BOG component) -->
+  <div class="ios-sheet" id="ios-passkey" hidden>
+    <div class="ios-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="ios-passkey-title">
+      <div class="ios-sheet__head">
+        <h2 class="ios-sheet__title" id="ios-passkey-title">Sign In</h2>
+        <button type="button" class="ios-sheet__close" aria-label="Close" id="ios-passkey-close"></button>
+      </div>
+      <div class="ios-sheet__app">
+        <span class="ios-sheet__icon"></span>
+        <p>Use your saved passkey for “bog.ge”?</p>
+      </div>
+      <div class="ios-sheet__account">
+        <img src="assets/img/passkey-avatar.png" alt="">
+        <span><b>Bank of Georgia</b><small>Passkey · iCloud Keychain</small></span>
+      </div>
+      <button type="button" class="ios-sheet__btn" id="ios-passkey-continue">Continue</button>
+    </div>
+  </div>
 
 </div>
 </body>

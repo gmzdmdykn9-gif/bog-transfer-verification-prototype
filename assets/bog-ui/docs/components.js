@@ -218,6 +218,30 @@ window.BOG_COMPONENTS = [
     desc: "Bordered single-choice option with title, description and radio. Left / Right, Error, Read-only, Disabled, Skeleton.",
     preview: '<label class="bog-radio-card" style="width:220px"><input type="radio" class="bog-radio-card__input" name="pv-rc" checked tabindex="-1"><span class="bog-radio-card__box"><span class="bog-radio-card__content"><span class="bog-radio-card__title">Title</span><span class="bog-radio-card__desc">Description</span></span><span class="bog-radio-card__radio"></span></span></label>'
   },
+  {
+    id: "wizard-progress",
+    name: "Wizard Progress",
+    page: "wizard-progress.html",
+    figma: "https://www.figma.com/design/7ceZjESb4Ga9PwNw4vP0p4/?node-id=17658-72592",
+    desc: "Step bar under the navigation bar: done, current (half) and upcoming steps.",
+    preview: '<div class="bog-wizard" style="width:220px"><span class="bog-wizard__step" data-state="done"></span><span class="bog-wizard__step" data-state="current"></span></div>'
+  },
+  {
+    id: "code-input",
+    name: "Code Input",
+    page: "code-input.html",
+    figma: "https://www.figma.com/design/7ceZjESb4Ga9PwNw4vP0p4/?node-id=17658-72586",
+    desc: "4-digit cells for an SMS code (keyboard + autofill) or a masked passcode (with Keypad).",
+    preview: '<div class="bog-code" data-size="medium" style="transform:scale(.6)"><span class="bog-code__cell">1</span><span class="bog-code__cell">2</span><span class="bog-code__cell"></span><span class="bog-code__cell"></span></div>'
+  },
+  {
+    id: "keypad",
+    name: "Keypad",
+    page: "keypad.html",
+    figma: "https://www.figma.com/design/7ceZjESb4Ga9PwNw4vP0p4/?node-id=17658-72652",
+    desc: "Number pad that types into a Code Input. Desktop keys work too.",
+    preview: '<div class="bog-keypad" style="width:220px;transform:scale(.8)"><button type="button" class="bog-keypad__key" tabindex="-1">1</button><button type="button" class="bog-keypad__key" tabindex="-1">2</button><button type="button" class="bog-keypad__key" tabindex="-1">3</button></div>'
+  },
 ];
 
 /* Sidebar for component pages: <nav id="bog-nav" data-current="button"></nav> */

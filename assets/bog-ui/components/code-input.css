@@ -1,0 +1,107 @@
+/* ==========================================================================
+   BOG UI — Code Input (OTP / passcode cells)
+   Figma: Onboarding › Verification states (17658:72570). Not in Mobile Components yet.
+   Empty cells come from Figma; Filled / Active / Error are prototype additions.
+
+   SMS code (opens the phone keyboard, supports SMS autofill)
+     <div class="bog-code" data-size="medium">
+       <input class="bog-code__input" inputmode="numeric" autocomplete="one-time-code" maxlength="4" aria-label="SMS code">
+       <span class="bog-code__cell"></span><span class="bog-code__cell"></span>
+       <span class="bog-code__cell"></span><span class="bog-code__cell"></span>
+     </div>
+
+   Passcode (typed on a .bog-keypad, digits hidden as dots)
+     <div class="bog-code" data-size="large" data-mask data-active id="passcode"> …4 cells, no input… </div>
+     <div class="bog-keypad" data-for="passcode">…</div>
+
+   Sizes      data-size  medium (56×68, OTP) · large (62×80, passcode)
+   Options    data-mask                 show dots instead of digits
+              data-active               always outline the next cell (use with a keypad)
+              data-validation="error"   red cells + shake (clear it on the next digit)
+              data-state="loading"      cells pulse while the code is checked
+   Events     "codechange"  (detail.value) on every digit
+              "codecomplete" (detail.value) when all cells are filled
+   JS         BOG.setCode(el, "12")  sets the value (used by the keypad)
+   ========================================================================== */
+
+.bog-code {
+  --_w: 56px;
+  --_h: 68px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-gap-small);
+  box-sizing: border-box;
+  width: 100%;
+  /* Figma: 32px between cells; on narrow phones the gaps shrink (min 8px) */
+  max-width: calc(var(--_w) * 4 + var(--spacing-gap-default) * 6);
+  margin-inline: auto;
+  font-family: var(--font-family-bog);
+}
+.bog-code[data-size="large"] { --_w: 62px; --_h: 80px; }
+
+/* Real input covers the cells: tapping anywhere focuses it and opens the keyboard */
+.bog-code__input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px; /* no iOS zoom on focus */
+  color: transparent;
+  caret-color: transparent;
+  background: transparent;
+}
+
+.bog-code__cell {
+  display: flex;
+  flex: 0 1 var(--_w);
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 44px;
+  height: var(--_h);
+  border-radius: var(--radius-default);
+  background: var(--layer-alpha-02);
+  color: var(--text-primary);
+  font-size: var(--heading-small-size);
+  line-height: var(--heading-small-line-height);
+  font-weight: var(--heading-small-weight);
+  transition: box-shadow 120ms ease, background-color 120ms ease;
+}
+
+/* Masked digit: a dot */
+.bog-code[data-mask] .bog-code__cell[data-filled] { font-size: 0; }
+.bog-code[data-mask] .bog-code__cell[data-filled]::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  background: var(--icon-primary);
+}
+
+/* Active: the next cell to fill while the code has focus (or always, with a keypad) */
+.bog-code:is(:focus-within, [data-active]) .bog-code__cell[data-active] {
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--border-selected-neutral-strong);
+}
+
+/* Error */
+.bog-code[data-validation="error"] .bog-code__cell {
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--border-error);
+}
+.bog-code[data-validation="error"] { animation: bog-code-shake 360ms ease; }
+@keyframes bog-code-shake {
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* Loading */
+.bog-code[data-state="loading"] .bog-code__cell { animation: bog-code-pulse 900ms ease-in-out infinite; }
+@keyframes bog-code-pulse { 50% { opacity: .45; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .bog-code[data-validation="error"], .bog-code[data-state="loading"] .bog-code__cell { animation: none; }
+}
