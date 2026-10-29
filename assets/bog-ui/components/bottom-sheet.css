@@ -48,6 +48,11 @@
   font-family: var(--font-family-bog);
 }
 .bog-sheet[hidden] { display: none; }
+/* While a sheet is open the page behind it is frozen: no page scroll, and
+   swipes on the overlay don't reach the content underneath. Pages with their own
+   scroll areas can target html.bog-sheet-locked to freeze those too. */
+html.bog-sheet-locked, html.bog-sheet-locked body { overflow: hidden; overscroll-behavior: none; }
+.bog-sheet { touch-action: none; }
 
 /* Overlay */
 .bog-sheet::before {

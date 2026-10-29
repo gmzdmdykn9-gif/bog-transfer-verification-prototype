@@ -38,8 +38,13 @@
 /* ---- Currency Input ------------------------------------------------------ */
 .bog-currency-input .bog-field__box { padding-right: 0; }
 .bog-currency-input:not(:has(.bog-currency-input__currency)) .bog-field__box { padding-right: var(--spacing-padding-default); }
+/* Collapsed (not display:none) while empty, so tapping the field can still focus
+   the input and open the phone keyboard. */
 .bog-currency-input__value {
-  display: none;
+  display: flex;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
   align-items: center;
   gap: var(--spacing-gap-2x-small);
   min-width: 0;
@@ -54,7 +59,7 @@
 }
 /* Show value + symbol once the label floats (same triggers as Text Input) */
 .bog-currency-input:is(:focus-within, :has(.bog-field__input:not(:placeholder-shown)),
-  [data-state="active"], [data-state="typing"], [data-state="filled"], [data-state="loading"]) .bog-currency-input__value { display: flex; }
+  [data-state="active"], [data-state="typing"], [data-state="filled"], [data-state="loading"]) .bog-currency-input__value { height: auto; overflow: visible; opacity: 1; }
 /* Filled (blurred, has value): symbol turns primary */
 .bog-currency-input:not(:focus-within):has(.bog-field__input:not(:placeholder-shown)) .bog-currency-input__symbol,
 .bog-currency-input[data-state="filled"] .bog-currency-input__symbol { color: var(--text-primary); }

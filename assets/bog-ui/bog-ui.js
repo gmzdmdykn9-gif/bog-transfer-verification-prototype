@@ -104,6 +104,7 @@
     sheet.getBoundingClientRect(); // start the slide-up from the closed position
     sheet.setAttribute("data-open", "");
     openStack.push(sheet);
+    document.documentElement.classList.add("bog-sheet-locked"); // freeze the page behind the sheet
     var panel = sheet.querySelector(".bog-sheet__panel");
     if (panel) {
       if (!panel.hasAttribute("tabindex")) panel.setAttribute("tabindex", "-1");
@@ -118,6 +119,7 @@
     sheet.removeAttribute("data-open");
     sheet.style.removeProperty("--drag");
     openStack = openStack.filter(function (s) { return s !== sheet; });
+    if (!openStack.length) document.documentElement.classList.remove("bog-sheet-locked");
     var panel = sheet.querySelector(".bog-sheet__panel");
     var done = function () { if (!sheet.hasAttribute("data-open")) sheet.hidden = true; };
     if (panel && getComputedStyle(panel).transitionDuration !== "0s") panel.addEventListener("transitionend", done, { once: true });

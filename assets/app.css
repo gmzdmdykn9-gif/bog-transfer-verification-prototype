@@ -1,5 +1,6 @@
 /* Transfer form prototype — page layout only. All UI comes from bog-ui. */
-html, body { margin: 0; background: var(--layer-layer-01); }
+/* The document never scrolls (no rubber-band moving the bars on iOS); only .screen__body does. */
+html, body { margin: 0; height: 100%; overflow: hidden; overscroll-behavior: none; background: var(--layer-layer-01); }
 body { font-family: var(--font-family-bog); color: var(--text-primary); -webkit-text-size-adjust: 100%; }
 
 /* App shell: the screen is fixed to the viewport (fits any phone, no dvh needed).
@@ -56,6 +57,8 @@ body { font-family: var(--font-family-bog); color: var(--text-primary); -webkit-
   gap: calc(var(--spacing-padding-default) * 2);
   padding: calc(var(--spacing-padding-default) * 1.5) var(--spacing-padding-default) calc(var(--spacing-padding-default) * 2);
 }
+/* Freeze the content while a bottom sheet is open */
+html.bog-sheet-locked .screen__body { overflow: hidden; touch-action: none; }
 
 /* Section (Figma _SECTION: header + 16px gap + content) */
 .section { display: flex; flex-direction: column; gap: var(--spacing-gap-default); }
