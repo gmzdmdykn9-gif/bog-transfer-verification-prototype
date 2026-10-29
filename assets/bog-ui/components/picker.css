@@ -102,7 +102,7 @@
   flex: none;
   width: 10px;
   height: 10px;
-  background-color: var(--icon-primary);
+  background-color: var(--icon-accent);
   -webkit-mask: url("../icons/star-10.svg") center / contain no-repeat;
           mask: url("../icons/star-10.svg") center / contain no-repeat;
 }

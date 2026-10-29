@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>სხვასთან გადარიცხვა — BOG prototype</title>
-<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=20261029154624">
-<link rel="stylesheet" href="assets/app.css?v=20261029154624">
-<script src="assets/bog-ui/bog-ui.js?v=20261029154624" defer></script>
-<script src="assets/app.js?v=20261029154624" defer></script>
+<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=20261029160002">
+<link rel="stylesheet" href="assets/app.css?v=20261029160002">
+<script src="assets/bog-ui/bog-ui.js?v=20261029160002" defer></script>
+<script src="assets/app.js?v=20261029160002" defer></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -29,13 +29,13 @@
     <main class="screen__body">
       <div class="section">
         <h2 class="section__title">საიდან რიცხავ?</h2>
-        <div class="bog-select" data-variant="account" data-sheet="accounts-sheet" data-value="salary" id="from-account">
+        <div class="bog-select" data-variant="account" data-value="salary" id="from-account">
           <button type="button" class="bog-select__box">
             <span class="bog-select__text">
               <span class="bog-select__label"><span id="from-name">სახელფასო ანგარიში</span><span class="bog-select__fav"></span></span>
               <span class="bog-select__value">24.02 ₾</span>
             </span>
-            <span class="bog-card-art" data-size="40"><img src="assets/img/just-card.png" alt=""></span>
+            <span id="from-media"><span class="bog-card-art" data-size="40"><img src="assets/img/just-card.png" alt=""></span></span>
             <span class="bog-select__chevron"></span>
           </button>
         </div>
@@ -95,38 +95,107 @@
     </footer>
   </section>
 
-  <!-- ===================== Sheets ===================== -->
-  <div class="bog-sheet" id="accounts-sheet" hidden>
-    <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="accounts-title">
-      <header class="bog-sheet__nav">
-        <div class="bog-sheet__heading"><h2 class="bog-sheet__title" id="accounts-title">აირჩიე ანგარიში</h2></div>
-      </header>
-      <div class="bog-sheet__content sheet-stack">
-        <div class="bog-picker" data-value="salary" data-label="24.02 ₾" data-name="სახელფასო ანგარიში" data-balance="24.02">
-          <div class="bog-picker__box" role="button" tabindex="0">
-            <div class="bog-picker__head">
-              <div class="bog-picker__info">
-                <span class="bog-picker__title">სახელფასო ანგარიში<span class="bog-picker__fav"></span></span>
-                <div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">24.02</span><span class="bog-amount__currency">₾</span></div></div>
+  <!-- ===================== Account Picker Page (Figma: 60100:23936), presented modally ===================== -->
+  <section class="screen screen--presented" data-screen="picker" aria-hidden="true" aria-labelledby="picker-title">
+    <header class="nav">
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="დახურვა" id="picker-close">
+        <span class="bog-icon icon-chevron-left"></span>
+      </button>
+      <h1 class="nav__title" id="picker-title">საიდან რიცხავ?</h1>
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="ჩატი">
+        <span class="bog-icon icon-chat"></span>
+      </button>
+    </header>
+
+    <main class="screen__body" id="picker-options">
+      <div class="section">
+        <div class="bog-radio-card-group">
+          <label class="bog-radio-card">
+            <input type="radio" class="bog-radio-card__input" name="pay-from" value="apple-pay" data-name="Apple Pay" data-media="apple-pay">
+            <span class="bog-radio-card__box">
+              <img class="apple-pay-mark" src="assets/img/apple-pay.svg" alt="" width="40" height="26">
+              <span class="bog-radio-card__content"><span class="bog-radio-card__title">Apple Pay</span></span>
+              <span class="bog-radio-card__radio"></span>
+            </span>
+          </label>
+          <button type="button" class="bog-action-card" id="add-card">
+            <span class="bog-icon-holder" data-size="40"><span class="bog-icon icon-debit-card"></span></span>
+            <span class="bog-action-card__content"><span class="bog-action-card__title">ბარათის დამატება</span></span>
+            <span class="bog-icon icon-plus"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section__title">დამატებული ბარათები</h2>
+        <div class="picker-stack">
+          <div class="bog-picker" data-value="mastercard" data-name="Mastercard" data-label="****0000" data-media="mastercard">
+            <div class="bog-picker__box" role="button" tabindex="0">
+              <div class="bog-picker__head">
+                <div class="bog-picker__info">
+                  <span class="bog-picker__title">Mastercard</span>
+                  <span class="bog-picker__number">****0000</span>
+                </div>
+                <span class="bog-media-circle" data-size="48"><img src="assets/img/mastercard.png" alt=""></span>
               </div>
-              <span class="bog-card-art" data-size="56"><img src="assets/img/just-card.png" alt=""></span>
             </div>
           </div>
-        </div>
-        <div class="bog-picker" data-value="savings" data-label="1,250.00 ₾" data-name="შემნახველი ანგარიში" data-balance="1250">
-          <div class="bog-picker__box" role="button" tabindex="0">
-            <div class="bog-picker__head">
-              <div class="bog-picker__info">
-                <span class="bog-picker__title">შემნახველი ანგარიში</span>
-                <div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">1,250.00</span><span class="bog-amount__currency">₾</span></div></div>
+          <div class="bog-picker" data-value="visa" data-name="Visa" data-label="****0000" data-media="visa">
+            <div class="bog-picker__box" role="button" tabindex="0">
+              <div class="bog-picker__head">
+                <div class="bog-picker__info">
+                  <span class="bog-picker__title">Visa</span>
+                  <span class="bog-picker__number">****0000</span>
+                </div>
+                <span class="bog-media-circle" data-size="48"><img src="assets/img/visa.png" alt=""></span>
               </div>
-              <span class="bog-card-art" data-size="56"></span>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
+
+      <div class="section">
+        <h2 class="section__title">აირჩიე ანგარიში</h2>
+        <div class="picker-stack">
+          <div class="bog-picker" data-value="salary" data-name="სახელფასო ანგარიში" data-label="24.02 ₾" data-balance="24.02" data-fav data-media="just-card">
+            <div class="bog-picker__box" role="button" tabindex="0">
+              <div class="bog-picker__head">
+                <div class="bog-picker__info">
+                  <span class="bog-picker__title">სახელფასო ანგარიში<span class="bog-picker__fav" aria-label="რჩეული"></span></span>
+                  <div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">24.02</span><span class="bog-amount__currency">₾</span></div></div>
+                </div>
+                <span class="bog-card-art" data-size="56"><img src="assets/img/just-card.png" alt=""></span>
+              </div>
+            </div>
+          </div>
+          <div class="bog-picker" data-value="multi" data-name="მრავალვალუტიანი ანგარიში" data-label="2,000.00 ₾" data-balance="2000" data-media="business-visa">
+            <div class="bog-picker__box" role="button" tabindex="0">
+              <div class="bog-picker__head">
+                <div class="bog-picker__info">
+                  <span class="bog-picker__title">მრავალვალუტიანი ანგარიში</span>
+                  <div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">2,000.00</span><span class="bog-amount__currency">₾</span></div></div>
+                </div>
+                <span class="bog-card-art" data-size="56"><img src="assets/img/business-visa.png" alt=""></span>
+              </div>
+              <div class="bog-amount__balances">
+                <span class="bog-amount__balance" data-active><span class="bog-amount__num">200.00</span>₾</span>
+                <span class="bog-amount__balance" data-active><span class="bog-amount__num">28.00</span>$</span>
+                <span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>€</span>
+                <span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>£</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="sticky-bar">
+      <div class="bog-feedback" data-status="negative" id="picker-error" hidden>
+        <div class="bog-feedback__text"><p class="bog-feedback__title">ანგარიში არ არის არჩეული</p><p class="bog-feedback__desc">აირჩიე საიდან გინდა გადარიცხვა</p></div>
+      </div>
+      <button class="bog-btn" data-type="primary" data-width="fill" id="picker-choose">არჩევა</button>
+    </footer>
+  </section>
 
 </div>
 </body>

@@ -209,7 +209,15 @@ window.BOG_COMPONENTS = [
     figma: "https://www.figma.com/design/EI6tYmEC7DhjpnzeuF5C45/?node-id=52913-5147",
     desc: "Centered dialog with title, content and 1–2 buttons. Opens with data-modal-open.",
     preview: '<div class="bog-modal__dialog" style="width:240px;transform:none"><header class="bog-modal__header"><span class="bog-modal__title" style="font:600 16px/24px var(--font-family-bog)">Modal dialog</span></header><div class="bog-modal__body" style="padding-block:4px 8px"><p class="bog-modal__text" style="font-size:12px;line-height:16px">Body text goes here.</p></div><footer class="bog-modal__footer"><span class="bog-btn" data-type="primary" data-size="small">Confirm</span></footer></div>'
-  }
+  },
+  {
+    id: "radio-card",
+    name: "Radio Card",
+    page: "radio-card.html",
+    figma: "https://www.figma.com/design/EI6tYmEC7DhjpnzeuF5C45/?node-id=22114-3977",
+    desc: "Bordered single-choice option with title, description and radio. Left / Right, Error, Read-only, Disabled, Skeleton.",
+    preview: '<label class="bog-radio-card" style="width:220px"><input type="radio" class="bog-radio-card__input" name="pv-rc" checked tabindex="-1"><span class="bog-radio-card__box"><span class="bog-radio-card__content"><span class="bog-radio-card__title">Title</span><span class="bog-radio-card__desc">Description</span></span><span class="bog-radio-card__radio"></span></span></label>'
+  },
 ];
 
 /* Sidebar for component pages: <nav id="bog-nav" data-current="button"></nav> */

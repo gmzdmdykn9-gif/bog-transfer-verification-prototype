@@ -45,6 +45,7 @@ Fonts: `fonts/` holds BOG woff2 files. They are licensed, so they stay out of gi
 | Password Input | `65690:6315` | ✅ all Themed variants + Password Requirements (Incomplete / Valid / Non-Valid, live) |
 | Phone Input | `61708:3382` | ✅ International (country picker → Bottom Sheet) / National × all states |
 | Modal Dialog | `52913:5147` | ✅ Standard, Minimal, Cover (image / illustration), Destructive, Single / Dual · `BOG.openModal()` (Image Only modal not built: needs Slider Indicator) |
+| Radio Card | `22114:3977` | ✅ Left / Right × Enabled, Pressed, Selected, Error, Read-only, Disabled, Skeleton; built-in Radio button |
 | UI Elements | `54990:3178`  | ✅ Flags, Media Circle/Square/Rectangle, Illustration, Card Placeholder, Icon Placeholder, Counter |
 
 The "iOS Liquid Glass" source variants are intentionally **not** implemented.
@@ -464,6 +465,26 @@ All three are Text Inputs (`.bog-field`) with an extra class, so states, validat
 </div>
 ```
 Open with `data-modal-open="confirm"` or `BOG.openModal("confirm")`. Minimal: `data-layout="minimal"` on the body, no header. Cover: `.bog-modal__cover` (img or `.bog-illustration`) before the body. Destructive: `data-type="negative"` button and no X. Use a Modal for short centered confirmations; anything sliding from the bottom is still a Bottom Sheet.
+
+### Radio Card
+
+```html
+<div class="bog-radio-card-group">
+  <label class="bog-radio-card">
+    <input type="radio" class="bog-radio-card__input" name="pay-with" value="apple-pay" checked>
+    <span class="bog-radio-card__box">
+      <span class="bog-icon"></span>                         <!-- optional leading slot -->
+      <span class="bog-radio-card__content">
+        <span class="bog-radio-card__title">Title</span>
+        <span class="bog-radio-card__desc">Description</span> <!-- optional -->
+      </span>
+      <span class="bog-radio-card__radio"></span>
+    </span>
+    <span class="bog-inline-message" data-status="negative">Message text</span>  <!-- Error only -->
+  </label>
+</div>
+```
+Selected = `checked` · Disabled = `disabled` on the input · on `.bog-radio-card`: `data-align="left"`, `data-validation="error"`, `data-state="readonly | skeleton | pressed"`. Same `name` = one group.
 
 ### Icons
 

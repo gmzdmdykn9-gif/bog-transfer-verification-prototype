@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radio Card — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="radio-card"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Radio Card</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">A bordered card that is one option of a single-choice group: optional leading slot, title, description and a radio button. Left or right aligned; Enabled, Pressed, Selected, Error, Read-only, Disabled and Skeleton.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-radio-card-group"&gt;
+  &lt;label class="bog-radio-card"&gt;
+    &lt;input type="radio" class="bog-radio-card__input" name="plan" value="basic" checked&gt;
+    &lt;span class="bog-radio-card__box"&gt;
+      &lt;span class="bog-icon"&gt;&lt;/span&gt;                                  &lt;!-- optional leading slot --&gt;
+      &lt;span class="bog-radio-card__content"&gt;
+        &lt;span class="bog-radio-card__title"&gt;Title&lt;/span&gt;
+        &lt;span class="bog-radio-card__desc"&gt;Description&lt;/span&gt;          &lt;!-- optional --&gt;
+      &lt;/span&gt;
+      &lt;span class="bog-radio-card__radio"&gt;&lt;/span&gt;
+    &lt;/span&gt;
+    &lt;span class="bog-inline-message" data-status="negative"&gt;Message text&lt;/span&gt;  &lt;!-- shown with data-validation="error" --&gt;
+  &lt;/label&gt;
+&lt;/div&gt;</code></pre>
+    <p>Selected = <code>checked</code> on the input · Disabled = <code>disabled</code> · on <code>.bog-radio-card</code>: <code>data-align="left"</code>, <code>data-validation="error"</code>, <code>data-state="readonly | skeleton | pressed"</code>. Radios with the same <code>name</code> form one group.</p>
+
+    <h2>Try it</h2>
+    <div class="panel"><div class="bog-radio-card-group" style="width:343px" id="demo"></div></div>
+
+    <h2>Variants</h2>
+    <div class="panel"><div id="variants" style="display:grid;grid-template-columns:repeat(2,324px);gap:16px 32px;align-items:start"></div></div>
+
+  </main>
+</div>
+<script>
+  let n = 0;
+  const rc = (o = {}) => `<label class="bog-radio-card"${o.align ? ' data-align="left"' : ""}${o.v ? ' data-validation="error"' : ""}${o.state ? ` data-state="${o.state}"` : ""}><input type="radio" class="bog-radio-card__input" name="${o.name || "v" + (n++)}"${o.on ? " checked" : ""}${o.disabled ? " disabled" : ""}${o.state === "readonly" ? ' tabindex="-1"' : ""}><span class="bog-radio-card__box">${o.state === "skeleton" ? '<span class="bog-radio-card__skeleton"><span class="bog-skeleton-wave"></span><span class="bog-skeleton-wave"></span></span>' : `${o.align ? "" : '<span class="bog-icon"></span>'}<span class="bog-radio-card__content"><span class="bog-radio-card__title">${o.title || "Title"}</span><span class="bog-radio-card__desc">${o.desc || "Description"}</span></span>`}<span class="bog-radio-card__radio"></span></span>${o.v ? '<span class="bog-inline-message" data-status="negative">Message text</span>' : ""}</label>`;
+  document.getElementById("demo").innerHTML = rc({name: "demo", on: 1, title: "Standard", desc: "Free, 1–2 business days"}) + rc({name: "demo", title: "Express", desc: "5.00 ₾, today"}) + rc({name: "demo", title: "Pick up", desc: "Unavailable in your city", disabled: 1});
+  const ROWS = [["Enabled", {}], ["Pressed", {state: "pressed"}], ["Selected", {on: 1}], ["Selected · Pressed", {on: 1, state: "pressed"}], ["Error", {v: 1}], ["Error · Selected", {v: 1, on: 1}], ["Read-only · Selected", {state: "readonly", on: 1}], ["Read-only", {state: "readonly"}], ["Disabled", {disabled: 1}], ["Disabled · Selected", {disabled: 1, on: 1}], ["Skeleton", {state: "skeleton"}]];
+  document.getElementById("variants").innerHTML = ROWS.map(([label, o]) => ["Right", "Left"].map(a => `<div><div class="row-label"><code>${a} · ${label}</code></div>${rc({...o, align: a === "Left"})}</div>`).join("")).join("");
+</script>
+</body>
+</html>
