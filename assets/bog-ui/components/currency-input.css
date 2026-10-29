@@ -86,6 +86,10 @@
   -webkit-tap-highlight-color: transparent;
 }
 .bog-currency-input .bog-field__box > .bog-currency-input__currency { margin-left: calc(-1 * var(--spacing-gap-medium) + var(--spacing-padding-small)); }
+/* Info button after the currency (Figma: Slot + tooltip): normal 16px right padding,
+   12px gap between the currency and the info icon */
+.bog-currency-input:has(.bog-currency-input__currency ~ .bog-field__info) .bog-field__box { padding-right: var(--spacing-padding-default); }
+.bog-currency-input .bog-currency-input__currency:has(~ .bog-field__info) { padding-right: 0; }
 button.bog-currency-input__currency { cursor: pointer; }
 button.bog-currency-input__currency::after {
   content: "";

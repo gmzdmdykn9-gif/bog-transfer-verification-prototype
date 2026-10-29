@@ -86,21 +86,23 @@ html.bog-sheet-locked .screen__body { overflow: hidden; touch-action: none; }
 }
 .sticky-bar__check { align-self: center; }
 
-/* Presented page (iOS modal "present"): slides up from the bottom over the current
-   screen and slides back down on close. Not a side push. */
-.screen--presented {
+/* Pushed page (iOS navigation push): slides in from the right while the screen
+   underneath shifts a little to the left; back reverses it. */
+.screen { transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1); }
+.screen--pushed {
   z-index: 10;
-  transform: translateY(100%);
+  transform: translateX(100%);
   visibility: hidden;
-  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 420ms;
-  box-shadow: 0 -8px 32px #1b1c1d14;
+  transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 380ms;
+  box-shadow: -8px 0 24px #1b1c1d14;
 }
-.screen--presented[data-open] {
+.screen--pushed[data-open] {
   transform: none;
   visibility: visible;
-  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s;
+  transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s;
 }
-@media (prefers-reduced-motion: reduce) { .screen--presented, .screen--presented[data-open] { transition: none; } }
+.screen[data-covered] { transform: translateX(-30%); }
+@media (prefers-reduced-motion: reduce) { .screen, .screen--pushed, .screen--pushed[data-open] { transition: none; } }
 
 /* Account Picker Page */
 .picker-stack { display: flex; flex-direction: column; gap: var(--spacing-gap-medium); }

@@ -1,4 +1,4 @@
-/* Transfer form (Figma: Transfers – Update · Step 949) + Account Picker Page (presented).
+/* Transfer form (Figma: Transfers – Update · Step 949) + Account Picker Page (pushed).
    "Next" validates the amount; verification screens get wired in once the designs arrive. */
 (function () {
   var $ = function (s) { return document.querySelector(s); };
@@ -19,7 +19,7 @@
     setAmountError(null);
   });
 
-  /* ---- Account Picker Page (presented) ---------------------------------- */
+  /* ---- Account Picker Page (pushed) ---------------------------------- */
   var transfer = $('[data-screen="transfer"]'), page = $('[data-screen="picker"]');
   var options = $("#picker-options"), pickerError = $("#picker-error");
   var MEDIA = {
@@ -65,12 +65,14 @@
     page.setAttribute("data-open", "");
     page.removeAttribute("aria-hidden");
     transfer.inert = true;
+    transfer.setAttribute("data-covered", "");
     setTimeout(function () { $("#picker-close").focus({ preventScroll: true }); }, 450);
   }
   function closePicker() {
     page.removeAttribute("data-open");
     page.setAttribute("aria-hidden", "true");
     transfer.inert = false;
+    transfer.removeAttribute("data-covered");
     $("#from-account .bog-select__box").focus({ preventScroll: true });
   }
   $("#from-account .bog-select__box").addEventListener("click", openPicker);
