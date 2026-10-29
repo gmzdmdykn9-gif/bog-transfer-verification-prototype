@@ -2,27 +2,24 @@
 html, body { margin: 0; background: var(--layer-layer-01); }
 body { font-family: var(--font-family-bog); color: var(--text-primary); -webkit-text-size-adjust: 100%; }
 
-/* Fill any phone screen; on wider screens keep a phone-width column.
-   The page itself scrolls (works best with mobile browser toolbars);
-   the nav bar and sticky bar are pinned with position: sticky. */
-.app {
-  width: 100%;
+/* App shell: the screen is fixed to the viewport (fits any phone, no dvh needed).
+   Nav bar on top and sticky bar at the bottom never move; only the middle scrolls.
+   On wider screens it stays a phone-width column. */
+.app { background: var(--layer-layer-01); }
+.screen {
+  position: fixed;
+  inset: 0;
   max-width: 480px;
   margin: 0 auto;
-  background: var(--layer-layer-01);
-}
-.screen {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
+  overflow: hidden;
   background: var(--layer-layer-01);
 }
 
 /* Navigation bar (Figma Navigation bar · Title, left slot) */
 .nav {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 2;
   flex: none;
   background: var(--layer-layer-01);
@@ -50,6 +47,10 @@ body { font-family: var(--font-family-bog); color: var(--text-primary); -webkit-
 /* Page content (Figma MainContainer: 24 top · 16 sides · 32 bottom · 32 section gap) */
 .screen__body {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
   gap: calc(var(--spacing-padding-default) * 2);
@@ -77,8 +78,7 @@ body { font-family: var(--font-family-bog); color: var(--text-primary); -webkit-
   margin-top: calc(var(--spacing-padding-default) * -1.5);
   padding: calc(var(--spacing-padding-default) * 1.5) var(--spacing-padding-default) max(var(--spacing-padding-default), env(safe-area-inset-bottom));
   background: linear-gradient(180deg, #ffffff00 0%, var(--layer-layer-05) 24px);
-  position: sticky;
-  bottom: 0;
+  position: relative;
   z-index: 2;
 }
 .sticky-bar__check { align-self: center; }
