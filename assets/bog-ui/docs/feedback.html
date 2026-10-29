@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feedback — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="feedback"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Feedback</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Messages that tell the user what happened: Inline (inside the page) and Toast (floating, auto-closing). Positive, warning, negative, info and neutral; optional title, actions, close and loading; Themed and Inverse.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-feedback" data-status="positive" role="status"&gt;
+  &lt;div class="bog-feedback__text"&gt;
+    &lt;p class="bog-feedback__title"&gt;Payment sent&lt;/p&gt;
+    &lt;p class="bog-feedback__desc"&gt;50.00 ₾ to Nino B.&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;button type="button" class="bog-feedback__close" aria-label="Close"&gt;&lt;/button&gt;
+  &lt;div class="bog-feedback__actions"&gt;
+    &lt;button class="bog-btn" data-type="ghost" data-size="small"&gt;Details&lt;/button&gt;
+    &lt;button class="bog-btn" data-type="primary" data-size="small"&gt;OK&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Toast: floats over the screen and disappears after 4 s --&gt;
+&lt;script&gt;BOG.toast({ status: "positive", title: "Saved", text: "Template saved" });&lt;/script&gt;</code></pre>
+
+    <h2>Toast — try it</h2>
+    <p class="lead">Toasts slide down from the top (or up from the bottom with <code>position: "bottom"</code>) with a small bounce, stay about 3 seconds and slide back out. Try it inside the phone frame.</p>
+    <div class="panel" style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap"><div class="bog-sheet-host" id="toast-phone" style="position:relative;width:375px;height:420px;border-radius:24px;background:#fff;box-shadow:0 0 0 8px #1b1c1d;overflow:hidden"></div><div class="row" id="toast-btns" style="gap:12px;align-items:center;max-width:360px"></div></div>
+
+    <h2>Inline — all statuses</h2>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px">
+      <div class="panel"><div id="fb-light" style="display:flex;flex-direction:column;gap:16px;max-width:343px"></div></div>
+      <div class="panel dark"><div id="fb-dark" style="display:flex;flex-direction:column;gap:16px;max-width:343px"></div></div>
+    </div>
+
+<script>
+  const ACT = '<div class="bog-feedback__actions"><button class="bog-btn" data-type="ghost" data-size="small">Button</button><button class="bog-btn" data-type="primary" data-size="small">Button</button></div>';
+  const ACT_INV = '<div class="bog-feedback__actions"><button class="bog-btn" data-type="ghost" data-appearance="inverse" data-size="small">Button</button><button class="bog-btn" data-type="primary" data-size="small">Button</button></div>';
+  const fb = (status, o = {}) => `<div class="bog-feedback" data-status="${status}"${o.inv ? ' data-appearance="inverse"' : ""}${o.state ? ` data-state="${o.state}"` : ""}>${status === "neutral" ? '<span class="bog-icon"></span>' : ""}<div class="bog-feedback__text">${o.title === false ? "" : `<p class="bog-feedback__title">${status[0].toUpperCase() + status.slice(1)}</p>`}<p class="bog-feedback__desc">Small description goes here related to the message</p></div><button type="button" class="bog-feedback__close" aria-label="Close"></button>${o.inv ? ACT_INV : ACT}</div>`;
+  const ALL = inv => ["positive", "warning", "negative", "info", "neutral"].map(s => fb(s, {inv})).join("") + fb("negative", {inv, title: false}) + fb("neutral", {inv, title: false, state: "loading"}) + fb("neutral", {inv, state: "skeleton"});
+  document.getElementById("fb-light").innerHTML = ALL(false);
+  document.getElementById("fb-dark").innerHTML = ALL(true);
+  const T = [["positive", "Payment sent", "50.00 ₾ to Nino B."], ["warning", "Low balance", "Your balance is below 10 ₾"], ["negative", "Transfer failed", "Please try again later"], ["info", "", "New statement is available"]];
+  document.getElementById("toast-btns").innerHTML = T.map(([s, t, x], i) => `<button class="bog-btn" data-type="neutral" data-size="small" data-i="${i}">${s} toast</button>`).join("") + '<button class="bog-btn" data-type="neutral" data-size="small" data-i="b">bottom toast</button>';
+  document.getElementById("toast-btns").addEventListener("click", e => {
+    const b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.i === "b") return BOG.toast({ status: "positive", text: "Copied to clipboard", position: "bottom", host: document.getElementById("toast-phone") });
+    const [status, title, text] = T[b.dataset.i]; BOG.toast({ status, title, text, host: document.getElementById("toast-phone"), actions: status === "positive" ? [{ label: "Button", type: "ghost" }, { label: "Button" }] : [] });
+  });
+</script>
+  </main>
+</div>
+</body>
+</html>

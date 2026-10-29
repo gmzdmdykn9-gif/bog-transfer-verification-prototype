@@ -1,0 +1,30 @@
+/* BOG UI — single entry point. Link this one file from any prototype:
+   <link rel="stylesheet" href="PATH/TO/bog-ui/bog-ui.css">
+   Interactive bits (e.g. the text-input clear button) also need:
+   <script src="PATH/TO/bog-ui/bog-ui.js" defer></script> */
+@import url("tokens.css");
+@import url("components/base.css");
+@import url("components/icon.css");
+@import url("components/button.css");
+@import url("components/text-input.css");
+@import url("components/amount.css");
+@import url("components/ui-elements.css");
+@import url("components/avatar.css");
+@import url("components/badge.css");
+@import url("components/picker.css");
+@import url("components/list.css");
+@import url("components/bottom-sheet.css");
+@import url("components/select.css");
+@import url("components/action-card.css");
+@import url("components/action-item.css");
+@import url("components/checkbox.css");
+@import url("components/chip.css");
+@import url("components/feedback.css");
+@import url("components/empty-state.css");
+@import url("components/currency-input.css");
+@import url("components/hero.css");
+@import url("components/product-card.css");
+@import url("components/number-input.css");
+@import url("components/password-input.css");
+@import url("components/phone-input.css");
+@import url("components/modal.css");

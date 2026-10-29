@@ -1,0 +1,205 @@
+/* ==========================================================================
+   BOG UI — Select
+   Figma: Select (43757:27381). Tapping it opens a Bottom Sheet with the options (bog-ui.js).
+
+   Quickest markup — options in a native <select>; bog-ui.js builds the bottom sheet for you:
+     <div class="bog-select">
+       <button type="button" class="bog-select__box">
+         <span class="bog-select__text">
+           <span class="bog-select__label">Country</span>
+           <span class="bog-select__value"></span>
+         </span>
+         <span class="bog-select__chevron"></span>
+       </button>
+       <select class="bog-select__native" name="country">
+         <option value="GE">Georgia</option> …
+       </select>
+       <p class="bog-select__message">Helper text</p>                       optional
+     </div>
+
+   Custom sheet (any content, e.g. flags, subtitles): give the Select data-sheet="sheet-id" and put
+   .bog-list-item elements with data-value (and optional data-label) inside that bottom sheet.
+
+   States: empty shows the label as the placeholder; with a value the label shrinks above it (Filled).
+   Attributes on .bog-select: data-validation="error|warning|success", data-state="skeleton".
+   On the button: disabled (Disabled=True), aria-readonly="true" (Read-only, doesn't open).
+   Optional icons: <span class="bog-icon"></span> before .bog-select__text (Left Icon) or before the chevron.
+   Listen for changes: the .bog-select fires a "change" event; the value is in its data-value.
+   ========================================================================== */
+
+.bog-select {
+  --_border: transparent;
+  --_msg: var(--text-secondary);
+  --_status-icon: var(--_msg);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+  width: 100%;
+  font-family: var(--font-family-bog);
+}
+.bog-select__native { display: none; }
+
+.bog-select__box {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-medium);
+  box-sizing: border-box;
+  width: 100%;
+  height: var(--input-container-height);
+  margin: 0;
+  padding: var(--spacing-padding-small) var(--spacing-padding-default);
+  border: 0;
+  border-radius: var(--radius-medium);
+  background-color: var(--layer-alpha-01);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--_border);
+  color: var(--icon-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-select__box:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 2px; }
+.bog-select__box:active:not(:disabled, [aria-readonly="true"]) {
+  background-image: linear-gradient(var(--layer-alpha-pressed-01), var(--layer-alpha-pressed-01));
+}
+
+.bog-select__text {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--spacing-padding-2x-small) 0;
+}
+/* Empty: label acts as the placeholder (Body/Large) */
+.bog-select__label {
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: var(--body-large-size);
+  line-height: var(--body-large-line-height);
+  font-weight: var(--body-large-weight);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bog-select__value {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: var(--body-large-size);
+  line-height: var(--body-large-line-height);
+  font-weight: var(--body-large-weight);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bog-select__value:empty { display: none; }
+/* Filled: small label above the value (Label/xSmall) */
+.bog-select:has(.bog-select__value:not(:empty)) .bog-select__label {
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: var(--label-xsmall-weight);
+}
+
+.bog-select__chevron {
+  position: relative;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: url("../icons/chevron-down.svg") center / contain no-repeat;
+          mask: url("../icons/chevron-down.svg") center / contain no-repeat;
+  transition: transform 200ms ease;
+}
+.bog-select[data-open] .bog-select__chevron { transform: rotate(180deg); }
+
+/* ---- Message (helper / validation), 8px inset like Figma ------------- */
+.bog-select__message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding-left: var(--spacing-padding-small);
+  color: var(--_msg);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-select[data-validation] .bog-select__message::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--_status-icon);
+  -webkit-mask: url("../icons/status-alert.svg") center / contain no-repeat;
+          mask: url("../icons/status-alert.svg") center / contain no-repeat;
+}
+.bog-select[data-validation="success"] .bog-select__message::before {
+  -webkit-mask-image: url("../icons/status-success.svg");
+          mask-image: url("../icons/status-success.svg");
+}
+.bog-select[data-validation="error"]   { --_border: var(--border-error);   --_msg: var(--text-error);   --_status-icon: var(--icon-error); }
+.bog-select[data-validation="warning"] { --_border: var(--border-warning); --_msg: var(--text-warning); --_status-icon: var(--icon-warning); }
+.bog-select[data-validation="success"] { --_border: var(--border-success); --_msg: var(--text-success); --_status-icon: var(--icon-success); }
+
+/* ---- Read-only ------------------------------------------------------- */
+.bog-select:has(.bog-select__box[aria-readonly="true"]) { --_border: var(--support-support-02); }
+.bog-select__box[aria-readonly="true"] { background-color: var(--layer-alpha-0); cursor: default; }
+
+/* ---- Disabled -------------------------------------------------------- */
+.bog-select__box:disabled { color: var(--icon-disabled); cursor: default; }
+.bog-select__box:disabled :is(.bog-select__label, .bog-select__value) { color: var(--text-disabled); }
+.bog-select:has(.bog-select__box:disabled) { --_border: transparent; --_msg: var(--text-disabled); --_status-icon: var(--icon-disabled); }
+
+/* ---- Skeleton -------------------------------------------------------- */
+.bog-select[data-state="skeleton"] { pointer-events: none; }
+.bog-select[data-state="skeleton"] .bog-select__box { background: var(--support-skeleton-background); box-shadow: none; }
+.bog-select[data-state="skeleton"] .bog-select__box > * { visibility: hidden; }
+.bog-select[data-state="skeleton"] .bog-select__message { display: none; }
+
+/* ==========================================================================
+   Account Select — Figma: Account Select (44100:79469)
+   A Select variant: 72px, UI Element media slot, chevron-right, larger value.
+     <div class="bog-select" data-variant="account" data-sheet="accounts-sheet">
+       <button type="button" class="bog-select__box">
+         <span class="bog-select__text">
+           <span class="bog-select__label">Account<span class="bog-select__fav"></span></span>
+           <span class="bog-select__value"></span>
+         </span>
+         <span class="bog-card-art" data-size="40"></span>                 media slot (any UI Element, 40)
+         <span class="bog-select__chevron"></span>
+       </button>
+     </div>
+   Empty shows the label as "Choose account"-style placeholder text.
+   The sheet holds Account Pickers with data-value (+ data-label, data-media) — picking one fills the Select.
+   ========================================================================== */
+.bog-select[data-variant="account"] .bog-select__box {
+  gap: var(--spacing-gap-small);
+  height: 72px;
+  padding: var(--spacing-padding-default);
+}
+.bog-select[data-variant="account"]:has(.bog-select__value:not(:empty)) .bog-select__box { padding-block: var(--spacing-padding-medium); }
+.bog-select[data-variant="account"] .bog-select__text { gap: var(--spacing-gap-x-small); }
+.bog-select[data-variant="account"] .bog-select__label { display: flex; align-items: center; gap: var(--spacing-gap-x-small); }
+.bog-select[data-variant="account"] .bog-select__value {
+  font-size: var(--title-medium-size);
+  line-height: var(--title-medium-line-height);
+  font-weight: var(--title-medium-weight);
+}
+.bog-select[data-variant="account"] .bog-select__box > :not(.bog-select__text, .bog-select__chevron) { flex: none; }
+.bog-select[data-variant="account"] .bog-select__chevron {
+  -webkit-mask-image: url("../icons/chevron-right.svg");
+          mask-image: url("../icons/chevron-right.svg");
+}
+.bog-select[data-variant="account"][data-open] .bog-select__chevron { transform: none; }
+/* Favorite star only shows once an account is chosen */
+.bog-select__fav {
+  display: none;
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background-color: var(--icon-accent);
+  -webkit-mask: url("../icons/star-10.svg") center / contain no-repeat;
+          mask: url("../icons/star-10.svg") center / contain no-repeat;
+}
+.bog-select:has(.bog-select__value:not(:empty)) .bog-select__fav { display: block; }
+.bog-select__box:disabled .bog-select__fav { background-color: var(--icon-disabled); }
+.bog-select__box:disabled > :is(.bog-card-art, .bog-media-circle, .bog-illustration, .bog-flag) { opacity: 0.5; }

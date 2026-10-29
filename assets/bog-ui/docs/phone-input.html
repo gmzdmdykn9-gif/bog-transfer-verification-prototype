@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phone Input — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="phone-input"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Phone Input</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Phone number field: International (country code picker) or National.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-field bog-phone-input"&gt;
+  &lt;label class="bog-field__box"&gt;
+    &lt;button type="button" class="bog-phone-input__country"&gt;
+      &lt;span class="bog-flag" data-size="20"&gt;&lt;img src="bog-ui/assets/flags/ge.svg" alt=""&gt;&lt;/span&gt;
+      &lt;span class="bog-phone-input__code"&gt;+995&lt;/span&gt;
+    &lt;/button&gt;
+    &lt;span class="bog-field__text"&gt;
+      &lt;span class="bog-field__label"&gt;Phone number&lt;/span&gt;
+      &lt;input class="bog-field__input" type="tel" inputmode="tel" placeholder="XXX XX XX XX"&gt;
+    &lt;/span&gt;
+    &lt;button type="button" class="bog-field__clear" aria-label="Clear"&gt;&lt;/button&gt;
+  &lt;/label&gt;
+&lt;/div&gt;
+&lt;!-- The country sheet is built in. To use your own: add data-sheet-open=&quot;id&quot; to the button; rows need data-dial and data-flag. --&gt;
+&lt;!-- National: same markup without the .bog-phone-input__country button --&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <p class="lead">Tap the flag and code: a Bottom Sheet lists countries with their flag, name and code. Pick one and it's set in the field. The list is built in (bog-ui.js), so you don't write the sheet yourself. Type a number: it's formatted for the selected country (try United States or United Kingdom).</p>
+    <div class="panel"><div class="bog-sheet-host" style="position:relative;width:375px;height:560px;border-radius:24px;background:#fff;box-shadow:0 0 0 8px #1b1c1d;padding:48px 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:16px" id="demo"></div></div>
+
+    <h2>States</h2>
+    <div class="panel"><table id="matrix"></table></div>
+
+<script>
+
+  const C = [["ge", "+995", "Georgia"], ["us", "+1", "United States"], ["gb", "+44", "United Kingdom"], ["eu", "+32", "European Union"]];
+  const flag = (f, s = 20) => `<span class="bog-flag" data-size="${s}"><img src="../assets/flags/${f}.svg" alt=""></span>`;
+  const ph = (o = {}) => `<div class="bog-field bog-phone-input"${o.state ? ` data-state="${o.state}"` : ""}${o.v ? ` data-validation="${o.v}"` : ""}><label class="bog-field__box">${o.national ? "" : `<button type="button" class="bog-phone-input__country"${o.sheet ? ' data-sheet-open="country-sheet"' : ""}>${flag("ge")}<span class="bog-phone-input__code">+995</span></button>`}<span class="bog-field__text"><span class="bog-field__label">Phone number</span><input class="bog-field__input" type="tel" inputmode="tel" placeholder="XXX XX XX XX"${o.value ? ` value="${o.value}"` : ""}${o.readonly ? " readonly" : ""}${o.disabled ? " disabled" : ""}></span><button type="button" class="bog-field__clear" aria-label="Clear"></button></label>${o.v ? '<p class="bog-field__message">Message text</p>' : ""}</div>`;
+  document.getElementById("demo").innerHTML = '<h3 style="margin:0;font-size:22px">Your phone</h3>' + ph();
+  const ROWS = [["Default", {}], ["Active", {state: "active"}], ["Typing", {state: "typing", value: "555 12 34 56"}], ["Filled", {value: "555 12 34 56"}], ["Loading", {state: "loading", value: "555 12 34 56"}], ["Typing · Success", {state: "typing", value: "555 12 34 56", v: "success"}], ["Default · Error", {v: "error"}], ["Filled · Error", {value: "555 12 34 56", v: "error"}], ["Filled · Warning", {value: "555 12 34 56", v: "warning"}], ["Read-only", {value: "555 12 34 56", readonly: 1}], ["Disabled", {disabled: 1}], ["Disabled · Filled", {value: "555 12 34 56", disabled: 1}], ["Skeleton", {state: "skeleton"}]];
+  document.getElementById("matrix").innerHTML = "<tr><th></th><th>International</th><th>National</th></tr>" + ROWS.map(([n, o]) => `<tr><th>${n}</th><td style="width:316px;min-width:316px">${ph(o)}</td><td style="width:316px;min-width:316px">${ph({...o, national: 1})}</td></tr>`).join("");
+
+</script>
+  </main>
+</div>
+</body>
+</html>

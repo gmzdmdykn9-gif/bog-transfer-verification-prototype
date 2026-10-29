@@ -1,0 +1,28 @@
+/* ==========================================================================
+   BOG UI — Icon slot (shared by all components)
+   16×16, takes the parent's text color. Figma default: "Icon Placeholder".
+   ========================================================================== */
+
+/* Recolors automatically. Custom icon: <span class="bog-icon" style="--icon: url(my.svg)"></span> */
+.bog-icon {
+  display: inline-block;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: var(--icon, url("../icons/placeholder.svg")) center / contain no-repeat;
+          mask: var(--icon, url("../icons/placeholder.svg")) center / contain no-repeat;
+}
+
+
+/* Built-in icons: <span class="bog-icon" data-icon="close"></span> */
+.bog-icon[data-icon="close"] {
+  -webkit-mask-image: url("../icons/close.svg");
+          mask-image: url("../icons/close.svg");
+}
+.bog-icon[data-icon="plus"]       { -webkit-mask-image: url("../icons/plus-16.svg");    mask-image: url("../icons/plus-16.svg"); }
+.bog-icon[data-icon="minus"]      { -webkit-mask-image: url("../icons/minus.svg");      mask-image: url("../icons/minus.svg"); }
+.bog-icon[data-icon="eye"]        { -webkit-mask-image: url("../icons/eye.svg");        mask-image: url("../icons/eye.svg"); }
+.bog-icon[data-icon="eye-hidden"] { -webkit-mask-image: url("../icons/eye-hidden.svg"); mask-image: url("../icons/eye-hidden.svg"); }
+.bog-icon[data-icon="chevron-down"]  { -webkit-mask-image: url("../icons/chevron-down.svg");  mask-image: url("../icons/chevron-down.svg"); }
+.bog-icon[data-icon="chevron-right"] { -webkit-mask-image: url("../icons/chevron-right.svg"); mask-image: url("../icons/chevron-right.svg"); }

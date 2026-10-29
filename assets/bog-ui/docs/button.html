@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Button &amp; Icon Button — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="button"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Button &amp; Icon Button</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">BOG Design source only (Liquid Glass excluded). Hold the mouse down on an enabled button to see its pressed state.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;button class="bog-btn" data-type="primary"&gt;Continue&lt;/button&gt;
+&lt;button class="bog-btn" data-type="secondary" data-size="small"&gt;Edit&lt;/button&gt;
+&lt;button class="bog-icon-btn" data-type="neutral" aria-label="Close"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;&lt;/button&gt;</code></pre>
+
+  <h2>Button — Themed</h2>
+  <div class="panel"><table id="btn-themed"></table></div>
+
+  <h2>Button — Inverse Static</h2>
+  <div class="panel dark"><table id="btn-inverse"></table></div>
+
+  <h2>Icon Button — Themed</h2>
+  <div class="panel"><table id="icon-themed"></table></div>
+
+  <h2>Icon Button — Inverse Static</h2>
+  <div class="panel dark"><table id="icon-inverse"></table></div>
+
+  <h2>Composition examples</h2>
+  <div class="panel" style="display:flex; gap:16px; flex-wrap:wrap; align-items:center;">
+    <button class="bog-btn" data-type="primary"><span class="bog-icon"></span>Icon left</button>
+    <button class="bog-btn" data-type="secondary">Icon right<span class="bog-icon"></span></button>
+    <button class="bog-icon-btn" data-type="neutral" aria-label="Notifications"><span class="bog-icon"></span><span class="bog-badge-dot"></span></button>
+    <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Notifications"><span class="bog-icon"></span><span class="bog-badge-dot"></span></button>
+    <div style="width:343px"><button class="bog-btn" data-type="primary" data-width="fill">Full-width (data-width="fill")</button></div>
+  </div>
+
+
+  </main>
+</div>
+<script>
+  const STATES = ["Enabled", "Pressed", "Disabled", "Loading", "Skeleton"];
+  const BTN_TYPES = ["primary","secondary","neutral","ghost","negative","negative-secondary","negative-ghost",
+    "positive","positive-secondary","positive-ghost","black","black-secondary","black-ghost",
+    "white","white-ghost","invert","text-primary","text-black","text-white"];
+  const ICON_TYPES = ["primary","secondary","neutral","neutral-ghost","ghost","negative","negative-secondary","negative-ghost",
+    "positive","positive-secondary","positive-ghost","black","black-secondary","black-ghost","white","white-ghost","invert"];
+  const INVERSE_BTN = ["primary","secondary","neutral","ghost","text-primary"];
+  const INVERSE_ICON = ["primary","secondary","neutral","ghost"];
+  const isText = t => t.startsWith("text-");
+
+  function attrs(type, size, state, inverse) {
+    let a = `data-type="${type}" data-size="${size}"`;
+    if (inverse) a += ` data-appearance="inverse"`;
+    if (state === "Disabled") a += " disabled";
+    else if (state !== "Enabled") a += ` data-state="${state.toLowerCase()}"`;
+    return a;
+  }
+  function render(id, types, isIcon, inverse) {
+    const sizes = ["medium", "small"];
+    let html = "<tr><th></th>" + sizes.map(s => STATES.map(st => `<th>${s[0].toUpperCase()} · ${st}</th>`).join("")).join("") + "</tr>";
+    for (const t of types) {
+      html += `<tr><th><code>${t}</code></th>`;
+      for (const s of sizes) for (const st of STATES) {
+        if (!isIcon && isText(t) && s === "medium") { html += "<td></td>"; continue; }
+        html += isIcon
+          ? `<td><button class="bog-icon-btn" ${attrs(t, s, st, inverse)} aria-label="${t}"><span class="bog-icon"></span></button></td>`
+          : `<td><button class="bog-btn" ${attrs(t, s, st, inverse)}>${st === "Loading" ? "Loading" : "Button"}</button></td>`;
+      }
+      html += "</tr>";
+    }
+    document.getElementById(id).innerHTML = html;
+  }
+  render("btn-themed", BTN_TYPES, false, false);
+  render("btn-inverse", INVERSE_BTN, false, true);
+  render("icon-themed", ICON_TYPES, true, false);
+  render("icon-inverse", INVERSE_ICON, true, true);
+
+</script>
+</body>
+</html>

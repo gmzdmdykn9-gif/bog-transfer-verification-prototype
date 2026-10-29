@@ -1,0 +1,168 @@
+/* ==========================================================================
+   BOG UI — Currency Input (+ Currency Small Input)
+   Figma: Currency Input (43648:2203), Currency Small Input (48883:26710)
+   Built on Text Input (.bog-field): every Text Input state/validation works the same.
+
+   Currency Input
+     <div class="bog-field bog-currency-input">
+       <label class="bog-field__box">
+         <span class="bog-field__text">
+           <span class="bog-field__label">Amount</span>
+           <span class="bog-currency-input__value">
+             <input class="bog-field__input" inputmode="decimal" placeholder="0.00">
+             <span class="bog-currency-input__symbol">₾</span>
+           </span>
+         </span>
+         <button type="button" class="bog-currency-input__currency" data-sheet-open="currency-sheet">   Selectable
+           <span class="bog-flag" data-size="16"><img src="bog-ui/assets/flags/ge.svg" alt=""></span>GEL
+         </button>
+       </label>
+       <p class="bog-field__message">Helper text</p>                                     optional
+     </div>
+     Fixed currency: use <span class="bog-currency-input__currency">…</span> (no chevron, not tappable).
+     Hidden currency: leave the currency part out.
+     The selector opens a Bottom Sheet; its .bog-list-item rows need
+       data-currency="USD" data-symbol="$" data-flag="bog-ui/assets/flags/us.svg"
+
+   Currency Small Input
+     <div class="bog-currency-small">
+       <label class="bog-currency-small__box">
+         <input class="bog-currency-small__input" inputmode="decimal" placeholder="0.00">
+         <span class="bog-currency-small__symbol">₾</span>
+       </label>
+       <p class="bog-currency-small__message">Max 500.00 ₾</p>                            optional
+     </div>
+       data-validation error | warning | success · data-state skeleton · input disabled / readonly
+   ========================================================================== */
+
+/* ---- Currency Input ------------------------------------------------------ */
+.bog-currency-input .bog-field__box { padding-right: 0; }
+.bog-currency-input:not(:has(.bog-currency-input__currency)) .bog-field__box { padding-right: var(--spacing-padding-default); }
+.bog-currency-input__value {
+  display: none;
+  align-items: center;
+  gap: var(--spacing-gap-2x-small);
+  min-width: 0;
+}
+.bog-currency-input__value > .bog-field__input { flex: none; width: auto; min-width: 1ch; max-width: 100%; field-sizing: content; }
+.bog-currency-input__symbol {
+  flex: none;
+  color: var(--text-secondary);
+  font-size: var(--body-large-size);
+  line-height: var(--body-large-line-height);
+  font-weight: var(--body-large-weight);
+}
+/* Show value + symbol once the label floats (same triggers as Text Input) */
+.bog-currency-input:is(:focus-within, :has(.bog-field__input:not(:placeholder-shown)),
+  [data-state="active"], [data-state="typing"], [data-state="filled"], [data-state="loading"]) .bog-currency-input__value { display: flex; }
+/* Filled (blurred, has value): symbol turns primary */
+.bog-currency-input:not(:focus-within):has(.bog-field__input:not(:placeholder-shown)) .bog-currency-input__symbol,
+.bog-currency-input[data-state="filled"] .bog-currency-input__symbol { color: var(--text-primary); }
+.bog-currency-input:has(.bog-field__input:disabled) .bog-currency-input__symbol { color: var(--text-disabled); }
+
+/* Currency part: Selectable (button, 100px) or Fixed (span) */
+.bog-currency-input__currency {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  align-self: stretch;
+  margin: calc(-1 * var(--spacing-padding-small)) 0;
+  padding: 0 var(--spacing-padding-default);
+  border: 0;
+  border-radius: var(--radius-medium);
+  background: none;
+  color: var(--text-primary);
+  font-family: var(--font-family-bog);
+  font-size: var(--subtitle-medium-size);
+  line-height: var(--subtitle-medium-line-height);
+  font-weight: var(--subtitle-medium-weight);
+  text-transform: uppercase;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-currency-input .bog-field__box > .bog-currency-input__currency { margin-left: calc(-1 * var(--spacing-gap-medium) + var(--spacing-padding-small)); }
+button.bog-currency-input__currency { cursor: pointer; }
+button.bog-currency-input__currency::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  margin-left: calc(var(--spacing-gap-2x-small) - var(--spacing-gap-x-small));
+  background-color: var(--icon-primary);
+  -webkit-mask: url("../icons/chevron-down.svg") center / contain no-repeat;
+          mask: url("../icons/chevron-down.svg") center / contain no-repeat;
+}
+button.bog-currency-input__currency:active { background: var(--layer-alpha-pressed-01); }
+.bog-currency-input:has(.bog-field__input:disabled) .bog-currency-input__currency { color: var(--text-disabled); pointer-events: none; }
+.bog-currency-input:has(.bog-field__input:disabled) .bog-currency-input__currency::after { background-color: var(--icon-disabled); }
+.bog-currency-input:has(.bog-field__input:disabled) .bog-currency-input__currency .bog-flag { opacity: 0.5; }
+.bog-currency-input:has(.bog-field__input[readonly]) button.bog-currency-input__currency { pointer-events: none; }
+
+/* ---- Currency Small Input ---------------------------------------------- */
+.bog-currency-small {
+  --_border: transparent;
+  --_border-w: var(--border-width-default);
+  --_msg: var(--text-secondary);
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-2x-small);
+  width: 96px;
+  font-family: var(--font-family-bog);
+}
+.bog-currency-small__box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-gap-2x-small);
+  box-sizing: border-box;
+  height: 32px;
+  padding: var(--spacing-padding-x-small) var(--spacing-padding-small);
+  border-radius: var(--radius-button-small);
+  background: var(--layer-alpha-01);
+  box-shadow: inset 0 0 0 var(--_border-w) var(--_border);
+  cursor: text;
+}
+.bog-currency-small__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-primary);
+  caret-color: var(--support-caret);
+  font: inherit;
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+  text-align: right;
+}
+.bog-currency-small__input::placeholder { color: var(--text-placeholder); }
+.bog-currency-small__symbol {
+  flex: none;
+  color: var(--text-primary);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+}
+.bog-currency-small:focus-within { --_border: var(--border-selected-neutral-strong); --_border-w: var(--border-width-trick); }
+.bog-currency-small:focus-within .bog-currency-small__symbol { color: var(--text-secondary); }
+.bog-currency-small__message {
+  margin: 0;
+  padding-right: var(--spacing-padding-small);
+  color: var(--_msg);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+  text-align: right;
+}
+.bog-currency-small[data-validation="error"]   { --_border: var(--border-error);   --_msg: var(--text-error); }
+.bog-currency-small[data-validation="warning"] { --_border: var(--border-warning); --_msg: var(--text-warning); }
+.bog-currency-small[data-validation="success"] { --_border: var(--border-success); --_msg: var(--text-success); }
+.bog-currency-small[data-validation]:focus-within { --_border-w: var(--border-width-trick); }
+.bog-currency-small:has(input[readonly]) .bog-currency-small__box { background: var(--layer-alpha-0); box-shadow: inset 0 0 0 var(--border-width-default) var(--support-support-02); }
+.bog-currency-small:has(input:disabled) :is(.bog-currency-small__input, .bog-currency-small__symbol, .bog-currency-small__message) { color: var(--text-disabled); -webkit-text-fill-color: var(--text-disabled); }
+.bog-currency-small:has(input:disabled) .bog-currency-small__box { cursor: default; }
+.bog-currency-small[data-state="skeleton"] .bog-currency-small__box { background: var(--support-skeleton-background); box-shadow: none; }
+.bog-currency-small[data-state="skeleton"] .bog-currency-small__box > *,
+.bog-currency-small[data-state="skeleton"] .bog-currency-small__message { visibility: hidden; }

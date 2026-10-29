@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avatar — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="avatar"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Avatar</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Initials, user icon or photo in 7 sizes (16–64), with optional status (verify, favorite, react) or action button, plus the add / overflow Avatar Button, overlapping groups and the diagonal pair.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;span class="bog-avatar" data-size="40"&gt;NB&lt;/span&gt;
+&lt;span class="bog-avatar" data-size="40" data-type="icon"&gt;&lt;/span&gt;
+&lt;span class="bog-avatar" data-size="40"&gt;&lt;img src="photo.jpg" alt=""&gt;&lt;/span&gt;
+
+&lt;span class="bog-avatar" data-size="56"&gt;NB&lt;span class="bog-avatar__status" data-status="verify"&gt;&lt;/span&gt;&lt;/span&gt;
+
+&lt;div class="bog-avatar-group"&gt;
+  &lt;span class="bog-avatar" data-size="40"&gt;A&lt;/span&gt; &lt;span class="bog-avatar" data-size="40"&gt;B&lt;/span&gt;
+  &lt;button type="button" class="bog-avatar-btn" data-size="40" data-type="overflow"&gt;+9&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+
+    <h2>Avatar — types × sizes</h2>
+    <div class="panel"><table id="types"></table></div>
+    <h2>Status and action</h2>
+    <div class="panel"><table id="extras"></table></div>
+    <h2>Avatar Button</h2>
+    <div class="panel"><table id="btns"></table></div>
+    <h2>Groups</h2>
+    <div class="panel"><div class="row" id="groups" style="gap:32px;align-items:center"></div></div>
+
+<script>
+  const SIZES = [16, 24, 32, 40, 48, 56, 64];
+  const IMG = "../assets/media/placeholder.png";
+  const av = (size, type, extra = "", attrs = "") => type === "icon" ? `<span class="bog-avatar" data-size="${size}" data-type="icon"${attrs}>${extra}</span>`
+    : type === "image" ? `<span class="bog-avatar" data-size="${size}"${attrs}><img src="${IMG}" alt="">${extra}</span>`
+    : `<span class="bog-avatar" data-size="${size}"${attrs}>${size < 32 ? "A" : "AV"}${extra}</span>`;
+  const ROWS = [["Initial", "initial", ""], ["Icon", "icon", ""], ["Image", "image", ""], ["Disabled", "initial", " data-disabled"], ["Skeleton", "initial", ' data-state="skeleton"']];
+  document.getElementById("types").innerHTML = "<tr><th></th>" + SIZES.map(s => `<th>${s}</th>`).join("") + "</tr>" +
+    ROWS.map(([n, t, a]) => `<tr><th>${n}</th>${SIZES.map(s => `<td>${av(s, t, "", a)}</td>`).join("")}</tr>`).join("");
+  const ACT = '<span class="bog-avatar__action"><button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Edit"><span class="bog-icon"></span></button></span>';
+  const ES = [32, 40, 48, 56, 64];
+  document.getElementById("extras").innerHTML = "<tr><th></th>" + ES.map(s => `<th>${s}</th>`).join("") + "</tr>" +
+    [["Verify", '<span class="bog-avatar__status" data-status="verify"></span>'], ["Favorite", '<span class="bog-avatar__status" data-status="favorite"></span>'], ["React", '<span class="bog-avatar__status" data-status="react"></span>'], ["Action (48+)", ACT]]
+      .map(([n, x]) => `<tr><th>${n}</th>${ES.map(s => `<td style="padding:10px 14px">${av(s, n === "React" ? "image" : "initial", x)}</td>`).join("")}</tr>`).join("");
+  const BS = [24, 32, 40, 48, 56, 64];
+  document.getElementById("btns").innerHTML = "<tr><th></th>" + BS.map(s => `<th>${s}</th>`).join("") + "</tr>" +
+    [["Add", "", ""], ["Overflow", ' data-type="overflow"', "+9"], ["Add · Disabled", " disabled", ""], ["Overflow · Disabled", ' data-type="overflow" disabled', "+9"]]
+      .map(([n, a, t]) => `<tr><th>${n}</th>${BS.map(s => `<td><button type="button" class="bog-avatar-btn" data-size="${s}"${a} aria-label="${n}">${t}</button></td>`).join("")}</tr>`).join("");
+  const grp = (s, type, end) => `<div class="bog-avatar-group">${[0, 1, 2, 3].map(() => av(s, type)).join("")}${end ? `<button type="button" class="bog-avatar-btn" data-size="${s}"${end === "more" ? ' data-type="overflow">+9' : ' aria-label="Add">'}</button>` : ""}</div>`;
+  document.getElementById("groups").innerHTML = grp(40, "initial", "more") + grp(40, "image", "add") + grp(64, "initial") + grp(24, "image") +
+    [24, 32, 40, 48, 64].map(s => `<span class="bog-avatar-pair" data-size="${s}"><span class="bog-avatar">A</span><span class="bog-avatar"><img src="${IMG}" alt=""></span></span>`).join("");
+</script>
+  </main>
+</div>
+</body>
+</html>

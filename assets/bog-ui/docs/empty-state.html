@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Empty State — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="empty-state"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Empty State</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Centered message for screens with nothing to show yet, after errors or after success: status icon (or your own visual), title, description and an optional button.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-empty" data-type="info"&gt;
+  &lt;p class="bog-empty__title"&gt;No transactions yet&lt;/p&gt;
+  &lt;p class="bog-empty__desc"&gt;Your payments will appear here.&lt;/p&gt;
+  &lt;div class="bog-empty__actions"&gt;&lt;button class="bog-btn" data-type="neutral"&gt;Make a payment&lt;/button&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Custom visual --&gt;
+&lt;div class="bog-empty" data-type="custom"&gt;
+  &lt;span class="bog-illustration" data-size="64"&gt;&lt;/span&gt;
+  &lt;p class="bog-empty__title"&gt;Custom&lt;/p&gt; …
+&lt;/div&gt;</code></pre>
+
+    <h2>Types</h2>
+    <div class="panel"><div class="row" id="light" style="gap:40px;align-items:flex-start"></div></div>
+    <h2>Inverse Static</h2>
+    <div class="panel dark"><div class="row" id="dark" style="gap:40px;align-items:flex-start"></div></div>
+
+<script>
+  const es = (type, inv, sk) => `<div class="bog-empty" data-type="${type}" style="width:288px"${inv ? ' data-appearance="inverse"' : ""}${sk ? ' data-state="skeleton"' : ""}>${type === "custom" ? '<span class="bog-illustration" data-size="64"></span>' : ""}<p class="bog-empty__title">${type[0].toUpperCase() + type.slice(1)}</p><p class="bog-empty__desc">Use Empty State to show messages when there is no content to display.</p><div class="bog-empty__actions"><button class="bog-btn" data-type="${inv ? "white" : "neutral"}"${sk ? ' data-size="small" data-state="skeleton"' : ""}>Button</button></div></div>`;
+  for (const [id, inv] of [["light", false], ["dark", true]])
+    document.getElementById(id).innerHTML = ["error", "warning", "success", "info", "custom"].map(t => es(t, inv)).join("") + es("error", inv, true);
+</script>
+  </main>
+</div>
+</body>
+</html>

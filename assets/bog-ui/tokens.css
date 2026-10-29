@@ -1,0 +1,327 @@
+/* ==========================================================================
+   BOG UI — Design tokens
+   Source: Figma "Mobile Components - SwiftUI - Compose" (EI6tYmEC7DhjpnzeuF5C45)
+   Names mirror the Figma variable paths: "Button/Primary/default" -> --button-primary-default
+   Light theme only. Do not hardcode these values in prototypes — use the variables.
+   ========================================================================== */
+
+@font-face { font-family: "BOG"; font-weight: 400; font-style: normal; font-display: swap;
+  src: local("BOG Regular"), local("BOG-Regular"), url("fonts/BOG-Regular.woff2") format("woff2"); }
+@font-face { font-family: "BOG"; font-weight: 500; font-style: normal; font-display: swap;
+  src: local("BOG Medium"), local("BOG-Medium"), url("fonts/BOG-Medium.woff2") format("woff2"); }
+@font-face { font-family: "BOG"; font-weight: 600; font-style: normal; font-display: swap;
+  src: local("BOG SemiBold"), local("BOG-SemiBold"), url("fonts/BOG-SemiBold.woff2") format("woff2"); }
+@font-face { font-family: "BOG"; font-weight: 700; font-style: normal; font-display: swap;
+  src: local("BOG Bold"), local("BOG-Bold"), url("fonts/BOG-Bold.woff2") format("woff2"); }
+
+:root {
+  /* ---- Typography --------------------------------------------------- */
+  --font-family-bog: "BOG", -apple-system, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  /* Label/Large */
+  --label-large-size: 16px;
+  --label-large-line-height: 20px;
+  --label-large-weight: 600;
+  /* Label/Medium */
+  --label-medium-size: 14px;
+  --label-medium-line-height: 20px;
+  --label-medium-weight: 600;
+  /* Link Body/Medium */
+  --link-body-medium-size: 14px;
+  --link-body-medium-line-height: 20px;
+  --link-body-medium-weight: 500;
+  /* Body/Large */
+  --body-large-size: 16px;
+  --body-large-line-height: 20px;
+  --body-large-weight: 500;
+  /* Label/Small */
+  --label-small-size: 12px;
+  --label-small-line-height: 16px;
+  --label-small-weight: 600;
+  /* Label/xSmall */
+  --label-xsmall-size: 11px;
+  --label-xsmall-line-height: 16px;
+  --label-xsmall-weight: 500;
+  /* Heading/Large SemiBold */
+  --heading-large-semibold-size: 32px;
+  --heading-large-semibold-line-height: 44px;
+  --heading-large-semibold-weight: 600;
+  /* Heading/Medium SemiBold */
+  --heading-medium-semibold-size: 28px;
+  --heading-medium-semibold-line-height: 36px;
+  --heading-medium-semibold-weight: 600;
+  /* Heading/Small */
+  --heading-small-size: 24px;
+  --heading-small-line-height: 32px;
+  --heading-small-weight: 600;
+  /* Title/Large */
+  --title-large-size: 20px;
+  --title-large-line-height: 32px;
+  --title-large-weight: 600;
+  --title-large-letter-spacing: -0.1px;
+  /* Title/Medium */
+  --title-medium-size: 17px;
+  --title-medium-line-height: 24px;
+  --title-medium-weight: 600;
+  /* Subtitle/Large */
+  --subtitle-large-size: 17px;
+  --subtitle-large-line-height: 20px;
+  --subtitle-large-weight: 600;
+  --subtitle-large-letter-spacing: -0.1px;
+  /* Body/Medium */
+  --body-medium-size: 14px;
+  --body-medium-line-height: 20px;
+  --body-medium-weight: 500;
+  /* List Body/Medium */
+  --list-body-medium-size: 15px;
+  --list-body-medium-line-height: 20px;
+  --list-body-medium-weight: 500;
+  /* Body/Small */
+  --body-small-size: 12px;
+  --body-small-line-height: 18px;
+  --body-small-weight: 500;
+
+  /* ---- Spacing ------------------------------------------------------ */
+  --space-0: 0px;
+  --space-8: 8px;
+  --space-4: 4px;
+  --spacing-gap-2x-small: 2px;
+  --spacing-gap-x-small: 4px;
+  --spacing-gap-m-small: 6px;
+  --spacing-padding-x-small: 4px;
+  --spacing-padding-m-small: 6px;
+  --spacing-gap-default: 16px;
+  --spacing-chips-gap-horizontal: 8px;
+  --spacing-padding-small: 8px;
+  --spacing-gap-medium: 12px;
+  --spacing-padding-2x-small: 2px;
+  --spacing-gap-small: 8px;
+  --spacing-padding-medium: 12px;
+  --spacing-padding-default: 16px;
+  --input-container-height: 56px; /* font/_Scale haks/input/container height */
+
+  /* ---- Radius / border ---------------------------------------------- */
+  --radius-x-small: 4px;
+  --radius-2x-small: 2px;
+  --radius-medium: 12px;
+  --radius-default: 16px;
+  --radius-button-small: 8px;
+  --radius-button-medium: 12px;
+  --radius-full: 10000px;
+  --border-width-default: 1px;
+  --border-width-thin: 0.5px;
+  --border-width-bold: 2px;
+  --border-width-trick: 1.6px;
+  --border-width-strong: 3px;
+
+  /* ---- Text --------------------------------------------------------- */
+  --text-primary: #1b1c1d;
+  --text-black: #1b1c1d;
+  --text-on-primary: #ffffff;
+  --text-white-primary: #ffffff;
+  --text-accent: #ff5c0a;
+  --text-disabled: #aaadb0;
+  --text-error: #da1e28;
+  --text-success: #198038;
+  --text-secondary: #515457;
+  --text-helper: #6c7075;
+  --text-placeholder: #989ba0;
+  --text-warning: #b28600;
+  --text-white-secondary: #d7d9db;
+  --text-white-tertiary: #8a8e93;
+  --text-inverse-primary: #f7f7f8;
+
+  /* ---- Icon --------------------------------------------------------- */
+  --icon-primary: #1b1c1d;
+  --icon-black: #1b1c1d;
+  --icon-on-primary: #ffffff;
+  --icon-white: #ffffff;
+  --icon-accent: #ff5c0a;
+  --icon-disabled: #aaadb0;
+  --icon-error: #da1e28;
+  --icon-success: #198038;
+  --icon-helper: #6c7075;
+  --icon-secondary: #515457;
+  --icon-warning: #d2a106;
+  --icon-white-secondary: #d7d9db;
+  --icon-inverse-primary: #f7f7f8;
+
+  /* ---- Background / support / border / status ----------------------- */
+  --background-inverse-accent-static: #ff8345;
+  --support-static-02: #6c7075;
+  --support-support-02: #73777d;
+  --support-skeleton: #ecedee;
+  --support-skeleton-inverse-static: #2f3032;
+  --layer-alpha-02: #6c70751a;
+  --border-disabled: #aaadb0;
+  --border-border-03: #e5e6e7;
+  --border-border-01: #d7d9db;
+  --border-alpha-01: #6c70751f;
+  --status-error-02: #da1e28;
+  --status-inverse-success-static: #42be65;
+  --status-inverse-error-static: #ff8389;
+  --status-inverse-warning-static: #d2a106;
+  --support-static-01: #989ba0;
+  --support-caret: #ff5c0a;
+  --support-skeleton-background: #f7f7f8;
+  --support-skeleton-inverse-background-static: #222425;
+  --layer-alpha-0: #ffffff00;
+  --layer-alpha-01: #6c70750f;
+  --layer-white-alpha-01: #ffffff12;
+  --layer-white-alpha-02: #ffffff1a;
+  --layer-inverse-alpha-02: #ffffff1a;
+  --layer-layer-02: #f7f7f8;
+  --layer-layer-05: #ffffff;
+  --layer-alpha-pressed-01: #6c70751a;
+  --chip-selected: #ffe0d0;
+  --support-overlay-canvas: #0f0f10ad; /* #0f0f10 @ 68% */
+  --support-overlay-media: #6c70750f; /* #6c7075 @ 6% */
+  --avatar-background: #e7d6ff;
+  --avatar-leyer: #5c3696;
+  --layer-layer-01: #ffffff;
+  --badge-feature-purple-layer-01: #ede5ff;
+  --badge-feature-purple-layer-03: #6929c4;
+  --layer-inverse-01: #1b1c1d;
+  --icon-inverse-primary-static: #f7f7f8;
+  --border-inverse-primary: #f4f4f4;
+  --border-selected: #ff5c0a;
+  --border-selected-neutral-strong: #515457;
+  --border-white-secondary: #d7d9db;
+  --border-success: #198038;
+  --border-error: #da1e28;
+  --border-warning: #b28600;
+
+  /* ---- Button ------------------------------------------------------- */
+  --button-disabled: #e5e6e7;
+  --button-inverse-disabled-static: #3f4245;
+
+  --button-primary-default: #ff5c0a;
+  --button-primary-pressed: #e04b00;
+  --button-primary-inverse-default-static: #ff8345;
+  --button-primary-inverse-pressed-static: #ff5c0a;
+
+  --button-secondary-default: #ff5c0a14;
+  --button-secondary-pressed: #ff5c0a52;
+  --button-secondary-inverse-default-static: #ff834529;
+  --button-secondary-inverse-pressed-static: #ff83454d;
+
+  --button-secondary-grey-default: #6c70751a;
+  --button-secondary-grey-pressed: #6c70751f;
+  --button-secondary-grey-inverse-default-static: #ffffff1a;
+  --button-secondary-grey-inverse-pressed-static: #ffffff1f;
+
+  --button-text-default: #ffffff00;
+  --button-text-pressed: #ff5c0a29;
+  --button-text-inverse-pressed-static: #ff834529;
+
+  --button-negative-default: #da1e28;
+  --button-negative-pressed: #a1161e;
+  --button-negative-secondary-default: #ff838924;
+  --button-negative-secondary-pressed: #ff838945;
+
+  --button-positive-default: #198038;
+  --button-positive-pressed: #14662d;
+  --button-positive-secondary-default: #a7f0ba42;
+  --button-positive-secondary-pressed: #a7f0ba69;
+
+  --button-black-default: #2a2b2d;
+  --button-black-pressed: #161718;
+  --button-black-disabled: #e5e6e7;
+  --button-secondary-black-default: #6c70751a;
+  --button-secondary-black-pressed: #6c70751f;
+  --button-black-ghost-default: #ffffff00;
+
+  --button-white-default: #ffffff;
+  --button-white-pressed: #ecedee;
+  --button-white-ghost-default: #ffffff00;
+  --button-white-ghost-pressed: #ffffff1f;
+
+  --button-inverse-default: #ffffff;
+  --button-inverse-pressed: #ecedee;
+  /* ---- Badges ------------------------------------------------------- */
+  --subtitle-medium-size: 14px;
+  --subtitle-medium-line-height: 20px;
+  --subtitle-medium-weight: 600;
+  --status-success-02: #198038;
+  --status-success-alpha-01: #a7f0ba69;
+  --status-warning-02: #f1c21b;
+  --status-warning-alpha-01: #fddc6959;
+  --status-error-alpha-01: #ff838945;
+  --status-info-02: #386285;
+  --status-info-alpha-01: #d9e1e885;
+  --status-neutral-01: #f1f2f3;
+  --status-neutral-02: #ecedee;
+  --status-neutral-alpha-02: #6c707529;
+  --support-alpha-01: #6c707529;
+  --icon-info: #386285;
+  --text-inverse-primary-badge: #f7f7f8;
+  --border-black: #1b1c1d;
+  --border-white: #ffffff;
+  --border-selected-neutral: #515457;
+  --layer-disabled: #f4f4f4;
+  --badge-loyalty-ice-blue-alpha-01: #bad9ff5c;
+  --badge-loyalty-ice-blue-layer-01: #e5f1ff;
+  --badge-loyalty-ice-blue-layer-02: #1172e8;
+  --badge-loyalty-ice-blue-layer-03: #00459a;
+  --badge-loyalty-vivid-orange-alpha-01: #ffdcc25c;
+  --badge-loyalty-vivid-orange-layer-01: #fff3eb;
+  --badge-loyalty-vivid-orange-layer-02: #e86e11;
+  --badge-loyalty-vivid-orange-layer-03: #9a4300;
+  --badge-loyalty-royal-purple-alpha-01: #e4daff5c;
+  --badge-loyalty-royal-purple-layer-01: #f5f2ff;
+  --badge-loyalty-royal-purple-layer-02: #713ffc;
+  --badge-loyalty-royal-purple-layer-03: #5229c4;
+  --badge-loyalty-vivid-magenta-alpha-01: #ffd6fb5c;
+  --badge-loyalty-vivid-magenta-layer-01: #fff0fd;
+  --badge-loyalty-vivid-magenta-layer-02: #d026bf;
+  --badge-loyalty-vivid-magenta-layer-03: #9f1891;
+  --badge-segment-regal-blue-alpha-01: #e2e5e95c;
+  --badge-segment-regal-blue-layer-01: #f3f5f6;
+  --badge-segment-regal-blue-layer-02: #1f3042;
+  --badge-segment-regal-blue-layer-03: #2e4761;
+  --decorative-coolgray-layer-alpha-04: #c1c7cd5c;
+  --decorative-coolgray-layer-02: #656a6e;
+  --decorative-coolgray-layer-03: #505458;
+  --badge-feature-cyan-layer-01: #cceeff;
+  --badge-feature-cyan-layer-03: #00539a;
+  --badge-feature-lima-layer-01: #d0f6b6;
+  --badge-feature-lima-layer-03: #305e12;
+  /* ---- Chips -------------------------------------------------------- */
+  --chip-default: #ffffff00;
+  --chip-pressed: #e5e6e7;
+  --chip-selected-pressed: #ffc4a6;
+  --text-accent-strong: #8f3700;
+  --icon-accent-strong: #8f3700;
+  --border-border-02: #aaadb0;
+  --status-accent-02: #ff5c0a;
+  /* ---- Feedback ----------------------------------------------------- */
+  --status-success-01: #dffbe7;
+  --status-success-static-01: #0a3316;
+  --status-success-alpha-02: #24a1485c;
+  --status-warning-01: #fcf4d6;
+  --status-warning-static-01: #3d2e00;
+  --status-warning-alpha-02: #d2a1066b;
+  --status-error-01: #fff1f1;
+  --status-error-static-01: #4c0a0e;
+  --status-error-static-02: #fa4d56;
+  --status-error-alpha-02: #da1e2857;
+  --status-info-01: #f1f4f6;
+  --status-info-static-01: #1b2f40;
+  --status-info-static-02: #6888a2;
+  --status-info-alpha-02: #38628552;
+  --status-neutral-static-02: #2f3032;
+  --border-white-alpha-01: #ffffff1f;
+  --layer-alpha-pressed-02: #6c707529;
+  --text-info: #386285;
+  --status-inverse-info-static: #92a9bc;
+  /* ---- Hero gradients (Figma Hero Area examples — marked "Work In Progress") */
+  --product-default-layer-01: #ffdbcf;
+  --product-default-layer-alpha-01: #ffdbcf00;
+  --hero-gradient-mint: #d1ffd8;
+  --hero-gradient-green: #234f31;
+  --hero-gradient-brown: #6c3925;
+  --hero-dark-background: #1b1c1d;
+}
+
+
+
+

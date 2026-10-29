@@ -1,0 +1,324 @@
+/* ==========================================================================
+   BOG UI — Text Input
+   Figma: Text Input (9881:38941)
+
+   Markup (every part except the box and input is optional)
+     <div class="bog-field">
+       <label class="bog-field__box">
+         <span class="bog-field__text">
+           <span class="bog-field__label">Card number</span>
+           <input class="bog-field__input" placeholder="0000 0000 0000 0000">
+         </span>
+         <button type="button" class="bog-field__clear" aria-label="Clear"></button>
+         <span class="bog-icon"></span>
+         <button type="button" class="bog-field__info" aria-label="More info"></button>
+       </label>
+       <p class="bog-field__message">Message text</p>
+     </div>
+
+   The input MUST have a placeholder (use placeholder=" " if none; bog-ui.js adds it automatically).
+   States follow real interaction: Default → Active (focused, empty) → Typing (focused, has value)
+   → Filled (blurred, has value). The clear button appears while typing (needs bog-ui.js).
+
+   Attributes on .bog-field
+     data-validation  error | warning | success
+     data-appearance  inverse   — "Inverse Static", for dark backgrounds
+     data-state       loading | skeleton  (active | typing | filled force a look, for static mockups)
+   Attributes on the input
+     disabled, readonly   → Disabled=True, State=Read-only
+   ========================================================================== */
+
+.bog-field {
+  --_box-bg: var(--layer-alpha-01);
+  --_label: var(--text-secondary);
+  --_value: var(--text-primary);
+  --_placeholder: var(--text-placeholder);
+  --_caret: var(--support-caret);
+  --_focus: var(--border-selected-neutral-strong);
+  --_border: transparent;
+  --_border-w: var(--border-width-default);
+  --_icon: var(--icon-primary);
+  --_clear: var(--icon-helper);
+  --_msg: var(--text-secondary);
+  --_status-icon: var(--_msg);
+  --_spin: var(--border-selected);
+  --_skeleton: var(--support-skeleton-background);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+  width: 100%;
+  font-family: var(--font-family-bog);
+}
+
+/* ---- Input container ------------------------------------------------ */
+.bog-field__box {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-medium);
+  box-sizing: border-box;
+  height: var(--input-container-height);
+  padding: var(--spacing-padding-small) var(--spacing-padding-default);
+  border-radius: var(--radius-medium);
+  background: var(--_box-bg);
+  box-shadow: inset 0 0 0 var(--_border-w) var(--_border);
+  color: var(--_icon);
+  cursor: text;
+  transition: box-shadow 120ms ease;
+}
+
+.bog-field__text {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--spacing-padding-2x-small) 0;
+}
+
+/* Resting label (Default state): large, in place of the value */
+.bog-field__label {
+  display: block;
+  overflow: hidden;
+  color: var(--_label);
+  font-size: var(--body-large-size);
+  line-height: var(--body-large-line-height);
+  font-weight: var(--body-large-weight);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: font-size 120ms ease, line-height 120ms ease;
+}
+
+.bog-field__input {
+  display: block;
+  width: 100%;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  opacity: 0;
+  background: transparent;
+  color: var(--_value);
+  caret-color: var(--_caret);
+  font: inherit;
+  font-size: var(--body-large-size);
+  line-height: var(--body-large-line-height);
+  font-weight: var(--body-large-weight);
+}
+.bog-field__input::placeholder { color: transparent; opacity: 1; }
+
+/* Floated label: focused, has a value, or loading */
+.bog-field:is(:focus-within, :has(.bog-field__input:not(:placeholder-shown)),
+              [data-state="active"], [data-state="typing"], [data-state="filled"], [data-state="loading"]) .bog-field__label {
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: var(--label-xsmall-weight);
+}
+.bog-field:is(:focus-within, :has(.bog-field__input:not(:placeholder-shown)),
+              [data-state="active"], [data-state="typing"], [data-state="filled"], [data-state="loading"]) .bog-field__input {
+  height: var(--body-large-line-height);
+  opacity: 1;
+}
+.bog-field:is(:focus-within, [data-state="active"]) .bog-field__input::placeholder { color: var(--_placeholder); }
+
+/* Focused (Active / Typing): thicker border */
+.bog-field:is(:focus-within, [data-state="active"], [data-state="typing"]) {
+  --_border: var(--_focus);
+  --_border-w: var(--border-width-trick);
+}
+
+/* ---- Trailing elements ---------------------------------------------- */
+.bog-field__clear,
+.bog-field__info {
+  position: relative;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-field__clear::before,
+.bog-field__info::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: var(--_mask) center / contain no-repeat;
+          mask: var(--_mask) center / contain no-repeat;
+}
+
+/* Clear: only while typing */
+.bog-field__clear {
+  --_mask: url("../icons/close.svg");
+  display: none;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  padding: var(--spacing-padding-small);
+  color: var(--_clear);
+}
+.bog-field:is(:focus-within:has(.bog-field__input:not(:placeholder-shown)), [data-state="typing"]) .bog-field__clear { display: block; }
+
+/* Info (tooltip trigger), 32px tap area */
+.bog-field__info {
+  --_mask: url("../icons/info.svg");
+  width: 16px;
+  height: 16px;
+  color: var(--_icon);
+}
+.bog-field__info::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+/* ---- Helper / feedback message -------------------------------------- */
+.bog-field__message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding-left: var(--spacing-padding-default);
+  color: var(--_msg);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-field[data-validation] .bog-field__message::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--_status-icon);
+  -webkit-mask: url("../icons/status-alert.svg") center / contain no-repeat;
+          mask: url("../icons/status-alert.svg") center / contain no-repeat;
+}
+.bog-field[data-validation="success"] .bog-field__message::before {
+  -webkit-mask-image: url("../icons/status-success.svg");
+          mask-image: url("../icons/status-success.svg");
+}
+
+/* ---- Validation ------------------------------------------------------ */
+.bog-field[data-validation="error"] {
+  --_border: var(--border-error);
+  --_focus: var(--border-error);
+  --_msg: var(--text-error);
+  --_status-icon: var(--icon-error);
+}
+.bog-field[data-validation="warning"] {
+  --_border: var(--border-warning);
+  --_focus: var(--border-warning);
+  --_msg: var(--text-warning);
+  --_status-icon: var(--icon-warning);
+}
+.bog-field[data-validation="success"] {
+  --_border: var(--border-success);
+  --_focus: var(--border-success);
+  --_msg: var(--text-success);
+  --_status-icon: var(--icon-success);
+}
+
+/* ---- Inverse Static appearance (dark / photo backgrounds) ------------ */
+.bog-field[data-appearance="inverse"] {
+  --_box-bg: var(--layer-white-alpha-01);
+  --_label: var(--text-white-secondary);
+  --_value: var(--text-white-primary);
+  --_placeholder: var(--text-white-tertiary);
+  --_caret: var(--background-inverse-accent-static);
+  --_focus: var(--border-white-secondary);
+  --_icon: var(--icon-white);
+  --_clear: var(--icon-white-secondary);
+  --_msg: var(--text-white-secondary);
+  --_spin: var(--background-inverse-accent-static);
+  --_skeleton: var(--support-skeleton-inverse-background-static);
+}
+.bog-field[data-appearance="inverse"][data-validation="error"] {
+  --_border: var(--status-inverse-error-static);
+  --_focus: var(--status-inverse-error-static);
+  --_msg: var(--status-inverse-error-static);
+  --_status-icon: var(--status-inverse-error-static);
+}
+.bog-field[data-appearance="inverse"][data-validation="warning"] {
+  --_border: var(--status-inverse-warning-static);
+  --_focus: var(--status-inverse-warning-static);
+  --_msg: var(--status-inverse-warning-static);
+  --_status-icon: var(--status-inverse-warning-static);
+}
+.bog-field[data-appearance="inverse"][data-validation="success"] {
+  --_border: var(--status-inverse-success-static);
+  --_focus: var(--status-inverse-success-static);
+  --_msg: var(--status-inverse-success-static);
+  --_status-icon: var(--status-inverse-success-static);
+}
+
+/* ---- Read-only ------------------------------------------------------- */
+.bog-field:has(.bog-field__input[readonly]) {
+  --_box-bg: var(--layer-alpha-0);
+  --_border: var(--support-support-02);
+  --_focus: var(--support-support-02);
+  --_border-w: var(--border-width-default);
+}
+.bog-field[data-appearance="inverse"]:has(.bog-field__input[readonly]) {
+  --_border: var(--support-static-01);
+  --_focus: var(--support-static-01);
+}
+.bog-field:has(.bog-field__input[readonly]) .bog-field__box { cursor: default; }
+.bog-field:has(.bog-field__input[readonly]) .bog-field__clear { display: none; }
+
+/* ---- Disabled -------------------------------------------------------- */
+.bog-field:has(.bog-field__input:disabled) {
+  --_label: var(--text-disabled);
+  --_value: var(--text-disabled);
+  --_icon: var(--icon-disabled);
+  --_msg: var(--text-disabled);
+  --_status-icon: var(--icon-disabled);
+  --_border: transparent;
+}
+.bog-field[data-appearance="inverse"]:has(.bog-field__input:disabled) {
+  --_label: var(--support-static-02);
+  --_value: var(--support-static-02);
+  --_icon: var(--support-static-02);
+  --_msg: var(--support-static-02);
+  --_status-icon: var(--support-static-02);
+}
+.bog-field:has(.bog-field__input:disabled) .bog-field__box { cursor: default; }
+.bog-field:has(.bog-field__input:disabled) :is(.bog-field__clear, .bog-field__info) { display: none; }
+.bog-field__input:disabled { -webkit-text-fill-color: var(--_value); }
+
+/* ---- Loading: 24px spinner replaces the trailing icons ---------------- */
+.bog-field[data-state="loading"] .bog-field__box > :not(.bog-field__text) { display: none; }
+.bog-field[data-state="loading"] .bog-field__box::after {
+  content: "";
+  flex: none;
+  width: 24px;
+  height: 24px;
+  background-color: var(--_spin);
+  -webkit-mask: url("../icons/spinner.svg") center / contain no-repeat;
+          mask: url("../icons/spinner.svg") center / contain no-repeat;
+  animation: bog-spin 800ms linear infinite;
+}
+
+/* ---- Skeleton: static placeholder blocks (56px box + 84×8 message bar) */
+.bog-field[data-state="skeleton"] { pointer-events: none; }
+.bog-field[data-state="skeleton"] .bog-field__box {
+  background: var(--_skeleton);
+  box-shadow: none;
+}
+.bog-field[data-state="skeleton"] .bog-field__box > * { visibility: hidden; }
+.bog-field[data-state="skeleton"] .bog-field__message {
+  width: 84px;
+  height: 8px;
+  margin-left: var(--spacing-padding-default);
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-2x-small);
+  background: var(--_skeleton);
+  color: transparent;
+}
+.bog-field[data-state="skeleton"] .bog-field__message::before { display: none; }
+
+@keyframes bog-spin { to { transform: rotate(360deg); } }

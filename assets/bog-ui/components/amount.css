@@ -1,0 +1,205 @@
+/* ==========================================================================
+   BOG UI — Amount
+   Figma: Amount (47318:6396) — "Converted Amount"
+
+   Markup (selector and balances are optional — Figma booleans "Selector", "Account Balance")
+     <div class="bog-amount" data-size="large">
+       <button type="button" class="bog-amount__main">
+         <span class="bog-amount__value">1,000.00</span>
+         <span class="bog-amount__currency">₾</span>
+         <span class="bog-amount__selector"></span>
+       </button>
+       <div class="bog-amount__balances">
+         <span class="bog-amount__balance" data-active><span class="bog-amount__num">2.00</span>₾</span>
+         <span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>$</span>
+         <span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>€</span>
+         <span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>£</span>
+       </div>
+     </div>
+   Use a <div class="bog-amount__main"> instead of a <button> when there is no selector.
+   .bog-amount__balances also works on its own (e.g. inside the Account Picker).
+   data-active = the balance is non-zero (full color); others are dimmed.
+
+   Attributes on .bog-amount
+     data-size    large (default) | medium | small
+     data-color   default | black (Black static) | white (White static) | inverse
+     data-align   left (default) | center
+     data-hidden  Amount visible=False — shows "......" and hides balance numbers
+     data-state   skeleton
+   ========================================================================== */
+
+.bog-amount {
+  --_fg: var(--text-primary);
+  --_muted: var(--text-disabled);
+  --_divider: var(--layer-alpha-02);
+  --_divider-op: 0.3;
+  --_sk: var(--support-skeleton-background);
+  --_sk-op: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-gap-small);
+  color: var(--_fg);
+  font-family: var(--font-family-bog);
+}
+
+/* ---- Amount + currency (+ selector) ---------------------------------- */
+.bog-amount__main {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-gap-small);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+button.bog-amount__main { cursor: pointer; }
+
+.bog-amount__value {
+  font-size: var(--heading-large-semibold-size);
+  line-height: var(--heading-large-semibold-line-height);
+  font-weight: var(--heading-large-semibold-weight);
+  white-space: nowrap;
+}
+.bog-amount__currency {
+  margin-left: calc(var(--spacing-gap-x-small) - var(--spacing-gap-small));
+  font-size: var(--heading-medium-semibold-size);
+  line-height: var(--heading-medium-semibold-line-height);
+  font-weight: var(--heading-medium-semibold-weight);
+}
+.bog-amount__selector {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  -webkit-mask: url("../icons/chevron-up-down.svg") center / contain no-repeat;
+          mask: url("../icons/chevron-up-down.svg") center / contain no-repeat;
+}
+
+/* ---- Account balances ------------------------------------------------ */
+.bog-amount__balances {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+}
+.bog-amount__balance {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-gap-small);
+  padding-right: var(--spacing-padding-small);
+  color: var(--_muted, var(--text-disabled));
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-line-height);
+  font-weight: var(--body-small-weight);
+  white-space: nowrap;
+}
+.bog-amount__balance[data-active] { color: var(--_fg, var(--text-primary)); }
+.bog-amount__num { margin-right: var(--spacing-gap-2x-small); }
+/* Divider before every balance except the first */
+.bog-amount__balance + .bog-amount__balance::before {
+  content: "";
+  flex: none;
+  width: var(--border-width-thin);
+  height: 9px;
+  background: var(--_divider, var(--layer-alpha-02));
+  opacity: var(--_divider-op, 0.3);
+}
+/* Figma: the divider is only faded before an empty (inactive) balance */
+.bog-amount__balance[data-active]::before { opacity: 1; }
+
+/* ---- Sizes ----------------------------------------------------------- */
+.bog-amount[data-size="medium"] { gap: var(--spacing-gap-x-small); }
+.bog-amount[data-size="medium"] .bog-amount__main { gap: 6px; }
+.bog-amount[data-size="medium"] .bog-amount__value {
+  font-size: var(--heading-small-size);
+  line-height: var(--heading-small-line-height);
+  font-weight: var(--heading-small-weight);
+}
+.bog-amount[data-size="medium"] .bog-amount__currency {
+  margin-left: calc(var(--spacing-gap-x-small) - 6px);
+  font-size: var(--title-large-size);
+  line-height: var(--title-large-line-height);
+  font-weight: var(--title-large-weight);
+  letter-spacing: var(--title-large-letter-spacing);
+}
+.bog-amount[data-size="medium"] .bog-amount__selector { width: 16px; height: 16px; }
+
+.bog-amount[data-size="small"] { gap: var(--spacing-gap-x-small); }
+.bog-amount[data-size="small"] .bog-amount__main { gap: 6px; }
+.bog-amount[data-size="small"] :is(.bog-amount__value, .bog-amount__currency) {
+  font-size: var(--label-large-size);
+  line-height: var(--label-large-line-height);
+  font-weight: var(--label-large-weight);
+}
+.bog-amount[data-size="small"] .bog-amount__currency { margin-left: calc(var(--spacing-gap-2x-small) - 6px); }
+.bog-amount[data-size="small"] .bog-amount__selector { width: 12px; height: 12px; }
+
+/* ---- Alignment ------------------------------------------------------- */
+.bog-amount[data-align="center"] { align-items: center; text-align: center; }
+.bog-amount[data-align="center"] .bog-amount__balances { justify-content: center; }
+
+/* ---- Colors ---------------------------------------------------------- */
+.bog-amount[data-color="black"] {
+  --_fg: var(--text-black);
+  --_sk: var(--icon-black);
+  --_sk-op: 0.17;
+}
+.bog-amount[data-color="white"] {
+  --_fg: var(--text-white-primary);
+  --_muted: var(--text-white-primary);
+  --_divider: var(--layer-white-alpha-02);
+  --_divider-op: 1;
+  --_sk: var(--icon-white);
+  --_sk-op: 0.15;
+}
+.bog-amount[data-color="inverse"] {
+  --_fg: var(--text-inverse-primary);
+  --_muted: var(--text-inverse-primary);
+  --_divider: var(--layer-inverse-alpha-02);
+  --_divider-op: 1;
+  --_sk: var(--icon-inverse-primary);
+  --_sk-op: 0.15;
+}
+
+/* ---- Hidden amount (Amount visible = False) -------------------------- */
+.bog-amount[data-hidden] .bog-amount__value { display: inline-flex; font-size: 0; }
+.bog-amount[data-hidden] .bog-amount__value::after {
+  content: "......";
+  font-size: var(--heading-large-semibold-size);
+}
+.bog-amount[data-hidden][data-size="medium"] .bog-amount__value::after { font-size: var(--heading-small-size); }
+.bog-amount[data-hidden][data-size="small"] .bog-amount__value::after { font-size: var(--label-large-size); }
+.bog-amount[data-hidden] .bog-amount__num { display: none; }
+
+/* ---- Skeleton: 112×32 block (24 for small) + 32×8 bars --------------- */
+.bog-amount[data-state="skeleton"] { pointer-events: none; }
+.bog-amount[data-state="skeleton"] { gap: var(--spacing-gap-small); }
+.bog-amount[data-state="skeleton"][data-size="small"] { gap: 6px; }
+.bog-amount[data-state="skeleton"] .bog-amount__main {
+  width: 112px;
+  height: 32px;
+  overflow: hidden;
+  border-radius: var(--radius-x-small);
+  background: var(--_sk);
+  opacity: var(--_sk-op);
+}
+.bog-amount[data-state="skeleton"][data-size="small"] .bog-amount__main { height: 24px; }
+.bog-amount[data-state="skeleton"] .bog-amount__main > * { visibility: hidden; }
+.bog-amount[data-state="skeleton"] .bog-amount__balances { gap: var(--spacing-gap-small); }
+.bog-amount[data-state="skeleton"] .bog-amount__balance {
+  width: 32px;
+  height: 8px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-2x-small);
+  background: var(--_sk);
+  opacity: var(--_sk-op);
+  color: transparent;
+}
+.bog-amount[data-state="skeleton"] .bog-amount__balance::before { display: none; }

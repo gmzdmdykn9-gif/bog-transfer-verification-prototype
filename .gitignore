@@ -1,0 +1,6 @@
+.DS_Store
+assets/fonts/
+assets/bog-ui/fonts/*.woff2
+assets/bog-ui/fonts/*.woff
+assets/bog-ui/fonts/*.otf
+assets/bog-ui/fonts/*.ttf

@@ -1,0 +1,43 @@
+/* ==========================================================================
+   BOG UI — Shared primitives used by several components
+   ========================================================================== */
+
+/* Status / notification dot — Figma "Notification Badge" (Type=Dot, Status=Negative).
+   Position is set by the component that contains it. */
+.bog-badge-dot {
+  position: absolute;
+  z-index: 1;
+  width: 8px;
+  height: 8px;
+  box-sizing: border-box;
+  border-radius: var(--radius-full);
+  background: var(--status-error-02);
+  box-shadow: 0 0 0 var(--border-width-default) var(--border-border-03);
+  pointer-events: none;
+}
+
+/* Figma "Skeleton Default": skeleton fill + a 64px light wave sweeping across */
+.bog-skeleton-wave {
+  position: relative;
+  overflow: hidden;
+  background: var(--support-skeleton);
+}
+.bog-skeleton-wave::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -64px;
+  width: 64px;
+  background: linear-gradient(90deg, #77777700 0%, #6c70751a 48.4%, #77777700 100%);
+  animation: bog-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes bog-spin { to { transform: rotate(360deg); } }
+@keyframes bog-shimmer {
+  from { left: -64px; }
+  to   { left: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bog-skeleton-wave::after { animation: none; }
+}

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Product Card — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="product-card"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Product Card</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Card that shows one of the client's products (account, card, deposit…): title, Amount with balances, and a card / illustration / image on the right. Empty version shows a short message instead of the amount.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-product-card" role="button" tabindex="0"&gt;
+  &lt;div class="bog-product-card__info"&gt;
+    &lt;span class="bog-product-card__title"&gt;Account&lt;/span&gt;
+    &lt;div class="bog-amount" data-size="medium"&gt;
+      &lt;div class="bog-amount__main"&gt;&lt;span class="bog-amount__value"&gt;1,000.00&lt;/span&gt;&lt;span class="bog-amount__currency"&gt;₾&lt;/span&gt;&lt;/div&gt;
+      &lt;div class="bog-amount__balances"&gt;
+        &lt;span class="bog-amount__balance" data-active&gt;&lt;span class="bog-amount__num"&gt;2.00&lt;/span&gt;₾&lt;/span&gt;
+        &lt;span class="bog-amount__balance"&gt;&lt;span class="bog-amount__num"&gt;0.00&lt;/span&gt;$&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;span class="bog-product-card__media" data-more&gt;&lt;span class="bog-card-art" data-size="56"&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;!-- Empty --&gt;
+&lt;div class="bog-product-card" data-empty role="button" tabindex="0"&gt;
+  &lt;div class="bog-product-card__info"&gt;
+    &lt;span class="bog-product-card__title"&gt;Card&lt;/span&gt;
+    &lt;span class="bog-inline-message" data-status="info"&gt;Order a card&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;span class="bog-product-card__media" data-more&gt;&lt;span class="bog-card-art" data-size="56"&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+
+    <h2>Variants</h2>
+    <div class="panel"><div class="row" id="cards" style="gap:24px;align-items:flex-start"></div></div>
+
+<script>
+  const amt = '<div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">1,000.00</span><span class="bog-amount__currency">₾</span></div><div class="bog-amount__balances"><span class="bog-amount__balance" data-active><span class="bog-amount__num">2.00</span>₾</span><span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>$</span><span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>€</span></div></div>';
+  const media = (m = '<span class="bog-card-art" data-size="56"></span>', more = true) => `<span class="bog-product-card__media"${more ? " data-more" : ""}>${m}</span>`;
+  const pc = (o = {}) => `<div class="cell" style="width:343px"><small>${o.n}</small><div class="bog-product-card" role="button" tabindex="0"${o.empty ? " data-empty" : ""}${o.state ? ` data-state="${o.state}"` : ""}><div class="bog-product-card__info"><span class="bog-product-card__title">${o.title || "Account"}</span>${o.empty ? '<span class="bog-inline-message" data-status="info" data-size="small">Message text</span>' : amt}</div>${o.media || media()}</div></div>`;
+  document.getElementById("cards").innerHTML = [
+    pc({n: "Default"}), pc({n: "Pressed", state: "pressed"}), pc({n: "Empty", empty: 1}), pc({n: "Empty · Pressed", empty: 1, state: "pressed"}), pc({n: "Skeleton", state: "skeleton"}),
+    pc({n: "Illustration media", title: "Deposit", media: media('<span class="bog-illustration" data-size="56"></span>', false)}),
+    pc({n: "Image media", title: "Insurance", media: media('<span class="bog-media-rect" data-size="56"></span>', false)})
+  ].join("");
+</script>
+  </main>
+</div>
+</body>
+</html>

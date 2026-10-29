@@ -1,0 +1,191 @@
+/* ==========================================================================
+   BOG UI — Bottom Sheet
+   Figma: Bottom Sheet (50810:6775), _Bottom Sheet, _Sheet Navigation, _Content. (Promo Bottom Sheet not built.)
+
+   Markup — any content goes in .bog-sheet__content ("free content" slot)
+     <div class="bog-sheet" id="my-sheet" hidden>
+       <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="my-sheet-title">
+         <header class="bog-sheet__nav">
+           <div class="bog-sheet__heading">
+             <h2 class="bog-sheet__title" id="my-sheet-title">Title</h2>
+             <p class="bog-sheet__desc">Description</p>                     optional
+           </div>
+         </header>
+         <div class="bog-sheet__content"> …anything… </div>
+         <div class="bog-sheet__bar">                                        optional Sticky Bar
+           <p class="bog-sheet__bar-text">Message text</p>                   optional
+           <button class="bog-btn" data-type="primary" data-width="fill">Primary</button>
+         </div>
+       </div>
+     </div>
+     <button class="bog-btn" data-sheet-open="my-sheet">Open</button>
+
+   Opening/closing is handled by bog-ui.js: [data-sheet-open="id"], BOG.openSheet("id"), BOG.closeSheet().
+   Closes on overlay tap, Escape, any [data-sheet-close] inside, or dragging the handle down.
+   An X close button (neutral Icon Button) is added to the right of the header by default;
+   turn it off with data-close="false" on .bog-sheet, or supply your own [data-sheet-close] button.
+
+   Options
+     .bog-sheet data-overlay="false"             Overlay=False (no dark backdrop)
+     .bog-sheet__nav data-divider               Divider under the header
+     .bog-sheet__content data-type="list"       _Content Type=List Group padding (8 top, 24 bottom, no sides)
+     Header buttons: put <button class="bog-icon-btn" data-type="neutral"> before/after .bog-sheet__heading
+     Description only: omit the title, keep .bog-sheet__desc. Blank: omit .bog-sheet__heading.
+
+   The sheet is position: fixed. Inside a phone-frame mockup give the frame
+   `transform: translateZ(0)` (or class .bog-sheet-host) so the sheet opens inside the frame.
+   ========================================================================== */
+
+.bog-sheet-host { transform: translateZ(0); overflow: hidden; }
+
+.bog-sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  font-family: var(--font-family-bog);
+}
+.bog-sheet[hidden] { display: none; }
+
+/* Overlay */
+.bog-sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--support-overlay-canvas);
+  opacity: 0;
+  transition: opacity 280ms ease;
+}
+.bog-sheet[data-open]::before { opacity: 1; }
+.bog-sheet[data-overlay="false"] { pointer-events: none; }
+.bog-sheet[data-overlay="false"]::before { display: none; }
+.bog-sheet[data-overlay="false"] .bog-sheet__panel { pointer-events: auto; box-shadow: 0 -4px 24px #1b1c1d1f; }
+
+/* Panel */
+.bog-sheet__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: calc(100% - 48px);
+  border-radius: var(--radius-default) var(--radius-default) 0 0;
+  background: var(--layer-layer-05);
+  color: var(--text-primary);
+  outline: none;
+  transform: translateY(100%);
+  transition: transform 320ms cubic-bezier(0.2, 0, 0, 1);
+  touch-action: pan-y;
+}
+.bog-sheet[data-open] .bog-sheet__panel { transform: translateY(var(--drag, 0px)); }
+.bog-sheet[data-dragging] .bog-sheet__panel { transition: none; }
+/* No sticky bar: keep room for the home indicator area */
+.bog-sheet__panel:not(:has(.bog-sheet__bar)) { padding-bottom: max(var(--spacing-padding-default), env(safe-area-inset-bottom)); }
+
+/* ---- Navigation (drag handle + heading) -------------------------------- */
+.bog-sheet__nav {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: var(--spacing-padding-default) var(--spacing-padding-medium) var(--spacing-padding-medium);
+  position: relative;
+  cursor: grab;
+  touch-action: none;
+}
+/* Drag handle: 32×4, 6px from the top of a 16px strip */
+.bog-sheet__nav::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 32px;
+  height: 4px;
+  margin-left: -16px;
+  border-radius: var(--radius-full);
+  background: var(--border-border-01);
+}
+.bog-sheet__close { flex: none; margin-left: auto; }
+.bog-sheet__nav[data-divider] { box-shadow: inset 0 -1px 0 var(--border-border-03); }
+.bog-sheet__heading {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-gap-2x-small);
+  min-height: 32px;
+  padding: 1px 0 1px var(--spacing-padding-x-small);
+  box-sizing: border-box;
+}
+.bog-sheet .bog-sheet__title { /* doubled class: wins over page-level h1–h3 styles */
+  margin: 0;
+  font-size: var(--subtitle-large-size);
+  line-height: var(--subtitle-large-line-height);
+  font-weight: var(--subtitle-large-weight);
+  letter-spacing: var(--subtitle-large-letter-spacing);
+}
+.bog-sheet__heading:has(> .bog-sheet__title:only-child) { padding-top: 6px; padding-bottom: 6px; }
+.bog-sheet .bog-sheet__desc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+}
+.bog-sheet__heading:has(> .bog-sheet__desc:only-child) { padding-top: 6px; padding-bottom: 6px; }
+/* Blank header: just the handle */
+.bog-sheet__nav:empty { min-height: 44px; padding: 0; }
+
+/* ---- Content (free slot) --------------------------------------------- */
+.bog-sheet__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--spacing-padding-default);
+}
+.bog-sheet__content[data-type="list"] { padding: var(--spacing-padding-small) 0 24px; }
+/* Full-width sheet lists use 12px side padding on the rows (Figma _Content List Group) */
+.bog-sheet__content[data-type="list"] .bog-list-item { padding-inline: var(--spacing-padding-medium); }
+
+/* ---- Sticky Bar: white fade over the content, message, buttons, home area */
+.bog-sheet__bar {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--spacing-gap-default);
+  margin-top: -24px;
+  padding: calc(24px + var(--spacing-padding-default)) var(--spacing-padding-default) max(34px, env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, #ffffff00 0%, var(--layer-layer-05) 20%);
+}
+.bog-sheet__bar-text {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+  text-align: center;
+}
+.bog-sheet__bar > .bog-btn + .bog-btn { margin-top: calc(var(--spacing-gap-small) - var(--spacing-gap-default)); }
+/* Figma shows an iOS home indicator in the bottom 34px; opt in for mockups */
+.bog-sheet[data-home-indicator] .bog-sheet__bar::after,
+.bog-sheet[data-home-indicator] .bog-sheet__panel:not(:has(.bog-sheet__bar))::after {
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 144px;
+  height: 5px;
+  margin-left: -72px;
+  border-radius: 100px;
+  background: var(--text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bog-sheet::before, .bog-sheet__panel { transition: none; }
+}

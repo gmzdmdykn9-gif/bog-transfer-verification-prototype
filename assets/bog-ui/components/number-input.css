@@ -1,0 +1,31 @@
+/* ==========================================================================
+   BOG UI — Number Input
+   Figma: Number Input (43870:49257). A Text Input with − / + Icon Buttons (Neutral, Small).
+
+     <div class="bog-field bog-number-input">
+       <label class="bog-field__box">
+         <span class="bog-field__text">
+           <span class="bog-field__label">Enter amount</span>
+           <input class="bog-field__input" inputmode="numeric" placeholder=" " value="1" data-min="0" data-max="10" data-step="1">
+         </span>
+         <span class="bog-number-input__stepper">
+           <button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" data-step="down" aria-label="Decrease"><span class="bog-icon" data-icon="minus"></span></button>
+           <button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" data-step="up" aria-label="Increase"><span class="bog-icon" data-icon="plus"></span></button>
+         </span>
+       </label>
+       <p class="bog-field__message">Helper text</p>          optional
+     </div>
+
+   States, validation (error | warning | success), read-only, disabled and skeleton work like Text Input.
+   bog-ui.js steps the value, respects data-min / data-max / data-step and disables − / + at the limits.
+   ========================================================================== */
+
+.bog-number-input .bog-field__box { padding-right: var(--spacing-padding-medium); }
+.bog-number-input__stepper {
+  display: flex;
+  flex: none;
+  gap: var(--spacing-gap-small);
+  margin-left: var(--spacing-padding-medium); /* Input 12 right padding + Actions 12 left padding */
+}
+.bog-number-input:has(.bog-field__input[readonly]) .bog-number-input__stepper { display: none; }
+.bog-number-input:has(.bog-field__input[readonly]) .bog-field__box { padding-right: var(--spacing-padding-default); }

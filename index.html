@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ka">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>სხვასთან გადარიცხვა — BOG prototype</title>
+<link rel="stylesheet" href="assets/bog-ui/bog-ui.css">
+<link rel="stylesheet" href="assets/app.css">
+<script src="assets/bog-ui/bog-ui.js" defer></script>
+<script src="assets/app.js" defer></script>
+</head>
+<body>
+<div class="app bog-sheet-host" id="app">
+
+  <!-- ===================== Transfer form (Figma: Step 949) ===================== -->
+  <section class="screen" data-screen="transfer">
+    <header class="nav">
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="უკან">
+        <span class="bog-icon" style="--icon: url(../../img/chevron-left.svg)"></span>
+      </button>
+      <h1 class="nav__title">სხვასთან გადარიცხვა</h1>
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="ჩატი">
+        <span class="bog-icon" style="--icon: url(../../img/chat.svg)"></span>
+      </button>
+    </header>
+
+    <main class="screen__body">
+      <div class="section">
+        <h2 class="section__title">საიდან რიცხავ?</h2>
+        <div class="bog-select" data-variant="account" data-sheet="accounts-sheet" data-value="salary" id="from-account">
+          <button type="button" class="bog-select__box">
+            <span class="bog-select__text">
+              <span class="bog-select__label"><span id="from-name">სახელფასო ანგარიში</span><span class="bog-select__fav"></span></span>
+              <span class="bog-select__value">24.02 ₾</span>
+            </span>
+            <span class="bog-card-art" data-size="40"><img src="assets/img/just-card.png" alt=""></span>
+            <span class="bog-select__chevron"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section__title">ვისთან რიცხავ?</h2>
+        <div class="bog-list">
+          <div class="bog-list-item">
+            <span class="bog-icon-holder" data-size="40" data-type="outline"><span class="bog-icon" style="--icon: url(../../img/user-retail.svg)"></span></span>
+            <span class="bog-list-item__content">
+              <span class="bog-list-item__label">მიხეილ გოგიბერიძე</span>
+              <span class="bog-list-item__subtitle">GE29BG24932722364732761</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section__title">შეიყვანე დეტალები</h2>
+        <div class="form">
+          <div class="bog-field bog-currency-input" id="amount-field">
+            <label class="bog-field__box">
+              <span class="bog-field__text">
+                <span class="bog-field__label">თანხა</span>
+                <span class="bog-currency-input__value">
+                  <input class="bog-field__input" id="amount" inputmode="decimal" placeholder="0.00" autocomplete="off">
+                  <span class="bog-currency-input__symbol">₾</span>
+                </span>
+              </span>
+              <span class="bog-currency-input__currency"><span class="bog-flag" data-size="16"><img src="assets/bog-ui/assets/flags/ge.svg" alt=""></span>GEL</span>
+              <button type="button" class="bog-field__info" aria-label="ინფორმაცია"></button>
+            </label>
+            <p class="bog-field__message" id="amount-msg">საკომისიო: 0.00 ₾</p>
+          </div>
+
+          <div class="bog-field">
+            <label class="bog-field__box">
+              <span class="bog-field__text">
+                <span class="bog-field__label">დანიშნულება</span>
+                <input class="bog-field__input" id="purpose" value="სხვასთან გადარიცხვა" placeholder=" ">
+              </span>
+              <button type="button" class="bog-field__clear" aria-label="გასუფთავება"></button>
+              <button type="button" class="bog-field__info" aria-label="ინფორმაცია"></button>
+            </label>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="sticky-bar">
+      <label class="bog-checkbox sticky-bar__check">
+        <input type="checkbox" class="bog-checkbox__input">
+        <span class="bog-checkbox__text"><span class="bog-checkbox__label">სანდო კონტაქტად მონიშვნა</span></span>
+      </label>
+      <button class="bog-btn" data-type="primary" data-width="fill" id="next-btn">შემდეგი</button>
+    </footer>
+  </section>
+
+  <!-- ===================== Sheets ===================== -->
+  <div class="bog-sheet" id="accounts-sheet" hidden>
+    <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="accounts-title">
+      <header class="bog-sheet__nav">
+        <div class="bog-sheet__heading"><h2 class="bog-sheet__title" id="accounts-title">აირჩიე ანგარიში</h2></div>
+      </header>
+      <div class="bog-sheet__content sheet-stack">
+        <div class="bog-picker" data-value="salary" data-label="24.02 ₾" data-name="სახელფასო ანგარიში" data-balance="24.02">
+          <div class="bog-picker__box" role="button" tabindex="0">
+            <div class="bog-picker__head">
+              <div class="bog-picker__info">
+                <span class="bog-picker__title">სახელფასო ანგარიში<span class="bog-picker__fav"></span></span>
+                <div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">24.02</span><span class="bog-amount__currency">₾</span></div></div>
+              </div>
+              <span class="bog-card-art" data-size="56"><img src="assets/img/just-card.png" alt=""></span>
+            </div>
+          </div>
+        </div>
+        <div class="bog-picker" data-value="savings" data-label="1,250.00 ₾" data-name="შემნახველი ანგარიში" data-balance="1250">
+          <div class="bog-picker__box" role="button" tabindex="0">
+            <div class="bog-picker__head">
+              <div class="bog-picker__info">
+                <span class="bog-picker__title">შემნახველი ანგარიში</span>
+                <div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">1,250.00</span><span class="bog-amount__currency">₾</span></div></div>
+              </div>
+              <span class="bog-card-art" data-size="56"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

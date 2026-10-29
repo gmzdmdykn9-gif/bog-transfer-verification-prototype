@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hero Area — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="hero"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Hero Area</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Top-of-screen header: a centered visual (avatar, image, illustration or card), label, title and description, with optional badges, a Feedback message and actions.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;section class="bog-hero"&gt;
+  &lt;div class="bog-hero__content"&gt;
+    &lt;span class="bog-avatar" data-size="64"&gt;&lt;img src="photo.jpg" alt=""&gt;&lt;/span&gt;
+    &lt;div class="bog-hero__text"&gt;
+      &lt;p class="bog-hero__label"&gt;Label&lt;/p&gt;
+      &lt;h1 class="bog-hero__title"&gt;Header text&lt;/h1&gt;
+      &lt;p class="bog-hero__desc"&gt;Description&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class="bog-hero__actions"&gt;
+    &lt;button class="bog-btn" data-type="secondary" data-width="fill"&gt;Primary action&lt;/button&gt;
+    &lt;button class="bog-btn" data-type="ghost" data-size="small"&gt;Text action&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/section&gt;</code></pre>
+
+    <h2>Variants</h2>
+    <p class="lead">Shown at phone width (375px). The Navigation bar that sits above the hero in Figma is a separate component (not built yet).</p>
+    <div class="row" id="heroes" style="gap:24px;align-items:flex-start"></div>
+
+    <h2>Gradient backgrounds</h2>
+    <p class="lead"><code>data-gradient="peach | mint | green | brown"</code>. The colour covers the whole hero, including buttons and action items, and fades out only towards the bottom edge. On the dark ones (green, brown) the hero text turns white; use light content inside (Amount <code>data-color="white"</code>, inverse Feedback). Figma marks these as work in progress.</p>
+    <div class="row" id="gradients" style="gap:24px;align-items:flex-start"></div>
+
+<script>
+  const IMG = "../assets/media/placeholder.png";
+  const txt = '<div class="bog-hero__text"><p class="bog-hero__label">Label</p><h1 class="bog-hero__title">Header text</h1><p class="bog-hero__desc">Description</p></div>';
+  const frame = h => `<div style="width:375px;background:#fff;border-radius:16px;overflow:hidden">${h}</div>`;
+  const H = [
+    `<section class="bog-hero"><div class="bog-hero__content"><span class="bog-avatar" data-size="64"><img src="${IMG}" alt=""></span>${txt}</div></section>`,
+    `<section class="bog-hero"><div class="bog-hero__content"><span class="bog-card-art" data-size="80"></span>${txt}<div class="bog-hero__badges"><span class="bog-loyalty-badge" data-type="cashback" data-contrast="high">50% Cashback</span><span class="bog-loyalty-badge" data-type="discount" data-contrast="high">-25% Discount</span></div></div><div class="bog-hero__actions"><button class="bog-btn" data-type="secondary" data-width="fill">Button</button><button class="bog-btn" data-type="ghost" data-size="small">Button</button></div></section>`,
+    `<section class="bog-hero"><div class="bog-hero__content"><span class="bog-illustration" data-size="80"></span>${txt}</div><div class="bog-feedback" data-status="info"><div class="bog-feedback__text"><p class="bog-feedback__desc">Small description goes here</p></div></div><div class="bog-action-items">${["Transfer", "Pay", "Top up"].map(l => `<div class="bog-action-item" data-type="secondary"><button type="button" class="bog-action-item__main"><span class="bog-action-item__circle"><span class="bog-icon"></span></span><span class="bog-action-item__label">${l}</span></button></div>`).join("")}</div></section>`,
+    `<section class="bog-hero" data-state="skeleton"><div class="bog-hero__content"><span class="bog-avatar" data-size="64"></span>${txt}</div></section>`
+  ];
+  document.getElementById("heroes").innerHTML = H.map(frame).join("");
+  const amount = c => `<div class="bog-amount" data-size="large" data-align="center"${c ? ` data-color="${c}"` : ""}><div class="bog-amount__main"><span class="bog-amount__value">1,000.00</span><span class="bog-amount__currency">₾</span></div><div class="bog-amount__balances"><span class="bog-amount__balance" data-active><span class="bog-amount__num">2.00</span>₾</span><span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>$</span><span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>€</span></div></div>`;
+  const items = inv => `<div class="bog-action-items">${["Transfer", "Pay", "Top up"].map(l => `<div class="bog-action-item" data-type="${inv ? "primary" : "secondary"}"><button type="button" class="bog-action-item__main"><span class="bog-action-item__circle"><span class="bog-icon"></span></span><span class="bog-action-item__label"${inv ? ' style="color:#fff"' : ""}>${l}</span></button></div>`).join("")}</div>`;
+  const btns = dark => `<div class="bog-hero__actions"><button class="bog-btn" data-type="${dark ? "white" : "secondary"}" data-width="fill">Button</button><button class="bog-btn" data-type="${dark ? "white-ghost" : "ghost"}" data-size="small">Button</button></div>`;
+  const G = [["peach", "", 0], ["mint", "", 1], ["green", "white", 0], ["brown", "white", 1]].map(([g, c, withBtns]) => {
+    const dark = !!c;
+    return `<div style="width:375px;border-radius:16px;overflow:hidden;background:${dark ? "#1b1c1d" : "#fff"}"><section class="bog-hero" data-gradient="${g}"><div class="bog-hero__content"><span class="bog-card-art" data-size="80"></span><div class="bog-hero__text"><p class="bog-hero__label">Credit Card</p></div>${amount(c)}</div><div class="bog-feedback" data-status="warning"${dark ? ' data-appearance="inverse"' : ""}><div class="bog-feedback__text"><p class="bog-feedback__title">Warning</p><p class="bog-feedback__desc">Small description goes here</p></div></div>${withBtns ? btns(dark) : items(dark)}</section><p style="margin:0;padding:8px 16px 16px;font-size:12px;color:${dark ? "#d7d9db" : "#6c7075"}"><code>data-gradient="${g}"</code></p></div>`;
+  });
+  document.getElementById("gradients").innerHTML = G.join("");
+</script>
+  </main>
+</div>
+</body>
+</html>

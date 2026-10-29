@@ -1,0 +1,277 @@
+/* ==========================================================================
+   BOG UI — Account Picker (+ Currency Chip)
+   Figma: _Account Picker (57967:24278), _Account Picker Currency Chip item
+
+   Built from other library components:
+     Amount (medium) · Account balances (.bog-amount__balances) · UI Elements for the media slot
+     (.bog-card-art 56 · .bog-illustration 56 · .bog-media-circle 48) · Country flags (20) in chips
+
+   Markup — Display=Balance, Multi Currency
+     <div class="bog-picker" data-selected>
+       <div class="bog-picker__box" role="button" tabindex="0">
+         <div class="bog-picker__head">
+           <div class="bog-picker__info">
+             <span class="bog-picker__title">Multi-currency Account</span>
+             <div class="bog-amount" data-size="medium"><div class="bog-amount__main">
+               <span class="bog-amount__value">1,000.00</span><span class="bog-amount__currency">₾</span>
+             </div></div>
+           </div>
+           <span class="bog-card-art" data-size="56"></span>
+         </div>
+         <div class="bog-amount__balances">…</div>
+       </div>
+       <p class="bog-picker__message">Message text</p>
+     </div>
+
+   Instead of the Amount, the info column can hold:
+     <span class="bog-picker__number">****0000</span>      Display=Card Number / IBAN
+     <span class="bog-picker__points">2,000 Plus</span>    Loyalty=True
+
+   Options on .bog-picker
+     data-selected              Selected=True
+     data-validation="error"    Validation=Error (put the text in .bog-picker__message)
+     data-state="skeleton"      Skeleton=True (use .bog-picker__skeleton markup, see docs)
+     data-state="pressed"       force Pressed look (also happens on tap)
+   Favorite star: <span class="bog-picker__fav" aria-label="Favorite"></span> after the title text.
+   Expandable: put a .bog-picker__chips group of .bog-currency-chip buttons inside the box.
+   ========================================================================== */
+
+.bog-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+  width: 100%;
+  font-family: var(--font-family-bog);
+}
+
+.bog-picker__box {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+  box-sizing: border-box;
+  padding: var(--spacing-padding-default);
+  border-radius: var(--radius-default);
+  background-color: var(--layer-layer-02);
+  color: var(--text-primary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+.bog-picker__box:focus-visible { box-shadow: 0 0 0 2px var(--text-accent); }
+
+/* Selected / error border (1px inside) */
+.bog-picker[data-selected] .bog-picker__box { box-shadow: inset 0 0 0 var(--border-width-default) var(--border-selected-neutral-strong); }
+.bog-picker[data-validation="error"] .bog-picker__box { box-shadow: inset 0 0 0 var(--border-width-default) var(--border-error); }
+
+/* Pressed: alpha tint layered under the content (not when a chip inside is pressed) */
+.bog-picker__box:active:not(:has(.bog-currency-chip:active)),
+.bog-picker[data-state="pressed"] .bog-picker__box {
+  background-image: linear-gradient(var(--layer-alpha-pressed-01), var(--layer-alpha-pressed-01));
+}
+
+/* ---- Header: info column + media slot -------------------------------- */
+.bog-picker__head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-medium);
+}
+.bog-picker__head > :last-child:not(.bog-picker__info) { flex: none; align-self: flex-start; }
+.bog-picker__info {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-gap-m-small);
+}
+/* Multi-currency layout (balances under the header): tighter gap, 6px bottom padding */
+.bog-picker__box:has(> .bog-amount__balances) > .bog-picker__head { gap: var(--spacing-gap-small); }
+.bog-picker__box:has(> .bog-amount__balances) .bog-picker__info { padding-bottom: var(--spacing-padding-m-small); }
+
+.bog-picker__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  color: var(--text-secondary);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-picker__fav {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background-color: var(--icon-primary);
+  -webkit-mask: url("../icons/star-10.svg") center / contain no-repeat;
+          mask: url("../icons/star-10.svg") center / contain no-repeat;
+}
+
+/* Card number / IBAN: Label/Large; card-number info column gets 4px vertical padding + 12 gap */
+.bog-picker__number {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: var(--label-large-size);
+  line-height: var(--label-large-line-height);
+  font-weight: var(--label-large-weight);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bog-picker__info:has(> .bog-picker__title + .bog-picker__number) {
+  gap: var(--spacing-gap-medium);
+  padding: var(--spacing-padding-x-small) 0;
+}
+/* IBAN layout: number + 48px media circle, then balances 4px below */
+.bog-picker__box:has(.bog-media-circle[data-size="48"]) { gap: var(--spacing-gap-x-small); }
+
+/* Loyalty points: Heading/Small, balances 4px below inside the info column */
+.bog-picker__points {
+  color: var(--text-primary);
+  font-size: var(--heading-small-size);
+  line-height: var(--heading-small-line-height);
+  font-weight: var(--heading-small-weight);
+}
+.bog-picker__points + .bog-amount__balances { margin-top: calc(var(--spacing-gap-x-small) - var(--spacing-gap-m-small)); }
+
+/* ---- Expandable: currency chips --------------------------------------- */
+.bog-picker__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-chips-gap-horizontal);
+  margin-top: calc(var(--spacing-gap-default) - var(--spacing-gap-small));
+}
+
+/* Tap-to-expand: wrap the chips in .bog-picker__expand and they stay hidden until the
+   card is tapped (bog-ui.js toggles data-expanded). Collapsed = Figma Expandable=False (118px),
+   expanded = Expandable=True (174px). Unwrapped chips are always visible. */
+.bog-picker__expand {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: calc(-1 * var(--spacing-gap-small)); /* cancels the box gap while collapsed */
+  opacity: 0;
+  transition: grid-template-rows 280ms cubic-bezier(0.2, 0, 0, 1),
+              margin-top 280ms cubic-bezier(0.2, 0, 0, 1),
+              opacity 200ms ease;
+}
+.bog-picker__expand > .bog-picker__chips {
+  min-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  visibility: hidden;
+  transition: visibility 0s 280ms;
+}
+.bog-picker[data-expanded] .bog-picker__expand {
+  grid-template-rows: 1fr;
+  margin-top: calc(var(--spacing-gap-default) - var(--spacing-gap-small));
+  opacity: 1;
+}
+.bog-picker[data-expanded] .bog-picker__expand > .bog-picker__chips {
+  visibility: visible;
+  transition: visibility 0s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bog-picker__expand, .bog-picker__expand > .bog-picker__chips { transition: none; }
+}
+
+.bog-currency-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-gap-small);
+  box-sizing: border-box;
+  height: 40px;
+  margin: 0;
+  padding: calc(var(--spacing-padding-small) + var(--spacing-padding-2x-small));
+  padding-right: calc(var(--spacing-padding-small) + var(--spacing-padding-x-small));
+  border: 0;
+  border-radius: var(--radius-full);
+  background-color: var(--layer-layer-05);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--border-alpha-01);
+  color: var(--text-primary);
+  font-family: var(--font-family-bog);
+  font-size: var(--label-large-size);
+  line-height: var(--label-large-line-height);
+  font-weight: var(--label-large-weight);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-currency-chip:active:not(:disabled) {
+  background-image: linear-gradient(var(--layer-alpha-pressed-01), var(--layer-alpha-pressed-01));
+}
+.bog-currency-chip[aria-pressed="true"] {
+  padding-right: calc(var(--spacing-padding-small) + var(--spacing-padding-2x-small));
+  background-color: var(--chip-selected);
+}
+/* Check icon on the selected chip */
+.bog-currency-chip[aria-pressed="true"]::before {
+  content: "";
+  order: 9;
+  width: 12px;
+  height: 12px;
+  background-color: var(--icon-primary);
+  -webkit-mask: url("../icons/check-12.svg") center / contain no-repeat;
+          mask: url("../icons/check-12.svg") center / contain no-repeat;
+}
+.bog-currency-chip:disabled { color: var(--text-disabled); cursor: default; }
+.bog-currency-chip:disabled .bog-flag { opacity: 0.5; }
+
+/* ---- Helper / error message below the card ---------------------------- */
+.bog-picker__message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  margin: 0;
+  padding-left: var(--spacing-padding-small);
+  color: var(--text-secondary);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-picker[data-validation="error"] .bog-picker__message { color: var(--text-error); }
+.bog-picker[data-validation="error"] .bog-picker__message::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--icon-error);
+  -webkit-mask: url("../icons/status-alert.svg") center / contain no-repeat;
+          mask: url("../icons/status-alert.svg") center / contain no-repeat;
+}
+
+/* ---- Skeleton ----------------------------------------------------------
+   <div class="bog-picker" data-state="skeleton"><div class="bog-picker__box">
+     <div class="bog-picker__head">
+       <div class="bog-picker__skeleton"><span></span><span></span></div>
+       <span class="bog-card-art" data-size="56"></span>
+     </div></div></div>                                                      */
+.bog-picker[data-state="skeleton"] .bog-picker__box { background: var(--support-skeleton-background); cursor: default; pointer-events: none; }
+.bog-picker[data-state="skeleton"] .bog-picker__head { gap: 48px; }
+.bog-picker__skeleton {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--spacing-gap-medium);
+  max-width: 174px;
+  height: 56px;
+  box-sizing: border-box;
+}
+.bog-picker__skeleton > span {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  height: 12px;
+  width: 96px;
+  border-radius: var(--radius-2x-small);
+  background: var(--support-skeleton);
+}
+.bog-picker__skeleton > span + span { width: 155px; height: 8px; }
+.bog-picker__skeleton > span::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -64px;
+  width: 64px;
+  background: linear-gradient(90deg, #77777700 0%, #6c70751a 48.4%, #77777700 100%);
+  animation: bog-shimmer 1.4s ease-in-out infinite;
+}

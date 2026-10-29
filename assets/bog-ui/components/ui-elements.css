@@ -1,0 +1,200 @@
+/* ==========================================================================
+   BOG UI — UI Elements ("Placeholder" page in Figma, 54990:3178)
+   Reusable visual slots that other components put in their leading/trailing positions.
+
+   Element             Class                 Sizes (data-size)                     Figma set
+   Country flag        .bog-flag             16 20 24 32 40 48 56 64               Country Flags
+   Counter             .bog-counter          32 40 48 56 64                        Counter Indicator
+   Icon container      .bog-icon-holder      24 32 40 48 56 64                     Icon Placeholder
+   Media, circle       .bog-media-circle     16 20 24 32 40 48 56 64               Media Circle
+   Media, square       .bog-media-square     20 24 32 40 48 56 64 72 80 96 132     Media Square
+   Media, 4:3          .bog-media-rect       20 24 32 40 48 56 64 72 80 96 132     Media Rectangle
+   Illustration, 4:3   .bog-illustration     24 32 40 48 56 64 72 80 96 132        Illustration
+   Bank card art       .bog-card-art         16 20 24 32 40 48 56 64 72 80 96 128 132  Card Placeholder
+   Avatar              .bog-avatar           → see components/avatar.css
+
+   data-size is the element's HEIGHT in px, exactly the number in the Figma size name
+   ("Medium 32" → data-size="32"). Widths follow the Figma aspect ratios.
+
+   Markup
+     <span class="bog-flag" data-size="32"><img src="bog-ui/assets/flags/ge.svg" alt="Georgia"></span>
+     <span class="bog-media-circle" data-size="40"><img src="photo.jpg" alt=""></span>
+     <span class="bog-card-art" data-size="32"><img src="card.png" alt="Visa Gold"></span>
+     <span class="bog-illustration" data-size="96"><img src="bog-ui/assets/illustrations/404.svg" alt=""></span>
+     <span class="bog-icon-holder" data-size="40"><span class="bog-icon"></span></span>
+     <span class="bog-counter" data-size="40">99+</span>
+   Leave out the <img> to show the Figma default placeholder.
+
+   Options (all elements)
+     data-disabled            Disabled=True
+     data-state="skeleton"    Skeleton=True
+     <span class="bog-badge-dot"></span> inside   "Status" boolean (not on flags/illustrations/counters)
+   Extra
+     .bog-icon-holder data-type="outline"         Type=Outline (default Fill)
+     .bog-media-circle style="--progress: 60%"     "Progress" ring (success color)
+   ========================================================================== */
+
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square,
+    .bog-media-rect, .bog-illustration, .bog-card-art) {
+  --s: 32px;
+  --_w: var(--s);
+  --_r: var(--radius-full);
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--_w);
+  height: var(--s);
+  border-radius: var(--_r);
+  background: var(--_placeholder, none) center / cover no-repeat;
+  vertical-align: middle;
+}
+:is(.bog-flag, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art) > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+.bog-illustration > img { object-fit: contain; }
+
+/* ---- Sizes (height) --------------------------------------------------- */
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="16"]  { --s: 16px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="20"]  { --s: 20px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="24"]  { --s: 24px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="32"]  { --s: 32px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="40"]  { --s: 40px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="48"]  { --s: 48px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="56"]  { --s: 56px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="64"]  { --s: 64px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="72"]  { --s: 72px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="80"]  { --s: 80px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="96"]  { --s: 96px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="128"] { --s: 128px; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-size="132"] { --s: 132px; }
+
+/* ---- Hairline border on media (Border/alpha_01, 0.5px inside) --------- */
+:is(.bog-media-circle, .bog-media-square, .bog-media-rect)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 var(--border-width-thin) var(--border-alpha-01);
+  pointer-events: none;
+}
+
+/* ---- Country flag: circle ---------------------------------------------- */
+.bog-flag > img { object-fit: contain; }
+
+/* ---- Media -------------------------------------------------------------- */
+:is(.bog-media-circle, .bog-media-square, .bog-media-rect) { --_placeholder: url("../assets/media/placeholder.png"); }
+.bog-media-square { --_r: var(--radius-x-small); }
+.bog-media-rect   { --_r: var(--radius-x-small); --_w: calc(var(--s) * 4 / 3); }
+:is(.bog-media-square, .bog-media-rect):is([data-size="20"], [data-size="24"], [data-size="32"]) { --_r: var(--radius-2x-small); }
+
+/* ---- Illustration: 4:3, no radius -------------------------------------- */
+.bog-illustration {
+  --_r: 0;
+  --_w: calc(var(--s) * 4 / 3);
+  --_placeholder: url("../assets/illustrations/404.svg");
+  background-size: contain;
+}
+
+/* ---- Bank card art: card ratio, widths from Figma ---------------------- */
+.bog-card-art {
+  --_r: var(--radius-2x-small);
+  --_w: calc(var(--s) * 1.6);
+  --_placeholder: url("../assets/cards/placeholder.svg");
+  background-size: 100% 100%;
+}
+.bog-card-art[data-size="16"]  { --_w: 26px; }
+.bog-card-art[data-size="20"]  { --_w: 32px; }
+.bog-card-art[data-size="24"]  { --_w: 38px; }
+.bog-card-art[data-size="32"]  { --_w: 51px; }
+.bog-card-art[data-size="40"]  { --_w: 64px; }
+.bog-card-art[data-size="48"]  { --_w: 76px; }
+.bog-card-art[data-size="56"]  { --_w: 89px;  --_r: var(--radius-x-small); }
+.bog-card-art[data-size="64"]  { --_w: 102px; --_r: var(--radius-x-small); }
+.bog-card-art[data-size="72"]  { --_w: 115px; --_r: var(--radius-x-small); }
+.bog-card-art[data-size="80"]  { --_w: 127px; --_r: var(--radius-x-small); }
+.bog-card-art[data-size="96"]  { --_w: 153px; --_r: var(--radius-x-small); }
+.bog-card-art[data-size="128"] { --_w: 203px; --_r: var(--radius-x-small); }
+.bog-card-art[data-size="132"] { --_w: 209px; --_r: var(--radius-x-small); }
+
+/* ---- Counter indicator ------------------------------------------------- */
+.bog-counter {
+  background: var(--layer-alpha-01);
+  color: var(--text-primary);
+  font-family: var(--font-family-bog);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.bog-counter:is([data-size="56"], [data-size="64"]) {
+  font-size: var(--label-medium-size);
+  line-height: var(--label-medium-line-height);
+  font-weight: var(--label-medium-weight);
+}
+.bog-counter[data-disabled] { color: var(--text-disabled); }
+
+/* ---- Icon container ---------------------------------------------------- */
+.bog-icon-holder {
+  background: var(--layer-alpha-01);
+  color: var(--icon-primary);
+}
+.bog-icon-holder[data-type="outline"] {
+  background: none;
+  box-shadow: inset 0 0 0 var(--border-width-thin) var(--border-border-03);
+}
+.bog-icon-holder:is([data-size="48"], [data-size="56"], [data-size="64"]) > .bog-icon { width: 24px; height: 24px; }
+.bog-icon-holder[data-disabled] { color: var(--icon-disabled); }
+
+/* ---- Disabled: media fade to 50% (counter/icon change color instead) --- */
+:is(.bog-flag, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art)[data-disabled] { opacity: 0.5; }
+
+/* ---- Status dot positions (from Figma) ---------------------------------- */
+:is(.bog-media-circle, .bog-icon-holder) > .bog-badge-dot { top: 0; right: 1px; }
+:is(.bog-media-circle, .bog-icon-holder):is([data-size="20"], [data-size="24"]) > .bog-badge-dot { top: -1px; right: 0; }
+:is(.bog-media-circle, .bog-icon-holder)[data-size="40"] > .bog-badge-dot { top: 1px; right: 3px; }
+:is(.bog-media-circle, .bog-icon-holder)[data-size="48"] > .bog-badge-dot { top: 2px; right: 4px; }
+:is(.bog-media-circle, .bog-icon-holder)[data-size="56"] > .bog-badge-dot { top: 4px; right: 4px; }
+:is(.bog-media-circle, .bog-icon-holder)[data-size="64"] > .bog-badge-dot { top: 4px; right: 7px; }
+:is(.bog-media-square, .bog-media-rect, .bog-card-art) > .bog-badge-dot { top: -4px; right: -4px; }
+
+/* ---- Progress ring (Media Circle): 3px, 4px outside the image ----------- */
+.bog-media-circle[style*="--progress"]::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: conic-gradient(var(--icon-success) var(--progress), transparent 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+}
+
+/* ---- Skeleton ----------------------------------------------------------- */
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square,
+    .bog-media-rect, .bog-illustration, .bog-card-art)[data-state="skeleton"] {
+  overflow: hidden;
+  background: var(--support-skeleton);
+  box-shadow: none;
+  color: transparent;
+}
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square,
+    .bog-media-rect, .bog-illustration, .bog-card-art)[data-state="skeleton"] > * { visibility: hidden; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square,
+    .bog-media-rect, .bog-illustration, .bog-card-art)[data-state="skeleton"]::before { display: none; }
+:is(.bog-flag, .bog-counter, .bog-icon-holder, .bog-media-circle, .bog-media-square,
+    .bog-media-rect, .bog-illustration, .bog-card-art)[data-state="skeleton"]::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -64px;
+  width: 64px;
+  border-radius: 0;
+  box-shadow: none;
+  background: linear-gradient(90deg, #77777700 0%, #6c70751a 48.4%, #77777700 100%);
+  animation: bog-shimmer 1.4s ease-in-out infinite;
+}

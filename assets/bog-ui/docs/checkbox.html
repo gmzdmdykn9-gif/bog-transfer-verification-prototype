@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checkbox — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="checkbox"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Checkbox</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Checkbox on its own, with a label and description, or in a group. Checked, indeterminate, error, read-only, disabled and skeleton; Themed and Inverse.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;label class="bog-checkbox"&gt;
+  &lt;input type="checkbox" class="bog-checkbox__input"&gt;
+  &lt;span class="bog-checkbox__text"&gt;
+    &lt;span class="bog-checkbox__label"&gt;I agree to the &lt;a href="#"&gt;terms ↗&lt;/a&gt;&lt;/span&gt;
+    &lt;span class="bog-checkbox__desc"&gt;Description&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/label&gt;
+
+&lt;fieldset class="bog-checkbox-group" data-state="error"&gt;
+  &lt;legend class="bog-checkbox-group__label"&gt;Notifications&lt;/legend&gt;
+  …checkboxes…
+&lt;/fieldset&gt;</code></pre>
+
+    <h2>Checkbox</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="panel"><table id="cb-light"></table></div>
+      <div class="panel dark"><table id="cb-dark"></table></div>
+    </div>
+    <h2>Checkbox + Label</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="panel"><div id="lbl-light" style="display:flex;flex-direction:column;gap:24px;max-width:320px"></div></div>
+      <div class="panel dark"><div id="lbl-dark" style="display:flex;flex-direction:column;gap:24px;max-width:320px"></div></div>
+    </div>
+    <h2>Checkbox Group</h2>
+    <div class="panel"><div class="row" style="gap:48px;align-items:flex-start" id="groups"></div></div>
+
+<script>
+  const SEL = [["Unchecked", ""], ["Checked", " checked"], ["Indeterminate", " data-indeterminate"]];
+  const STATES = [["Enabled", ""], ["Error", "error"], ["Read-only", "readonly"], ["Disabled", "disabled"], ["Skeleton", "skeleton"]];
+  const box = (sel, st, inv) => `<input type="checkbox" class="bog-checkbox__input" aria-label="checkbox"${sel}${st === "disabled" ? " disabled" : st ? ` data-state="${st}"` : ""}${inv ? ' data-appearance="inverse"' : ""}>`;
+  const table = inv => "<tr><th></th>" + SEL.map(([n]) => `<th>${n}</th>`).join("") + "</tr>" + STATES.map(([n, st]) => `<tr><th>${n}</th>${SEL.map(([, s]) => `<td>${box(s, st, inv)}</td>`).join("")}</tr>`).join("");
+  document.getElementById("cb-light").innerHTML = table(false);
+  document.getElementById("cb-dark").innerHTML = table(true);
+  const lbl = (o = {}) => `<label class="bog-checkbox"${o.st && o.st !== "disabled" ? ` data-state="${o.st}"` : ""}${o.inv ? ' data-appearance="inverse"' : ""}${o.right ? ' data-align="right"' : ""}><input type="checkbox" class="bog-checkbox__input"${o.checked ? " checked" : ""}${o.st === "disabled" ? " disabled" : ""}><span class="bog-checkbox__text"><span class="bog-checkbox__label">Checkbox text <a href="#">link ↗</a></span><span class="bog-checkbox__desc">Description</span>${o.st === "error" ? '<span class="bog-checkbox__message">Message text</span>' : ""}</span></label>`;
+  const L = inv => [lbl({inv}), lbl({inv, checked: 1}), lbl({inv, st: "error"}), lbl({inv, checked: 1, st: "disabled"}), lbl({inv, checked: 1, st: "readonly"}), lbl({inv, right: 1, checked: 1}), lbl({inv, st: "skeleton"})].join("");
+  document.getElementById("lbl-light").innerHTML = L(false);
+  document.getElementById("lbl-dark").innerHTML = L(true);
+  const grp = st => `<fieldset class="bog-checkbox-group" style="width:320px"${st ? ` data-state="${st}"` : ""}><legend class="bog-checkbox-group__label">Group Label (optional)</legend>${lbl({checked: 1})}${lbl({st: st === "error" ? "error" : ""})}</fieldset>`;
+  document.getElementById("groups").innerHTML = grp("") + grp("error");
+</script>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UI Elements — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="ui-elements"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>UI Elements</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Visual slots that other components (list items, pickers, cards…) place in their leading or trailing position. Use these whenever a design shows a flag, photo, illustration, bank card, icon circle or counter. <code>data-size</code> is the height from the Figma size name ("Medium 32" → <code>data-size="32"</code>).</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;span class="bog-flag" data-size="32"&gt;&lt;img src="bog-ui/assets/flags/ge.svg" alt="Georgia"&gt;&lt;/span&gt;
+&lt;span class="bog-media-circle" data-size="40"&gt;&lt;img src="avatar.jpg" alt=""&gt;&lt;/span&gt;
+&lt;span class="bog-media-square" data-size="48"&gt;&lt;img src="product.jpg" alt=""&gt;&lt;/span&gt;
+&lt;span class="bog-media-rect" data-size="48"&gt;&lt;img src="banner.jpg" alt=""&gt;&lt;/span&gt;
+&lt;span class="bog-illustration" data-size="96"&gt;&lt;img src="bog-ui/assets/illustrations/404.svg" alt=""&gt;&lt;/span&gt;
+&lt;span class="bog-card-art" data-size="32"&gt;&lt;img src="my-card.png" alt="Visa Gold"&gt;&lt;/span&gt;
+&lt;span class="bog-icon-holder" data-size="40"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class="bog-counter" data-size="40"&gt;99+&lt;/span&gt;
+&lt;span class="bog-avatar" data-size="56"&gt;AV&lt;/span&gt;
+
+&lt;!-- options on any element --&gt;
+data-disabled · data-state="skeleton" · &lt;span class="bog-badge-dot"&gt;&lt;/span&gt; inside for the status dot</code></pre>
+
+    <div id="sections"></div>
+  </main>
+</div>
+<script>
+  const SETS = [
+    { title: "Country Flags", cls: "bog-flag", sizes: [16, 20, 24, 32, 40, 48, 56, 64], img: "../assets/flags/ge.svg",
+      note: 'Flags included: <code>assets/flags/ge.svg</code> <code>us.svg</code> <code>eu.svg</code> <code>gb.svg</code>. Ask Claude to add more from the Figma <em>country-flags</em> library.',
+      extra: '<div class="row" style="margin-top:16px">' + ["ge", "us", "eu", "gb"].map(f => `<span class="bog-flag" data-size="40"><img src="../assets/flags/${f}.svg" alt="${f}"></span>`).join("") + "</div>" },
+    { title: "Media Circle", cls: "bog-media-circle", sizes: [16, 20, 24, 32, 40, 48, 56, 64], badge: true,
+      extra: '<h3>Progress ring</h3><div class="row"><span class="bog-media-circle" data-size="24" style="--progress: 55%"></span><span class="bog-media-circle" data-size="32" style="--progress: 55%"></span><span class="bog-media-circle" data-size="40" style="--progress: 55%"></span></div>' },
+    { title: "Media Square", cls: "bog-media-square", sizes: [20, 24, 32, 40, 48, 56, 64, 72, 80, 96, 132], badge: true },
+    { title: "Media Rectangle (4:3)", cls: "bog-media-rect", sizes: [20, 24, 32, 40, 48, 56, 64, 72, 80, 96, 132], badge: true },
+    { title: "Illustration", cls: "bog-illustration", sizes: [24, 32, 40, 48, 56, 64, 72, 80, 96, 132] },
+    { title: "Card Placeholder", cls: "bog-card-art", sizes: [16, 20, 24, 32, 40, 48, 56, 64, 72, 80, 96, 128, 132], badge: true },
+    { title: "Icon Placeholder — Fill", cls: "bog-icon-holder", sizes: [24, 32, 40, 48, 56, 64], inner: '<span class="bog-icon"></span>', badge: true },
+    { title: "Icon Placeholder — Outline", cls: "bog-icon-holder", attrs: ' data-type="outline"', sizes: [24, 32, 40, 48, 56, 64], inner: '<span class="bog-icon"></span>', badge: true },
+    { title: "Avatar (initials)", cls: "bog-avatar", sizes: [32, 40, 48, 56, 64], text: () => "AV" },
+    { title: "Counter Indicator", cls: "bog-counter", sizes: [32, 40, 48, 56, 64], text: s => s >= 48 ? "999+" : "99+" }
+  ];
+  function el(set, size, extra, badge) {
+    const inner = set.text ? set.text(size) : set.inner ? set.inner : set.img ? `<img src="${set.img}" alt="">` : "";
+    return `<span class="${set.cls}" data-size="${size}"${set.attrs || ""}${extra}>${inner}${badge ? '<span class="bog-badge-dot"></span>' : ""}</span>`;
+  }
+  document.getElementById("sections").innerHTML = SETS.map(set => {
+    const rows = [["Default", ""], ["Disabled", " data-disabled"], ["Skeleton", ' data-state="skeleton"']];
+    if (set.badge) rows.splice(1, 0, ["Status", "", true]);
+    return `<h2>${set.title}</h2>${set.note ? `<p class="lead">${set.note}</p>` : ""}<div class="panel"><table>` +
+      `<tr><th></th>${set.sizes.map(s => `<th>${s}</th>`).join("")}</tr>` +
+      rows.map(([name, attr, badge]) => `<tr><th>${name}</th>${set.sizes.map(s => `<td>${el(set, s, attr, badge)}</td>`).join("")}</tr>`).join("") +
+      `</table>${set.extra || ""}</div>`;
+  }).join("");
+</script>
+</body>
+</html>

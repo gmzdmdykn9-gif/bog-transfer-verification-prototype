@@ -1,0 +1,233 @@
+/* ==========================================================================
+   BOG UI — List item + List group
+   Figma: List (45093:6300) — List item (45564:58835), List group (45986:6672), List Slots
+
+   Markup
+     <div class="bog-list-group">                                                   optional wrapper
+       <div class="bog-list-group__header"><span>Label</span><span>Right label</span></div>
+       <div class="bog-list" data-divider>                                          data-divider = lines between items
+         <button type="button" class="bog-list-item">
+           <span class="bog-icon-holder" data-size="40" data-type="outline">…</span>  left slot (any UI Element) — optional
+           <span class="bog-list-item__content">
+             <span class="bog-list-item__subtitle">Subtitle</span>                  optional
+             <span class="bog-list-item__label">Primary Label</span>
+             <span class="bog-list-item__secondary">Secondary text</span>           optional (3 Line)
+             <span class="bog-list-item__extra">…badge / message…</span>            optional (3 Line+)
+           </span>
+           <span class="bog-list-item__end">                                        right text slot — optional
+             <span class="bog-list-item__value">0.00 ₾</span>
+             <span class="bog-list-item__value-sub">Secondary text</span>
+           </span>
+           <span class="bog-list-item__chevron"></span>                             optional
+         </button>
+       </div>
+     </div>
+
+   Layouts come from what you put in the content, in reading order:
+     1 Line          label
+     2 Line          subtitle + label
+     2 Line Reverse  label + subtitle
+     3 Line          subtitle + label + secondary
+     3 Line+         label + subtitle + extra
+   Label icons: <span class="bog-list-item__fav"></span> (favorite star) and
+                <span class="bog-list-item__info"></span> (12px info) inside the label.
+   Right slot can also hold any UI Element, an Icon Button (data-size="small"), etc.
+
+   States: data-state="pressed" | "skeleton" on the item · disabled (or aria-disabled="true").
+   Selected option (used by Select): aria-selected="true" shows a check.
+   Use <a class="bog-list-item"> for navigation, <div> for static rows.
+   ========================================================================== */
+
+.bog-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.bog-list-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-medium);
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 56px;
+  margin: 0;
+  padding: var(--spacing-padding-small) var(--spacing-padding-x-small);
+  border: 0;
+  border-radius: var(--radius-x-small);
+  background: transparent;
+  color: var(--text-primary);
+  font-family: var(--font-family-bog);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+div.bog-list-item { cursor: default; }
+.bog-list-item:has(.bog-list-item__subtitle) { min-height: 60px; }
+.bog-list-item:active:not(div, :disabled, [aria-disabled="true"], [data-state]),
+.bog-list-item[data-state="pressed"] { background: var(--layer-alpha-pressed-01); }
+.bog-list-item:focus-visible { outline: 2px solid var(--text-accent); outline-offset: -2px; }
+.bog-list-item > :not(.bog-list-item__content) { flex: none; }
+
+/* Divider between items (Figma Divider: 1px Border/alpha_01) */
+.bog-list[data-divider] > .bog-list-item:not(:last-child)::before,
+.bog-list-item[data-divider]::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background: var(--border-alpha-01);
+  pointer-events: none;
+}
+
+/* ---- Content ----------------------------------------------------------- */
+.bog-list-item__content {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-gap-x-small);
+}
+/* 3 Line (subtitle + label + secondary): tighter 2px gap */
+.bog-list-item__content:has(.bog-list-item__secondary) { gap: var(--spacing-gap-2x-small); }
+
+.bog-list-item__label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--list-body-medium-size);
+  line-height: var(--list-body-medium-line-height);
+  font-weight: var(--list-body-medium-weight);
+}
+.bog-list-item__subtitle,
+.bog-list-item__secondary {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  color: var(--text-secondary);
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-line-height);
+  font-weight: var(--body-small-weight);
+}
+.bog-list-item__extra {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-gap-x-small);
+}
+
+/* Label icons */
+.bog-list-item__fav,
+.bog-list-item__info {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background-color: var(--icon-accent);
+  -webkit-mask: url("../icons/star-10.svg") center / contain no-repeat;
+          mask: url("../icons/star-10.svg") center / contain no-repeat;
+}
+.bog-list-item__info {
+  width: 12px;
+  height: 12px;
+  background-color: currentColor;
+  -webkit-mask-image: url("../icons/info.svg");
+          mask-image: url("../icons/info.svg");
+}
+
+/* ---- Right text slot (amount + secondary) ------------------------------ */
+.bog-list-item__end {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  text-align: right;
+}
+.bog-list-item__value {
+  color: var(--text-primary);
+  font-size: var(--label-large-size);
+  line-height: var(--label-large-line-height);
+  font-weight: var(--label-large-weight);
+  white-space: nowrap;
+}
+.bog-list-item__value-sub {
+  color: var(--text-secondary);
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-line-height);
+  font-weight: var(--body-small-weight);
+  white-space: nowrap;
+}
+
+/* ---- Chevron / selected check ----------------------------------------- */
+.bog-list-item__chevron,
+.bog-list-item[aria-selected="true"]::after {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--icon-primary);
+  -webkit-mask: url("../icons/chevron-right.svg") center / contain no-repeat;
+          mask: url("../icons/chevron-right.svg") center / contain no-repeat;
+}
+.bog-list-item[aria-selected="true"]::after {
+  content: "";
+  -webkit-mask-image: url("../icons/check-12.svg");
+          mask-image: url("../icons/check-12.svg");
+  -webkit-mask-size: 12px;
+          mask-size: 12px;
+}
+
+/* ---- Disabled ----------------------------------------------------------- */
+.bog-list-item:is(:disabled, [aria-disabled="true"]) { color: var(--text-disabled); cursor: default; }
+.bog-list-item:is(:disabled, [aria-disabled="true"]) :is(.bog-list-item__subtitle, .bog-list-item__secondary, .bog-list-item__value, .bog-list-item__value-sub) { color: var(--text-disabled); }
+.bog-list-item:is(:disabled, [aria-disabled="true"]) :is(.bog-list-item__chevron, .bog-list-item__fav) { background-color: var(--icon-disabled); }
+.bog-list-item:is(:disabled, [aria-disabled="true"]) > :is(.bog-icon-holder, .bog-counter) { color: var(--icon-disabled); }
+.bog-list-item:is(:disabled, [aria-disabled="true"]) > :is(.bog-flag, .bog-media-circle, .bog-media-square, .bog-media-rect, .bog-card-art, .bog-illustration) { opacity: 0.5; }
+.bog-list-item:is(:disabled, [aria-disabled="true"]) > .bog-avatar { background: var(--button-disabled); color: var(--text-disabled); }
+
+/* ---- Skeleton: 160×8 bar (+96×8 for 2 lines, 48/160/96 for 3 lines) -- */
+.bog-list-item[data-state="skeleton"] { pointer-events: none; }
+.bog-list-item[data-state="skeleton"] > * { display: none; }
+.bog-list-item[data-state="skeleton"]::after {
+  content: "";
+  width: 160px;
+  height: 8px;
+  border-radius: var(--radius-2x-small);
+  background: var(--support-skeleton);
+}
+.bog-list-item[data-state="skeleton"]:has(.bog-list-item__subtitle)::after {
+  height: 24px;
+  border-radius: 0;
+  background:
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 0 / 160px 8px no-repeat,
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 16px / 96px 8px no-repeat;
+}
+.bog-list-item[data-state="skeleton"]:has(.bog-list-item__secondary) { min-height: 88px; }
+.bog-list-item[data-state="skeleton"]:has(.bog-list-item__secondary)::after {
+  height: 40px;
+  background:
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 0 / 48px 8px no-repeat,
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 16px / 160px 8px no-repeat,
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 32px / 96px 8px no-repeat;
+}
+
+/* ---- List group header ------------------------------------------------- */
+.bog-list-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+}
+.bog-list-group__header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-gap-default);
+  color: var(--text-helper);
+  font-family: var(--font-family-bog);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}

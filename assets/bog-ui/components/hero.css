@@ -1,0 +1,114 @@
+/* ==========================================================================
+   BOG UI — Hero Area
+   Figma: Hero Area (55256:12093). (The Navigation bar above it is a separate component, not built yet.
+   _⚠️ Deprecated Hero Header is not built.)
+
+   <section class="bog-hero">
+     <div class="bog-hero__content">
+       <span class="bog-avatar" data-size="64"><img src="photo.jpg" alt=""></span>      media (optional):
+           Avatar 64 · .bog-media-rect 72 · .bog-illustration 80 · .bog-card-art 80
+       <div class="bog-hero__text">
+         <p class="bog-hero__label">Label</p>                                            optional
+         <h1 class="bog-hero__title">Header text</h1>
+         <p class="bog-hero__desc">Description</p>                                       optional
+       </div>
+       <div class="bog-hero__badges">…loyalty / status badges…</div>                     optional
+     </div>
+     <div class="bog-feedback" data-status="info">…</div>                                optional Feedback
+     <div class="bog-hero__actions">                                                      optional Action
+       <button class="bog-btn" data-type="secondary" data-width="fill">Primary action</button>
+       <button class="bog-btn" data-type="ghost" data-size="small">Text action</button>
+     </div>
+     (or <div class="bog-action-items">…3 Action Items…</div> for the three-button row)
+   </section>
+     data-state="skeleton" on .bog-hero
+     data-gradient    peach | mint (light) · green | brown (dark — text turns white)
+                      Colour covers the whole hero (incl. buttons) and fades out only towards the bottom edge.
+                      Put the Navigation bar inside the hero (first child) so the gradient runs behind it, as in Figma.
+                      For dark gradients use light content inside (e.g. Amount data-color="white",
+                      Feedback/Buttons data-appearance="inverse").
+   ========================================================================== */
+
+.bog-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-gap-default);
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0 var(--spacing-padding-default) 32px;
+  font-family: var(--font-family-bog);
+  text-align: center;
+}
+.bog-hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-gap-default);
+  box-sizing: border-box;
+  width: 100%;
+  padding: 40px 24px var(--spacing-padding-small);
+}
+.bog-hero__content > :first-child:not(.bog-hero__text) { flex: none; }
+.bog-hero__text { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-gap-x-small); width: 100%; }
+.bog-hero .bog-hero__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-hero .bog-hero__title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--title-large-size);
+  line-height: var(--title-large-line-height);
+  font-weight: var(--title-large-weight);
+  letter-spacing: var(--title-large-letter-spacing);
+}
+.bog-hero .bog-hero__desc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+}
+.bog-hero__badges { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--spacing-gap-x-small); }
+.bog-hero > .bog-feedback { text-align: left; }
+.bog-hero__actions { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-gap-small); width: 100%; }
+.bog-hero > .bog-action-items { width: 100%; }
+
+/* ---- Gradient background (Figma "Example / Gradient") --------------------- */
+.bog-hero[data-gradient] {
+  --_g: var(--product-default-layer-01);
+  --_base: transparent;
+  /* Colour holds across the whole hero (content, feedback, buttons) and only fades out at the bottom edge */
+  background:
+    linear-gradient(180deg,
+      var(--_g) 0%,
+      color-mix(in srgb, var(--_g) 90%, transparent) 45%,
+      color-mix(in srgb, var(--_g) 60%, transparent) 75%,
+      color-mix(in srgb, var(--_g) 0%, transparent) 100%),
+    var(--_base);
+}
+.bog-hero[data-gradient="mint"]  { --_g: var(--hero-gradient-mint);  --_base: var(--layer-layer-05); }
+.bog-hero[data-gradient="peach"] { --_base: var(--layer-layer-05); }
+.bog-hero:is([data-gradient="green"], [data-gradient="brown"]) { --_base: var(--hero-dark-background); }
+.bog-hero[data-gradient="green"] { --_g: var(--hero-gradient-green); }
+.bog-hero[data-gradient="brown"] { --_g: var(--hero-gradient-brown); }
+.bog-hero:is([data-gradient="green"], [data-gradient="brown"]) .bog-hero__title { color: var(--text-white-primary); }
+.bog-hero:is([data-gradient="green"], [data-gradient="brown"]) :is(.bog-hero__label, .bog-hero__desc) { color: var(--text-white-secondary); }
+
+/* ---- Skeleton ----------------------------------------------------------- */
+.bog-hero[data-state="skeleton"] { pointer-events: none; }
+.bog-hero[data-state="skeleton"] .bog-hero__content > :first-child:not(.bog-hero__text) { background: var(--support-skeleton); color: transparent; }
+.bog-hero[data-state="skeleton"] .bog-hero__content > :first-child:not(.bog-hero__text) > * { visibility: hidden; }
+.bog-hero[data-state="skeleton"] .bog-hero__text { gap: 6px; }
+.bog-hero[data-state="skeleton"] .bog-hero__text > * { width: 96px; height: 8px; border-radius: var(--radius-2x-small); background: var(--support-skeleton); color: transparent; overflow: hidden; }
+.bog-hero[data-state="skeleton"] .bog-hero__label { width: 48px; }
+.bog-hero[data-state="skeleton"] .bog-hero__title { height: 24px; border-radius: var(--radius-x-small); }
+.bog-hero[data-state="skeleton"] > :not(.bog-hero__content),
+.bog-hero[data-state="skeleton"] .bog-hero__badges { display: none; }

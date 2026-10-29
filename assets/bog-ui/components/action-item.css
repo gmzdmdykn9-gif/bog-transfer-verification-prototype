@@ -1,0 +1,233 @@
+/* ==========================================================================
+   BOG UI — Action Item (+ 2 / 3 Action item rows)
+   Figma page "Action item" (44073:26629): Action item Primary / Secondary / Media / Avatar,
+   _Badge, _Remove Button, 2 Action item, 3 Action item.
+
+   Markup
+     <div class="bog-action-item" data-type="primary">
+       <button type="button" class="bog-action-item__main">
+         <span class="bog-action-item__circle"><span class="bog-icon"></span></span>
+         <span class="bog-action-item__label">Action item label here</span>
+         <span class="bog-action-item__amount">0.01 ₾</span>                optional (Amount)
+       </button>
+     </div>
+
+   Types (data-type): primary (orange circle) · secondary (grey circle).
+   Media / Avatar: put a UI Element in the circle instead of an icon —
+     <span class="bog-action-item__circle"><span class="bog-media-circle" data-size="56"><img …></span></span>
+     <span class="bog-action-item__circle"><span class="bog-avatar" data-size="56">AV</span></span>
+
+   Badge (inside the circle, optional):
+     <span class="bog-action-item__badge">New</span>                        New
+     <span class="bog-action-item__badge" data-badge="dot"></span>          Notification
+     <span class="bog-action-item__badge" data-badge="lock"></span>         Locked
+   Removable: add <button type="button" class="bog-action-item__remove" aria-label="Remove"></button>
+     after the main button (bog-ui.js removes the item; listen for "actionitemremove").
+   States: disabled on the main button · data-state="pressed" | "skeleton" on .bog-action-item.
+
+   Rows: <div class="bog-action-items">…2 or 3 items…</div>
+     2 items → centered, 24px apart · 3 items → spread across the row (Figma 2 / 3 Action item)
+   ========================================================================== */
+
+.bog-action-item {
+  --_circle: var(--button-primary-default);
+  --_circle-pressed: var(--button-primary-pressed);
+  --_icon: var(--icon-white);
+
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  width: 109px;
+  font-family: var(--font-family-bog);
+}
+.bog-action-item[data-type="secondary"] {
+  --_circle: var(--button-secondary-grey-default);
+  --_circle-pressed: var(--button-secondary-grey-pressed);
+  --_icon: var(--icon-primary);
+}
+
+.bog-action-item__main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-action-item__main:focus-visible { outline: none; }
+.bog-action-item__main:focus-visible .bog-action-item__circle { box-shadow: 0 0 0 2px var(--text-accent); }
+
+.bog-action-item__circle {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--_circle);
+  color: var(--_icon);
+  transition: background-color 100ms ease;
+}
+.bog-action-item__circle > .bog-icon { width: 24px; height: 24px; }
+/* Media / Avatar: the UI Element fills the circle */
+.bog-action-item__circle:has(> :is(.bog-media-circle, .bog-avatar, .bog-flag)) { background: none; }
+
+.bog-action-item__label {
+  display: -webkit-box;
+  overflow: hidden;
+  width: 100%;
+  color: var(--text-primary);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow-wrap: anywhere;
+}
+.bog-action-item__amount {
+  margin-top: calc(var(--spacing-gap-2x-small) - var(--spacing-gap-x-small));
+  color: var(--text-error);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+  white-space: nowrap;
+}
+
+/* ---- Pressed ------------------------------------------------------------ */
+.bog-action-item__main:active:not(:disabled) .bog-action-item__circle,
+.bog-action-item[data-state="pressed"] .bog-action-item__circle { background-color: var(--_circle-pressed); }
+.bog-action-item__main:active:not(:disabled) .bog-action-item__circle > .bog-media-circle::after,
+.bog-action-item[data-state="pressed"] .bog-action-item__circle > .bog-media-circle::after {
+  background: var(--layer-alpha-pressed-01);
+}
+
+/* ---- Disabled ----------------------------------------------------------- */
+.bog-action-item__main:disabled { cursor: default; }
+.bog-action-item__main:disabled .bog-action-item__circle { background-color: var(--button-disabled); color: var(--icon-disabled); }
+.bog-action-item__main:disabled .bog-action-item__circle:has(> :is(.bog-media-circle, .bog-flag)) { background: none; }
+.bog-action-item__main:disabled .bog-action-item__circle > :is(.bog-media-circle, .bog-flag) { opacity: 0.5; }
+.bog-action-item__main:disabled .bog-action-item__circle > .bog-avatar { background: var(--button-disabled); color: var(--text-disabled); }
+.bog-action-item__main:disabled :is(.bog-action-item__label, .bog-action-item__amount) { color: var(--text-disabled); }
+.bog-action-item:has(.bog-action-item__main:disabled) .bog-action-item__remove { display: none; }
+
+/* ---- Badges (top-right of the circle) ----------------------------------- */
+.bog-action-item__badge {
+  position: absolute;
+  z-index: 1;
+  top: -4px;
+  right: -12px;
+  box-sizing: border-box;
+  height: 20px;
+  padding: var(--spacing-padding-2x-small) var(--spacing-padding-x-small);
+  border-radius: var(--radius-full);
+  background: var(--badge-feature-purple-layer-01);
+  color: var(--badge-feature-purple-layer-03);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.bog-action-item__badge[data-badge="dot"] {
+  top: 2px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  background: var(--status-error-02);
+  box-shadow: 0 0 0 var(--border-width-default) var(--border-inverse-primary);
+  font-size: 0;
+}
+.bog-action-item__badge[data-badge="lock"] {
+  top: -2px;
+  right: 3px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  background: var(--layer-inverse-01);
+  font-size: 0;
+}
+.bog-action-item__badge[data-badge="lock"]::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background-color: var(--icon-inverse-primary-static);
+  -webkit-mask: url("../icons/lock-12.svg") center / contain no-repeat;
+          mask: url("../icons/lock-12.svg") center / contain no-repeat;
+}
+
+/* ---- Remove button: 16px red circle with a minus, 32px tap target ------- */
+.bog-action-item__remove {
+  position: absolute;
+  z-index: 2;
+  top: -10px;
+  left: calc(50% + 1px);
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-action-item__remove::before {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  background: var(--status-error-02);
+}
+.bog-action-item__remove::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 12px;
+  height: 12px;
+  background-color: var(--icon-white);
+  -webkit-mask: url("../icons/minus-12.svg") center / 10px no-repeat;
+          mask: url("../icons/minus-12.svg") center / 10px no-repeat;
+}
+.bog-action-item[data-removing] { transition: opacity 180ms ease, transform 180ms ease; opacity: 0; transform: scale(0.8); }
+
+/* ---- Skeleton: 56px circle + 109×8 and 56×8 bars ------------------------ */
+.bog-action-item[data-state="skeleton"] { align-items: center; gap: var(--spacing-gap-small); pointer-events: none; }
+.bog-action-item[data-state="skeleton"] > * { display: none; }
+.bog-action-item[data-state="skeleton"]::before {
+  content: "";
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--support-skeleton);
+}
+.bog-action-item[data-state="skeleton"]::after {
+  content: "";
+  width: 109px;
+  height: 20px;
+  background:
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 0 / 109px 8px no-repeat,
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 26.5px 12px / 56px 8px no-repeat;
+}
+
+/* ---- Rows: 2 items centered 24px apart, 3 items spread ----------------- */
+.bog-action-items {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px;
+}
+.bog-action-items:has(> :nth-child(3)) { justify-content: space-between; gap: 0; }
+.bog-action-items:has(> :nth-child(3)) > .bog-action-item { flex: 1 1 0; max-width: 109px; }

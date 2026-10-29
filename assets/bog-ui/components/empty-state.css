@@ -1,0 +1,98 @@
+/* ==========================================================================
+   BOG UI — Empty State
+   Figma: Empty State (46774:84590)
+
+   <div class="bog-empty" data-type="error">
+     <p class="bog-empty__title">Nothing here yet</p>
+     <p class="bog-empty__desc">Use Empty State to show messages when there is no content.</p>
+     <div class="bog-empty__actions"><button class="bog-btn" data-type="neutral">Try again</button></div>   optional
+   </div>
+     data-type        error | warning | success | info | custom
+     data-appearance  inverse (dark backgrounds — use a White button there)
+     data-state       skeleton
+   Custom: put any 64px visual first, e.g. <span class="bog-illustration" data-size="64"></span>
+   ========================================================================== */
+
+.bog-empty {
+  --_bg: var(--status-error-alpha-01);
+  --_ic: var(--icon-error);
+  --_glyph: url("../icons/glyph-alert-48.svg");
+  --_gs: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-gap-default);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 288px;
+  margin-inline: auto;
+  font-family: var(--font-family-bog);
+  text-align: center;
+}
+/* 64px status circle (::before) with the glyph laid over it (::after) */
+.bog-empty { position: relative; }
+.bog-empty:not([data-type="custom"])::before {
+  content: "";
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: var(--_bg);
+}
+.bog-empty:not([data-type="custom"]):not([data-state="skeleton"])::after {
+  content: "";
+  position: absolute;
+  top: calc(32px - var(--_gs) / 2);
+  left: calc(50% - var(--_gs) / 2);
+  width: var(--_gs);
+  height: var(--_gs);
+  background-color: var(--_ic);
+  -webkit-mask: var(--_glyph) center / contain no-repeat;
+          mask: var(--_glyph) center / contain no-repeat;
+}
+.bog-empty[data-type="warning"] { --_bg: var(--status-warning-alpha-01); --_ic: var(--text-warning); }
+.bog-empty[data-type="success"] { --_bg: var(--status-success-alpha-01); --_ic: var(--icon-success); --_glyph: url("../icons/check-24.svg"); --_gs: 24px; }
+.bog-empty[data-type="info"]    { --_bg: var(--status-info-alpha-01);    --_ic: var(--icon-info);    --_glyph: url("../icons/glyph-info-48.svg"); }
+.bog-empty > :first-child:not(p, div) { flex: none; }
+
+.bog-empty__title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--subtitle-large-size);
+  line-height: var(--subtitle-large-line-height);
+  font-weight: var(--subtitle-large-weight);
+  letter-spacing: var(--subtitle-large-letter-spacing);
+}
+.bog-empty__desc {
+  margin: calc(var(--spacing-gap-small) - var(--spacing-gap-default)) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+}
+.bog-empty__actions { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-gap-small); }
+
+/* ---- Inverse Static ---------------------------------------------------- */
+.bog-empty[data-appearance="inverse"] { --_bg: var(--status-error-static-02); --_ic: var(--icon-black); }
+.bog-empty[data-appearance="inverse"][data-type="warning"] { --_bg: var(--status-warning-02); }
+.bog-empty[data-appearance="inverse"][data-type="success"] { --_bg: var(--status-inverse-success-static); }
+.bog-empty[data-appearance="inverse"][data-type="info"]    { --_bg: var(--status-info-static-02); --_ic: var(--icon-white); }
+.bog-empty[data-appearance="inverse"] .bog-empty__title { color: var(--text-white-primary); }
+.bog-empty[data-appearance="inverse"] .bog-empty__desc  { color: var(--text-white-secondary); }
+
+/* ---- Skeleton: circle + 96×16, 128×8, 68×8 bars + small button ---------- */
+.bog-empty[data-state="skeleton"] { --_sk: var(--support-skeleton); pointer-events: none; }
+.bog-empty[data-appearance="inverse"][data-state="skeleton"] { --_sk: var(--support-skeleton-inverse-static); }
+.bog-empty[data-state="skeleton"]::before { background: var(--_sk); }
+.bog-empty[data-state="skeleton"] > :is(.bog-empty__title, .bog-empty__desc) { display: none; }
+.bog-empty[data-state="skeleton"]::after {
+  content: "";
+  order: 1;
+  width: 128px;
+  height: 48px;
+  background:
+    linear-gradient(var(--_sk), var(--_sk)) center 0 / 96px 16px no-repeat,
+    linear-gradient(var(--_sk), var(--_sk)) center 24px / 128px 8px no-repeat,
+    linear-gradient(var(--_sk), var(--_sk)) center 40px / 68px 8px no-repeat;
+}
+.bog-empty[data-state="skeleton"] > .bog-empty__actions { order: 2; }

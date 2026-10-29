@@ -1,0 +1,328 @@
+/* ==========================================================================
+   BOG UI — Button & Icon Button
+   Figma: Button (38686:29051), Icon Button (38686:29095) — "BOG Design" source only.
+
+   Markup
+     <button class="bog-btn" data-type="primary" data-size="medium">Label</button>
+     <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Close">
+       <span class="bog-icon"></span>
+     </button>
+
+   Attributes
+     data-type        see the type blocks below (default: primary)
+     data-size        medium (default) | small      — text-* types are always 24px
+     data-appearance  themed (default) | inverse     — inverse = "Inverse Static" (dark surfaces);
+                      only primary, secondary, neutral, ghost, text-primary have inverse designs
+     data-state       pressed | loading | skeleton  — pressed also happens on :active
+     disabled         native attribute (or aria-disabled="true")
+     data-width       fill — stretch to container width
+   ========================================================================== */
+
+.bog-btn,
+.bog-icon-btn {
+  /* per-type colors, overridden below */
+  --_bg: var(--button-primary-default);
+  --_bg-pressed: var(--button-primary-pressed);
+  --_fg: var(--text-on-primary);
+  --_bg-disabled: var(--button-disabled);
+  --_fg-disabled: var(--text-disabled);
+  --_spin: var(--border-disabled);
+  --_skeleton: var(--support-skeleton);
+  --_underline: none;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-gap-small);
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+  overflow: visible;
+  background: var(--_bg);
+  color: var(--_fg);
+  font-family: var(--font-family-bog);
+  text-decoration: var(--_underline);
+  text-underline-offset: 2px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 120ms ease;
+}
+.bog-btn:focus-visible,
+.bog-icon-btn:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 2px; }
+
+/* ---- Sizes ---------------------------------------------------------- */
+.bog-btn {
+  height: 48px;
+  padding: 0 var(--spacing-padding-default);
+  border-radius: var(--radius-button-medium);
+  font-size: var(--label-large-size);
+  line-height: var(--label-large-line-height);
+  font-weight: var(--label-large-weight);
+}
+.bog-btn[data-size="small"] {
+  height: 32px;
+  padding: 0 var(--spacing-padding-medium);
+  border-radius: var(--radius-button-small);
+  font-size: var(--label-medium-size);
+  line-height: var(--label-medium-line-height);
+  font-weight: var(--label-medium-weight);
+}
+.bog-btn:is([data-type="text-primary"], [data-type="text-black"], [data-type="text-white"]) {
+  height: 24px;
+  padding: 0 var(--spacing-padding-2x-small);
+  border-radius: var(--radius-button-small);
+  font-size: var(--label-medium-size);
+  line-height: var(--label-medium-line-height);
+  font-weight: var(--label-medium-weight);
+}
+/* Figma "Tap Area": 32px-high hit target around 24px text buttons */
+.bog-btn:is([data-type="text-primary"], [data-type="text-black"], [data-type="text-white"])::before {
+  content: "";
+  position: absolute;
+  inset: -4px -4px;
+}
+.bog-btn[data-width="fill"] { display: flex; width: 100%; }
+
+.bog-icon-btn {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: var(--radius-full);
+}
+.bog-icon-btn[data-size="small"] { width: 32px; height: 32px; }
+
+/* ---- Notification dot (Icon Button "Notification" option) ------------ */
+.bog-icon-btn .bog-badge-dot {
+  position: absolute;
+  top: 1px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  box-sizing: border-box;
+  border-radius: var(--radius-full);
+  background: var(--status-error-02);
+  box-shadow: 0 0 0 var(--border-width-default) var(--border-border-03);
+}
+.bog-icon-btn[data-size="small"] .bog-badge-dot { top: 0; right: 1px; }
+
+/* ---- Types ---------------------------------------------------------- */
+:is(.bog-btn, .bog-icon-btn)[data-type="secondary"] {
+  --_bg: var(--button-secondary-default);
+  --_bg-pressed: var(--button-secondary-pressed);
+  --_fg: var(--text-accent);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="neutral"] {
+  --_bg: var(--button-secondary-grey-default);
+  --_bg-pressed: var(--button-secondary-grey-pressed);
+  --_fg: var(--text-primary);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="ghost"] {
+  --_bg: var(--button-text-default);
+  --_bg-pressed: var(--button-text-pressed);
+  --_fg: var(--text-accent);
+  --_bg-disabled: transparent;
+  --_underline: underline;
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="neutral-ghost"] { /* Icon Button only */
+  --_bg: var(--button-text-default);
+  --_bg-pressed: var(--button-secondary-grey-pressed);
+  --_fg: var(--icon-primary);
+  --_bg-disabled: transparent;
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="negative"] {
+  --_bg: var(--button-negative-default);
+  --_bg-pressed: var(--button-negative-pressed);
+  --_fg: var(--text-white-primary);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="negative-secondary"] {
+  --_bg: var(--button-negative-secondary-default);
+  --_bg-pressed: var(--button-negative-secondary-pressed);
+  --_fg: var(--text-error);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="negative-ghost"] {
+  --_bg: transparent;
+  --_bg-pressed: var(--button-negative-secondary-pressed);
+  --_fg: var(--text-error);
+  --_bg-disabled: transparent;
+  --_underline: underline;
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="positive"] {
+  --_bg: var(--button-positive-default);
+  --_bg-pressed: var(--button-positive-pressed);
+  --_fg: var(--text-white-primary);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="positive-secondary"] {
+  --_bg: var(--button-positive-secondary-default);
+  --_bg-pressed: var(--button-positive-secondary-pressed);
+  --_fg: var(--text-success);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="positive-ghost"] {
+  --_bg: transparent;
+  --_bg-pressed: var(--button-positive-secondary-pressed);
+  --_fg: var(--text-success);
+  --_bg-disabled: transparent;
+  --_underline: underline;
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="black"] {
+  --_bg: var(--button-black-default);
+  --_bg-pressed: var(--button-black-pressed);
+  --_fg: var(--text-white-primary);
+  --_bg-disabled: var(--button-black-disabled);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="black-secondary"] {
+  --_bg: var(--button-secondary-black-default);
+  --_bg-pressed: var(--button-secondary-black-pressed);
+  --_fg: var(--text-black);
+  --_bg-disabled: var(--button-black-disabled);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="black-ghost"] {
+  --_bg: var(--button-black-ghost-default);
+  --_bg-pressed: var(--button-secondary-black-pressed);
+  --_fg: var(--text-black);
+  --_bg-disabled: transparent;
+  --_underline: underline;
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="white"] {
+  --_bg: var(--button-white-default);
+  --_bg-pressed: var(--button-white-pressed);
+  --_fg: var(--text-black);
+  --_bg-disabled: var(--button-black-disabled);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="white-ghost"] {
+  --_bg: var(--button-white-ghost-default);
+  --_bg-pressed: var(--button-white-ghost-pressed);
+  --_fg: var(--text-white-primary);
+  --_bg-disabled: transparent;
+  --_underline: underline;
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="invert"] {
+  --_bg: var(--button-inverse-default);
+  --_bg-pressed: var(--button-inverse-pressed);
+  --_fg: var(--text-primary);
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="text-primary"] {
+  --_bg: var(--button-text-default);
+  --_bg-pressed: var(--button-secondary-pressed);
+  --_fg: var(--text-accent);
+  --_bg-disabled: transparent;
+  --_underline: underline;
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="text-black"] {
+  --_bg: var(--button-black-ghost-default);
+  --_bg-pressed: var(--button-secondary-black-pressed);
+  --_fg: var(--text-black);
+  --_bg-disabled: transparent;
+  --_underline: underline;
+}
+:is(.bog-btn, .bog-icon-btn)[data-type="text-white"] {
+  --_bg: var(--button-white-ghost-default);
+  --_bg-pressed: var(--button-white-ghost-pressed);
+  --_fg: var(--text-white-primary);
+  --_bg-disabled: transparent;
+  --_underline: underline;
+}
+/* Icon Button: no underline, and ghost presses to the lighter secondary tint */
+.bog-icon-btn { text-decoration: none; }
+.bog-icon-btn[data-type="ghost"] { --_bg-pressed: var(--button-secondary-default); }
+
+/* ---- Inverse Static appearance (for dark / photo backgrounds) -------- */
+:is(.bog-btn, .bog-icon-btn)[data-appearance="inverse"] {
+  --_bg-disabled: var(--button-inverse-disabled-static);
+  --_fg-disabled: var(--support-static-02);
+  --_spin: var(--support-support-02);
+  --_skeleton: var(--support-skeleton-inverse-static);
+}
+:is(.bog-btn, .bog-icon-btn)[data-appearance="inverse"][data-type="primary"],
+:is(.bog-btn, .bog-icon-btn)[data-appearance="inverse"]:not([data-type]) {
+  --_bg: var(--button-primary-inverse-default-static);
+  --_bg-pressed: var(--button-primary-inverse-pressed-static);
+  --_fg: var(--text-on-primary);
+}
+:is(.bog-btn, .bog-icon-btn)[data-appearance="inverse"][data-type="secondary"] {
+  --_bg: var(--button-secondary-inverse-default-static);
+  --_bg-pressed: var(--button-secondary-inverse-pressed-static);
+  --_fg: var(--background-inverse-accent-static);
+}
+:is(.bog-btn, .bog-icon-btn)[data-appearance="inverse"][data-type="neutral"] {
+  --_bg: var(--button-secondary-grey-inverse-default-static);
+  --_bg-pressed: var(--button-secondary-grey-inverse-pressed-static);
+  --_fg: var(--text-white-primary);
+}
+:is(.bog-btn, .bog-icon-btn)[data-appearance="inverse"][data-type="ghost"] {
+  --_bg-pressed: var(--button-text-inverse-pressed-static);
+  --_fg: var(--background-inverse-accent-static);
+  --_bg-disabled: transparent;
+}
+:is(.bog-btn, .bog-icon-btn)[data-appearance="inverse"][data-type="text-primary"] {
+  --_bg-pressed: var(--button-secondary-inverse-pressed-static);
+  --_fg: var(--background-inverse-accent-static);
+  --_bg-disabled: transparent;
+}
+.bog-icon-btn[data-appearance="inverse"][data-type="ghost"] { --_bg-pressed: var(--button-secondary-inverse-default-static); }
+
+/* ---- States --------------------------------------------------------- */
+.bog-btn:active:not(:disabled, [aria-disabled="true"], [data-state]),
+.bog-icon-btn:active:not(:disabled, [aria-disabled="true"], [data-state]),
+.bog-btn[data-state="pressed"],
+.bog-icon-btn[data-state="pressed"] {
+  background: var(--_bg-pressed);
+}
+
+.bog-btn:is(:disabled, [aria-disabled="true"], [data-state="loading"]),
+.bog-icon-btn:is(:disabled, [aria-disabled="true"], [data-state="loading"]) {
+  background: var(--_bg-disabled);
+  color: var(--_fg-disabled);
+  cursor: default;
+}
+.bog-btn[data-state="loading"],
+.bog-icon-btn[data-state="loading"] { pointer-events: none; }
+
+/* Loading: spinner after the label (Button) or in place of the icon (Icon Button) */
+.bog-btn[data-state="loading"]::after,
+.bog-icon-btn[data-state="loading"]::after {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--_spin);
+  -webkit-mask: url("../icons/spinner.svg") center / contain no-repeat;
+          mask: url("../icons/spinner.svg") center / contain no-repeat;
+  animation: bog-spin 800ms linear infinite;
+}
+.bog-icon-btn[data-state="loading"] > * { display: none; }
+
+/* Skeleton: keeps the size, hides content, shimmers */
+.bog-btn[data-state="skeleton"],
+.bog-icon-btn[data-state="skeleton"] {
+  background: var(--_skeleton);
+  color: transparent;
+  text-decoration: none;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bog-btn[data-state="skeleton"] > *,
+.bog-icon-btn[data-state="skeleton"] > * { visibility: hidden; }
+.bog-btn[data-state="skeleton"]::before,
+.bog-icon-btn[data-state="skeleton"]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -64px;
+  width: 64px;
+  background: linear-gradient(90deg, #77777700 0%, #6c70751a 48.4%, #77777700 100%);
+  animation: bog-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes bog-spin { to { transform: rotate(360deg); } }
+@keyframes bog-shimmer {
+  from { left: -64px; }
+  to   { left: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bog-btn::after, .bog-icon-btn::after,
+  .bog-btn::before, .bog-icon-btn::before { animation: none; }
+}

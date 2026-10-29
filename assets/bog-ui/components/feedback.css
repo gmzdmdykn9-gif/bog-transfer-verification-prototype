@@ -1,0 +1,260 @@
+/* ==========================================================================
+   BOG UI — Feedback (Inline + Toast)
+   Figma: Feedback (22112:354)
+
+   Inline (in the page)
+     <div class="bog-feedback" data-status="positive" role="status">
+       <div class="bog-feedback__text">
+         <p class="bog-feedback__title">Payment sent</p>                              optional (Title)
+         <p class="bog-feedback__desc">Small description goes here</p>
+       </div>
+       <button type="button" class="bog-feedback__close" aria-label="Close"></button>   optional
+       <div class="bog-feedback__actions">                                               optional
+         <button class="bog-btn" data-type="ghost" data-size="small">Button</button>
+         <button class="bog-btn" data-type="primary" data-size="small">Button</button>
+       </div>
+     </div>
+       data-status      positive | warning | negative | info | neutral
+       data-appearance  inverse (Inverse Static)
+       data-state       loading (spinner instead of the icon) | skeleton
+     Neutral icon: put <span class="bog-icon"></span> as the first child.
+
+   Toast (floats over the screen, 12px from the edges)
+     BOG.toast({ status: "positive", title: "Saved", text: "…" })        stays 3 s (timeout: ms to change, 0 = until closed)
+     or wrap a .bog-feedback in <div class="bog-toast-region"> yourself.
+   The close button and BOG.toast need bog-ui.js.
+   ========================================================================== */
+
+.bog-feedback {
+  --_bg: var(--status-neutral-02);
+  --_line: var(--border-border-01);
+  --_badge: transparent;
+  --_mask: none;
+  --_fg: var(--text-primary);
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  grid-template-areas: "icon text close" "actions actions actions";
+  column-gap: var(--spacing-gap-medium);
+  row-gap: var(--spacing-gap-medium);
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-padding-default);
+  border-radius: var(--radius-medium);
+  background: var(--_bg);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--_line);
+  color: var(--_fg);
+  font-family: var(--font-family-bog);
+}
+/* Status icon: 16px coloured circle with the glyph, 4px from the top */
+.bog-feedback::before {
+  content: "";
+  grid-area: icon;
+  width: 16px;
+  height: 16px;
+  margin-top: var(--spacing-padding-x-small);
+  background-color: var(--_badge);
+  -webkit-mask: var(--_mask) center / contain no-repeat;
+          mask: var(--_mask) center / contain no-repeat;
+}
+.bog-feedback > .bog-icon:first-child { grid-area: icon; margin-top: var(--spacing-padding-x-small); color: var(--icon-primary); }
+.bog-feedback:has(> .bog-icon:first-child)::before { display: none; }
+
+.bog-feedback__text { grid-area: text; display: flex; flex-direction: column; gap: var(--spacing-gap-x-small); min-width: 0; }
+.bog-feedback__title {
+  margin: 0;
+  font-size: var(--label-large-size);
+  line-height: var(--label-large-line-height);
+  font-weight: var(--label-large-weight);
+}
+.bog-feedback__desc {
+  margin: 0;
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+}
+/* No title: description uses Body/Large */
+.bog-feedback__text:not(:has(.bog-feedback__title)) .bog-feedback__desc {
+  font-size: var(--body-large-size);
+  line-height: var(--body-large-line-height);
+  font-weight: var(--body-large-weight);
+}
+
+.bog-feedback__close {
+  grid-area: close;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: var(--_close, var(--icon-primary));
+  -webkit-mask: url("../icons/close.svg") center / contain no-repeat;
+          mask: url("../icons/close.svg") center / contain no-repeat;
+  cursor: pointer;
+}
+.bog-feedback__close::after { content: ""; position: absolute; inset: -4px; }
+.bog-feedback__actions { grid-area: actions; display: flex; justify-content: flex-end; gap: var(--spacing-gap-small); }
+
+/* ---- Statuses ---------------------------------------------------------- */
+.bog-feedback[data-status="positive"] { --_bg: var(--status-success-01); --_line: var(--status-success-alpha-01); --_badge: var(--status-success-02); --_mask: url("../icons/status-success.svg"); }
+.bog-feedback[data-status="warning"]  { --_bg: var(--status-warning-01); --_line: var(--status-warning-alpha-01); --_badge: var(--status-warning-02); --_mask: url("../icons/status-alert.svg"); }
+.bog-feedback[data-status="negative"] { --_bg: var(--status-error-01);   --_line: var(--status-error-alpha-01);   --_badge: var(--status-error-02);   --_mask: url("../icons/status-alert.svg"); }
+.bog-feedback[data-status="info"]     { --_bg: var(--status-info-01);    --_line: var(--status-info-alpha-01);    --_badge: var(--status-info-02);    --_mask: url("../icons/info-fill.svg"); }
+
+/* ---- Inverse Static ---------------------------------------------------- */
+.bog-feedback[data-appearance="inverse"] { --_bg: var(--status-neutral-static-02); --_line: var(--border-white-alpha-01); --_fg: var(--text-white-primary); --_close: var(--icon-white-secondary); }
+.bog-feedback[data-appearance="inverse"] > .bog-icon:first-child { color: var(--icon-white-secondary); }
+.bog-feedback[data-appearance="inverse"][data-status="positive"] { --_bg: var(--status-success-static-01); --_line: var(--status-success-alpha-02); --_badge: var(--status-inverse-success-static); }
+.bog-feedback[data-appearance="inverse"][data-status="warning"]  { --_bg: var(--status-warning-static-01); --_line: var(--status-warning-alpha-02); }
+.bog-feedback[data-appearance="inverse"][data-status="negative"] { --_bg: var(--status-error-static-01);   --_line: var(--status-error-alpha-02);   --_badge: var(--status-error-static-02); }
+.bog-feedback[data-appearance="inverse"][data-status="info"]     { --_bg: var(--status-info-static-01);    --_line: var(--status-info-alpha-02);    --_badge: var(--status-info-static-02); }
+
+/* ---- Loading / Skeleton ------------------------------------------------ */
+.bog-feedback[data-state="loading"]::before {
+  background-color: var(--border-selected);
+  -webkit-mask-image: url("../icons/spinner.svg");
+          mask-image: url("../icons/spinner.svg");
+  animation: bog-spin 800ms linear infinite;
+}
+.bog-feedback[data-appearance="inverse"][data-state="loading"]::before { background-color: var(--background-inverse-accent-static); }
+.bog-feedback[data-state="loading"] > .bog-icon:first-child { display: none; }
+.bog-feedback[data-state="loading"]:has(> .bog-icon:first-child)::before { display: block; }
+.bog-feedback[data-state="skeleton"] {
+  --_sk: var(--support-skeleton);
+  min-height: 100px;
+  background: var(--support-skeleton-background);
+  box-shadow: none;
+  pointer-events: none;
+}
+.bog-feedback[data-state="skeleton"] > * { display: none; }
+.bog-feedback[data-state="skeleton"]::before {
+  position: absolute;
+  inset: 16px;
+  width: auto;
+  height: auto;
+  margin: 0;
+  -webkit-mask: none;
+          mask: none;
+  background:
+    linear-gradient(var(--_sk), var(--_sk)) 0 0 / 96px 12px no-repeat,
+    linear-gradient(var(--_sk), var(--_sk)) 0 24px / 180px 8px no-repeat,
+    linear-gradient(var(--_sk), var(--_sk)) 100% 100% / 48px 20px no-repeat;
+}
+.bog-feedback[data-state="skeleton"] { position: relative; }
+.bog-feedback[data-appearance="inverse"][data-state="skeleton"] { --_sk: var(--support-skeleton-inverse-static); background: var(--support-skeleton-inverse-background-static); }
+
+.bog-feedback[data-removing] { transition: opacity 180ms ease, transform 180ms ease; opacity: 0; transform: translateY(-6px); }
+
+/* ---- Toast region ------------------------------------------------------- */
+.bog-toast-region {
+  position: fixed;
+  z-index: 1100;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+  padding: max(var(--spacing-padding-medium), env(safe-area-inset-top)) var(--spacing-padding-medium) 0;
+  pointer-events: none;
+}
+.bog-toast-region[data-position="bottom"] { top: auto; bottom: 0; padding: 0 var(--spacing-padding-medium) max(var(--spacing-padding-medium), env(safe-area-inset-bottom)); }
+/* Toast motion (from the reference recording):
+   enter — slides down from above the screen (~290ms), overshoots ~6px, settles (~230ms)
+   stay  — 3s by default (BOG.toast timeout)
+   exit  — slides straight back up, fast (~140ms), no fade                                  */
+.bog-toast-region > .bog-feedback {
+  pointer-events: auto;
+  animation: bog-toast-in 520ms both;
+}
+.bog-toast-region > .bog-feedback[data-leaving] { animation: bog-toast-out 140ms cubic-bezier(0.4, 0, 1, 1) forwards; }
+@keyframes bog-toast-in {
+  0%   { transform: translateY(calc(-100% - 96px)); animation-timing-function: cubic-bezier(0.15, 0.7, 0.3, 1); }
+  56%  { transform: translateY(6px); animation-timing-function: cubic-bezier(0.4, 0, 0.4, 1); }
+  100% { transform: translateY(0); }
+}
+@keyframes bog-toast-out {
+  to { transform: translateY(calc(-100% - 96px)); }
+}
+/* Bottom placement mirrors the motion */
+.bog-toast-region[data-position="bottom"] > .bog-feedback { animation-name: bog-toast-in-up; }
+.bog-toast-region[data-position="bottom"] > .bog-feedback[data-leaving] { animation-name: bog-toast-out-down; }
+@keyframes bog-toast-in-up {
+  0%   { transform: translateY(calc(100% + 96px)); animation-timing-function: cubic-bezier(0.15, 0.7, 0.3, 1); }
+  56%  { transform: translateY(-6px); animation-timing-function: cubic-bezier(0.4, 0, 0.4, 1); }
+  100% { transform: translateY(0); }
+}
+@keyframes bog-toast-out-down {
+  to { transform: translateY(calc(100% + 96px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bog-toast-region > .bog-feedback, .bog-toast-region > .bog-feedback[data-leaving] { animation-duration: 1ms; }
+}
+
+/* ==========================================================================
+   Inline Message — Figma: Inline Message (14033:39774)
+   One-line status message used on its own or inside other components (list rows, cards, inputs…).
+     <span class="bog-inline-message" data-status="info">Message text</span>
+       data-status      neutral (default) | positive | negative | warning | info | black (on light static bg)
+       data-size        medium (default, 16px icon) | small (12px icon)
+       data-align       right — right-aligned (Alignment=Right)
+       data-appearance  inverse (Inverse Static)
+       data-disabled · data-state="skeleton"
+     Hide the icon: data-icon="false"
+   ========================================================================== */
+.bog-inline-message {
+  --_c: var(--text-secondary);
+  --_i: var(--icon-secondary, var(--text-secondary));
+  --_mask: url("../icons/info.svg");
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  color: var(--_c);
+  font-family: var(--font-family-bog);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-inline-message::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--_i);
+  -webkit-mask: var(--_mask) center / contain no-repeat;
+          mask: var(--_mask) center / contain no-repeat;
+}
+.bog-inline-message[data-size="small"]::before { width: 12px; height: 12px; }
+.bog-inline-message[data-icon="false"]::before { display: none; }
+.bog-inline-message[data-align="right"] { display: flex; justify-content: flex-end; text-align: right; }
+
+.bog-inline-message[data-status="positive"] { --_c: var(--text-success); --_i: var(--icon-success); --_mask: url("../icons/status-success.svg"); }
+.bog-inline-message[data-status="negative"] { --_c: var(--text-error);   --_i: var(--icon-error);   --_mask: url("../icons/status-alert.svg"); }
+.bog-inline-message[data-status="warning"]  { --_c: var(--text-warning); --_i: var(--icon-warning); --_mask: url("../icons/status-alert.svg"); }
+.bog-inline-message[data-status="info"]     { --_c: var(--text-info);    --_i: var(--icon-info);    --_mask: url("../icons/info-fill.svg"); }
+.bog-inline-message[data-status="black"]    { --_c: var(--text-black);   --_i: var(--icon-black); }
+/* aliases used elsewhere in the library */
+.bog-inline-message[data-status="success"] { --_c: var(--text-success); --_i: var(--icon-success); --_mask: url("../icons/status-success.svg"); }
+.bog-inline-message[data-status="error"]   { --_c: var(--text-error);   --_i: var(--icon-error);   --_mask: url("../icons/status-alert.svg"); }
+
+.bog-inline-message[data-appearance="inverse"] { --_c: var(--text-white-secondary); --_i: var(--icon-white-secondary); }
+.bog-inline-message[data-appearance="inverse"]:is([data-status="positive"], [data-status="success"]) { --_c: var(--status-inverse-success-static); --_i: var(--status-inverse-success-static); }
+.bog-inline-message[data-appearance="inverse"]:is([data-status="negative"], [data-status="error"])   { --_c: var(--status-inverse-error-static);   --_i: var(--status-inverse-error-static); }
+.bog-inline-message[data-appearance="inverse"][data-status="warning"] { --_c: var(--status-inverse-warning-static); --_i: var(--status-inverse-warning-static); }
+.bog-inline-message[data-appearance="inverse"][data-status="info"]    { --_c: var(--status-inverse-info-static);    --_i: var(--status-inverse-info-static); }
+.bog-inline-message[data-appearance="inverse"][data-status="black"]   { --_c: var(--text-black); --_i: var(--icon-black); }
+
+.bog-inline-message[data-disabled] { --_c: var(--text-disabled); --_i: var(--icon-disabled); }
+.bog-inline-message[data-appearance="inverse"][data-disabled] { --_c: var(--support-static-02); --_i: var(--support-static-02); }
+
+.bog-inline-message[data-state="skeleton"] {
+  width: 96px;
+  height: 16px;
+  overflow: hidden;
+  border-radius: var(--radius-x-small);
+  background: var(--support-skeleton);
+  color: transparent;
+}
+.bog-inline-message[data-state="skeleton"][data-size="small"] { height: 12px; }
+.bog-inline-message[data-state="skeleton"][data-appearance="inverse"] { background: var(--support-skeleton-inverse-static); }
+.bog-inline-message[data-state="skeleton"]::before { visibility: hidden; }

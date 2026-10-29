@@ -1,0 +1,69 @@
+/* ==========================================================================
+   BOG UI — Phone Number Input
+   Figma: Phone Number Input (61610:720)
+
+   International — country selector (flag + code) opens a Bottom Sheet
+     <div class="bog-field bog-phone-input">
+       <label class="bog-field__box">
+         <button type="button" class="bog-phone-input__country">
+           <span class="bog-flag" data-size="20"><img src="bog-ui/assets/flags/ge.svg" alt=""></span>
+           <span class="bog-phone-input__code">+995</span>
+         </button>
+         <span class="bog-field__text">
+           <span class="bog-field__label">Phone number</span>
+           <input class="bog-field__input" type="tel" inputmode="tel" placeholder="XXX XX XX XX">
+         </span>
+         <button type="button" class="bog-field__clear" aria-label="Clear"></button>
+       </label>
+       <p class="bog-field__message">Message text</p>        optional
+     </div>
+   Tapping the country opens a built-in Bottom Sheet (flag, name, code) — bog-ui.js, list in BOG.countries.
+   Own sheet instead: data-sheet-open="id" on the button; rows need data-dial and data-flag.
+
+   Numbers are formatted as you type with the country's pattern (4th column of BOG.countries).
+   National — leave the country button out; optional data-format="XXX XX XX XX" on .bog-phone-input (default Georgia).
+   States, validation (error | warning | success), loading, read-only, disabled and skeleton work like Text Input.
+   ========================================================================== */
+
+.bog-phone-input .bog-field__box:has(> .bog-phone-input__country) { gap: var(--spacing-gap-small); }
+/* Clear button visible → 12px right padding (Typing) */
+.bog-phone-input:is(:focus-within:has(.bog-field__input:not(:placeholder-shown)), [data-state="typing"]):not(:has(.bog-field__input[readonly])) .bog-field__box {
+  padding-right: var(--spacing-padding-medium);
+}
+
+.bog-phone-input__country {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--spacing-gap-m-small);
+  margin: 0;
+  padding: var(--spacing-padding-small) 0;
+  border: 0;
+  background: none;
+  color: var(--_value);
+  font-family: inherit;
+  font-size: var(--body-large-size);
+  line-height: var(--body-large-line-height);
+  font-weight: var(--body-large-weight);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-phone-input__code {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-gap-2x-small);
+}
+.bog-phone-input__code::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: var(--_icon);
+  -webkit-mask: url("../icons/chevron-down.svg") center / contain no-repeat;
+          mask: url("../icons/chevron-down.svg") center / contain no-repeat;
+}
+.bog-phone-input__country:active { opacity: 0.7; }
+.bog-phone-input:has(.bog-field__input:is(:disabled, [readonly])) .bog-phone-input__country { pointer-events: none; }
+.bog-phone-input:has(.bog-field__input[readonly]) .bog-phone-input__code::after { display: none; }
+.bog-phone-input:has(.bog-field__input:disabled) .bog-phone-input__country .bog-flag { opacity: 0.5; }
+/* Loading hides trailing elements only; the country selector stays */
+.bog-phone-input[data-state="loading"] .bog-field__box > .bog-phone-input__country { display: inline-flex; }

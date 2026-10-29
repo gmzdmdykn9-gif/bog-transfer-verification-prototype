@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inline Message — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+<style>/*#matrix-td*/ .panel td{min-width:140px}</style>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="inline-message"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Inline Message</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">One-line status message with icon — used on its own and inside inputs, list rows and cards. Neutral, positive, negative, warning, info and black; medium or small; left or right aligned; Themed and Inverse.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;span class="bog-inline-message" data-status="negative"&gt;Insufficient funds&lt;/span&gt;
+&lt;span class="bog-inline-message" data-status="info" data-size="small"&gt;Updated 2 min ago&lt;/span&gt;
+&lt;span class="bog-inline-message" data-status="positive" data-align="right"&gt;Paid&lt;/span&gt;</code></pre>
+
+    <h2>Statuses × sizes</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="panel"><table id="light"></table></div>
+      <div class="panel dark"><table id="dark"></table></div>
+    </div>
+
+<script>
+  const ST = ["neutral", "positive", "negative", "warning", "info"];
+  const im = (st, size, inv, extra = "") => `<span class="bog-inline-message" data-status="${st}" data-size="${size}"${inv ? ' data-appearance="inverse"' : ""}${extra}>Message text</span>`;
+  const table = inv => "<tr><th></th><th>Medium</th><th>Small</th><th>Right aligned</th></tr>" +
+    (inv ? [...ST, "black"] : ST).map(s => `<tr><th><code>${s}</code></th><td>${im(s, "medium", inv)}</td><td>${im(s, "small", inv)}</td><td style="width:160px">${im(s, "medium", inv, ' data-align="right"')}</td></tr>`).join("") +
+    `<tr><th>Disabled</th><td>${im("neutral", "medium", inv, " data-disabled")}</td><td>${im("neutral", "small", inv, " data-disabled")}</td><td></td></tr>` +
+    `<tr><th>Skeleton</th><td>${im("neutral", "medium", inv, ' data-state="skeleton"')}</td><td>${im("neutral", "small", inv, ' data-state="skeleton"')}</td><td></td></tr>`;
+  document.getElementById("light").innerHTML = table(false);
+  document.getElementById("dark").innerHTML = table(true).replace("<code>black</code>", "<code>black</code> <small>(light static bg)</small>");
+</script>
+  </main>
+</div>
+</body>
+</html>

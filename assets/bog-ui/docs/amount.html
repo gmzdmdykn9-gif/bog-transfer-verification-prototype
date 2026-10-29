@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amount — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="amount"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Amount</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Balance with currency symbol, optional currency selector and per-currency account balances. White static is shown on orange, Inverse on dark.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-amount" data-size="large"&gt;
+  &lt;button type="button" class="bog-amount__main"&gt;
+    &lt;span class="bog-amount__value"&gt;1,000.00&lt;/span&gt;
+    &lt;span class="bog-amount__currency"&gt;₾&lt;/span&gt;
+    &lt;span class="bog-amount__selector"&gt;&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;div class="bog-amount__balances"&gt;
+    &lt;span class="bog-amount__balance" data-active&gt;&lt;span class="bog-amount__num"&gt;2.00&lt;/span&gt;₾&lt;/span&gt;
+    &lt;span class="bog-amount__balance"&gt;&lt;span class="bog-amount__num"&gt;0.00&lt;/span&gt;$&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+  <h2>Amount</h2>
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px;">
+    <div class="panel"><div class="fields" style="grid-template-columns:160px 1fr" id="amount-default"></div></div>
+    <div class="panel"><div class="fields" style="grid-template-columns:160px 1fr" id="amount-black"></div></div>
+    <div class="panel orange"><div class="fields" style="grid-template-columns:160px 1fr" id="amount-white"></div></div>
+    <div class="panel dark"><div class="fields" style="grid-template-columns:160px 1fr" id="amount-inverse"></div></div>
+  </div>
+
+
+  </main>
+</div>
+<script>
+  function amount(o) {
+    const a = ` data-size="${o.size}" data-color="${o.color}"` + (o.align ? ` data-align="${o.align}"` : "") + (o.hidden ? " data-hidden" : "") + (o.skeleton ? ` data-state="skeleton"` : "");
+    return `<div class="bog-amount"${a}><button type="button" class="bog-amount__main"><span class="bog-amount__value">1,000.00</span><span class="bog-amount__currency">₾</span>` +
+      (o.selector === false ? "" : `<span class="bog-amount__selector"></span>`) + `</button><div class="bog-amount__balances">` +
+      `<span class="bog-amount__balance" data-active><span class="bog-amount__num">2.00</span>₾</span><span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>$</span>` +
+      `<span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>€</span><span class="bog-amount__balance"><span class="bog-amount__num">0.00</span>£</span></div></div>`;
+  }
+  for (const color of ["default", "black", "white", "inverse"]) {
+    let h = "";
+    for (const size of ["large", "medium", "small"]) {
+      h += `<div class="row-label"><code>${size}</code></div>${amount({size, color})}`;
+      h += `<div class="row-label"><code>${size} · hidden</code></div>${amount({size, color, hidden: true, selector: false})}`;
+      h += `<div class="row-label"><code>${size} · skeleton</code></div>${amount({size, color, skeleton: true})}`;
+    }
+    h += `<div class="row-label"><code>large · center</code></div><div style="width:252px">${amount({size: "large", color, align: "center"})}</div>`;
+    document.getElementById("amount-" + color).innerHTML = h;
+  }
+
+</script>
+</body>
+</html>

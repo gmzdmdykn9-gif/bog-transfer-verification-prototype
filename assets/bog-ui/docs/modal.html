@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modal Dialog — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="modal"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Modal Dialog</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Centered dialog over a dim background: Standard, Minimal, Cover and Destructive.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;button class="bog-btn" data-type="primary" data-modal-open="my-modal"&gt;Open&lt;/button&gt;
+
+&lt;div class="bog-modal" id="my-modal" hidden&gt;
+  &lt;div class="bog-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="my-modal-title"&gt;
+    &lt;header class="bog-modal__header"&gt;
+      &lt;h2 class="bog-modal__title" id="my-modal-title"&gt;Modal dialog&lt;/h2&gt;
+      &lt;button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Close" data-modal-close&gt;&lt;span class="bog-icon" data-icon="close"&gt;&lt;/span&gt;&lt;/button&gt;
+    &lt;/header&gt;
+    &lt;div class="bog-modal__body"&gt;
+      &lt;p class="bog-modal__text"&gt;Body text&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;footer class="bog-modal__footer"&gt;
+      &lt;button type="button" class="bog-btn" data-type="primary" data-size="medium"&gt;Confirm&lt;/button&gt;
+      &lt;button type="button" class="bog-btn" data-type="neutral" data-size="medium" data-modal-close&gt;Cancel&lt;/button&gt;
+    &lt;/footer&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Minimal: no header --&gt;
+&lt;div class="bog-modal__body" data-layout="minimal"&gt;&lt;p class="bog-modal__text"&gt;…&lt;/p&gt;&lt;button … data-modal-close&gt;X&lt;/button&gt;&lt;/div&gt;
+
+&lt;!-- Cover: put before the body, the title moves into the body --&gt;
+&lt;div class="bog-modal__cover"&gt;&lt;img src="photo.jpg" alt=""&gt;
+  &lt;button type="button" class="bog-icon-btn" data-type="invert" data-size="small" aria-label="Close" data-modal-close&gt;&lt;span class="bog-icon" data-icon="close"&gt;&lt;/span&gt;&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class="bog-modal__cover" data-type="illustration"&gt;&lt;span class="bog-illustration"&gt;&lt;img src="…" alt=""&gt;&lt;/span&gt; …X…&lt;/div&gt;
+
+&lt;!-- JS: BOG.openModal("my-modal"), BOG.closeModal("my-modal") --&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <p class="lead">Open each layout. Close with the X, a button, Escape or a tap on the dim background.</p>
+    <div class="panel"><div class="bog-sheet-host" style="position:relative;width:375px;height:700px;border-radius:24px;background:#fff;box-shadow:0 0 0 8px #1b1c1d;padding:48px 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;overflow:hidden" id="demo"></div></div>
+
+    <h2>Layouts</h2>
+    <div class="panel" style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;background:#0f0f10ad" id="static"></div>
+
+<script>
+
+  const TXT = "Over the years, the company has held the leading position in the banking sector, offering customers a wide range of services.";
+  const X = (t = "neutral") => `<button type="button" class="bog-icon-btn" data-type="${t}" data-size="small" aria-label="Close" data-modal-close><span class="bog-icon" data-icon="close"></span></button>`;
+  const footer = (dual, neg) => `<footer class="bog-modal__footer"><button type="button" class="bog-btn" data-type="${neg ? "negative" : "primary"}" data-size="medium" data-modal-close>${neg ? "Delete" : "Confirm"}</button>${dual ? '<button type="button" class="bog-btn" data-type="neutral" data-size="medium" data-modal-close>Cancel</button>' : ""}</footer>`;
+  const dialog = (o) => {
+    let h = "";
+    if (o.layout === "standard") h += `<header class="bog-modal__header"><h2 class="bog-modal__title">Modal dialog</h2>${o.neg ? "" : X()}</header><div class="bog-modal__body"><p class="bog-modal__text">${TXT}</p></div>`;
+    if (o.layout === "minimal") h += `<div class="bog-modal__body" data-layout="minimal"><p class="bog-modal__text">${TXT}</p>${X()}</div>`;
+    if (o.layout === "cover") h += (o.ill ? `<div class="bog-modal__cover" data-type="illustration"><span class="bog-illustration"><img src="../assets/illustrations/404.svg" alt=""></span>${X("invert")}</div>`
+                                          : `<div class="bog-modal__cover"><img src="../assets/media/placeholder.png" alt="">${X("invert")}</div>`) +
+                                  `<div class="bog-modal__body"><h2 class="bog-modal__title">Modal dialog</h2><p class="bog-modal__text">${TXT}</p></div>`;
+    return `<div class="bog-modal__dialog" role="dialog" aria-modal="true" aria-label="Modal dialog">${h}${footer(o.dual, o.neg)}</div>`;
+  };
+  const CASES = [["Standard", {layout: "standard"}], ["Standard · Dual", {layout: "standard", dual: 1}], ["Minimal", {layout: "minimal"}], ["Cover · Image", {layout: "cover", dual: 1}], ["Cover · Illustration", {layout: "cover", ill: 1}], ["Destructive", {layout: "standard", dual: 1, neg: 1}]];
+  document.getElementById("demo").innerHTML = CASES.map(([n], i) => `<button type="button" class="bog-btn" data-type="neutral" data-size="medium" data-modal-open="m${i}">${n}</button>`).join("") +
+    CASES.map(([, o], i) => `<div class="bog-modal" id="m${i}" hidden>${dialog(o)}</div>`).join("");
+  document.getElementById("static").innerHTML = CASES.map(([n, o]) => `<div style="width:343px"><p style="color:#fff;margin:0 0 8px;font-size:13px">${n}</p><div class="bog-modal" data-open style="position:static;padding:0;background:none">${dialog(o)}</div></div>`).join("");
+
+</script>
+  </main>
+</div>
+</body>
+</html>

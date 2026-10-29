@@ -1,0 +1,230 @@
+/* ==========================================================================
+   BOG UI — Badges
+   Figma: Badge page (40620:3172) — Status Badge, Currency Badge, Loyalty Badge, Feature Badge.
+   (_🚫 New Badge is deprecated in Figma and not built.)
+
+   Status Badge
+     <span class="bog-status-badge" data-status="success">Badge</span>
+       data-status   success | warning | negative | info | neutral | neutral-static
+       data-size     medium (default, 24px, with icon) | small (20px, no icon)
+       data-contrast high                          (High contrast=True)
+       data-state    skeleton
+       Neutral icon: put <span class="bog-icon"></span> first inside the badge.
+
+   Currency Badge
+     <span class="bog-currency-badge">GEL</span>
+       data-color    default | black | white | inverse
+       data-size     large (default, 24px) | small (20px)
+       data-disabled
+
+   Loyalty Badge
+     <span class="bog-loyalty-badge" data-type="mr">5X MR Points</span>
+       data-type     mr | plus | cashback | discount | solo | other
+       data-contrast high · data-state skeleton
+
+   Feature Badge
+     <span class="bog-feature-badge" data-type="new">New</span>
+       data-type     new | beta | availability       · data-disabled
+   ========================================================================== */
+
+:is(.bog-status-badge, .bog-currency-badge, .bog-loyalty-badge, .bog-feature-badge) {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  font-family: var(--font-family-bog);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* ---- Status Badge ------------------------------------------------------ */
+.bog-status-badge {
+  --_bg: var(--status-neutral-alpha-02);
+  --_fg: var(--text-primary);
+  --_ic: var(--icon-primary);
+  --_mask: none;
+  gap: var(--spacing-gap-x-small);
+  height: 24px;
+  padding: 0 var(--spacing-padding-small) 0 var(--spacing-padding-x-small);
+  border-radius: var(--radius-full);
+  background: var(--_bg);
+  color: var(--_fg);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-status-badge::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--_ic);
+  -webkit-mask: var(--_mask) center / contain no-repeat;
+          mask: var(--_mask) center / contain no-repeat;
+}
+.bog-status-badge > .bog-icon { width: 16px; height: 16px; color: var(--_ic); -webkit-mask-size: 14px; mask-size: 14px; }
+/* Neutral has no built-in icon: drop the pseudo; padding stays 4px left only if an icon is supplied */
+.bog-status-badge:is([data-status="neutral"], [data-status="neutral-static"], :not([data-status]))::before { display: none; }
+.bog-status-badge:is([data-status="neutral"], [data-status="neutral-static"], :not([data-status])):not(:has(> .bog-icon)) { padding-left: var(--spacing-padding-small); }
+
+.bog-status-badge[data-status="success"]  { --_bg: var(--status-success-alpha-01); --_ic: var(--icon-success); --_mask: url("../icons/status-success.svg"); }
+.bog-status-badge[data-status="warning"]  { --_bg: var(--status-warning-alpha-01); --_ic: var(--icon-warning); --_mask: url("../icons/status-alert.svg"); }
+.bog-status-badge[data-status="negative"] { --_bg: var(--status-error-alpha-01);   --_ic: var(--icon-error);   --_mask: url("../icons/status-alert.svg"); }
+.bog-status-badge[data-status="info"]     { --_bg: var(--status-info-alpha-01);    --_ic: var(--icon-info);    --_mask: url("../icons/info-fill.svg"); }
+.bog-status-badge[data-status="neutral-static"] { --_bg: var(--support-alpha-01); --_fg: var(--text-black); --_ic: var(--icon-black); }
+
+/* High contrast */
+.bog-status-badge[data-contrast="high"][data-status="success"]  { --_bg: var(--status-success-02); --_fg: var(--text-inverse-primary); --_ic: var(--icon-inverse-primary); }
+.bog-status-badge[data-contrast="high"][data-status="warning"]  { --_bg: var(--status-warning-02); --_fg: var(--text-black); --_ic: var(--icon-black); }
+.bog-status-badge[data-contrast="high"][data-status="negative"] { --_bg: var(--status-error-02);   --_fg: var(--text-inverse-primary); --_ic: var(--icon-inverse-primary); }
+.bog-status-badge[data-contrast="high"][data-status="info"]     { --_bg: var(--status-info-02);    --_fg: var(--text-white-primary); --_ic: var(--icon-white); }
+.bog-status-badge[data-contrast="high"]:is([data-status="neutral"], :not([data-status])) { --_bg: var(--status-neutral-02); }
+.bog-status-badge[data-contrast="high"][data-status="neutral-static"] { --_bg: var(--status-neutral-01); }
+
+/* Small: 20px, text only */
+.bog-status-badge[data-size="small"] { height: 20px; padding: 0 var(--spacing-padding-small); gap: 0; }
+.bog-status-badge[data-size="small"]::before,
+.bog-status-badge[data-size="small"] > .bog-icon { display: none; }
+
+/* Skeleton */
+.bog-status-badge[data-state="skeleton"] { min-width: 94px; border-radius: var(--radius-x-small); background: var(--support-skeleton); color: transparent; }
+.bog-status-badge[data-state="skeleton"][data-size="small"] { min-width: 80px; }
+.bog-status-badge[data-state="skeleton"]::before,
+.bog-status-badge[data-state="skeleton"] > * { visibility: hidden; }
+
+/* ---- Currency Badge ---------------------------------------------------- */
+.bog-currency-badge {
+  --_c: var(--text-primary);
+  --_b: var(--border-selected-neutral);
+  min-width: 40px;
+  height: 24px;
+  padding: var(--spacing-padding-2x-small) var(--spacing-padding-x-small);
+  border-radius: var(--radius-x-small);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--_b);
+  color: var(--_c);
+  font-size: var(--subtitle-medium-size);
+  line-height: var(--subtitle-medium-line-height);
+  font-weight: var(--subtitle-medium-weight);
+  text-transform: uppercase;
+}
+.bog-currency-badge[data-size="small"] {
+  min-width: 32px;
+  height: 20px;
+  padding: var(--spacing-padding-2x-small);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: var(--label-xsmall-weight);
+}
+.bog-currency-badge[data-color="black"]   { --_c: var(--text-black);         --_b: var(--border-black); }
+.bog-currency-badge[data-color="white"]   { --_c: var(--text-white-primary); --_b: var(--border-white); }
+.bog-currency-badge[data-color="inverse"] { --_c: var(--text-inverse-primary-badge); --_b: var(--border-inverse-primary); }
+.bog-currency-badge[data-disabled]:is([data-color="default"], :not([data-color])) { --_c: var(--text-disabled); --_b: var(--border-disabled); }
+.bog-currency-badge[data-disabled]:is([data-color="black"], [data-color="white"], [data-color="inverse"]) { opacity: 0.4; }
+
+/* ---- Loyalty Badge ----------------------------------------------------- */
+.bog-loyalty-badge {
+  gap: var(--spacing-gap-x-small);
+  height: 24px;
+  padding: var(--spacing-padding-x-small) var(--spacing-padding-small);
+  border-radius: var(--radius-full);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-loyalty-badge[data-type="mr"]       { background: var(--badge-loyalty-ice-blue-alpha-01);      color: var(--badge-loyalty-ice-blue-layer-03); }
+.bog-loyalty-badge[data-type="plus"]     { background: var(--badge-loyalty-vivid-orange-alpha-01);  color: var(--badge-loyalty-vivid-orange-layer-03); }
+.bog-loyalty-badge[data-type="cashback"] { background: var(--badge-loyalty-royal-purple-alpha-01);  color: var(--badge-loyalty-royal-purple-layer-03); }
+.bog-loyalty-badge[data-type="discount"] { background: var(--badge-loyalty-vivid-magenta-alpha-01); color: var(--badge-loyalty-vivid-magenta-layer-03); }
+.bog-loyalty-badge[data-type="solo"]     { background: var(--badge-segment-regal-blue-alpha-01);    color: var(--badge-segment-regal-blue-layer-03); padding-left: var(--spacing-padding-x-small); }
+.bog-loyalty-badge:is([data-type="other"], :not([data-type])) { background: var(--decorative-coolgray-layer-alpha-04); color: var(--decorative-coolgray-layer-03); }
+.bog-loyalty-badge[data-contrast="high"][data-type="mr"]       { background: var(--badge-loyalty-ice-blue-layer-02);      color: var(--badge-loyalty-ice-blue-layer-01); }
+.bog-loyalty-badge[data-contrast="high"][data-type="plus"]     { background: var(--badge-loyalty-vivid-orange-layer-02);  color: var(--badge-loyalty-vivid-orange-layer-01); }
+.bog-loyalty-badge[data-contrast="high"][data-type="cashback"] { background: var(--badge-loyalty-royal-purple-layer-02);  color: var(--badge-loyalty-royal-purple-layer-01); }
+.bog-loyalty-badge[data-contrast="high"][data-type="discount"] { background: var(--badge-loyalty-vivid-magenta-layer-02); color: var(--badge-loyalty-vivid-magenta-layer-01); }
+.bog-loyalty-badge[data-contrast="high"][data-type="solo"]     { background: var(--badge-segment-regal-blue-layer-02);    color: var(--badge-segment-regal-blue-layer-01); }
+.bog-loyalty-badge[data-contrast="high"]:is([data-type="other"], :not([data-type])) { background: var(--decorative-coolgray-layer-02); color: var(--text-inverse-primary); }
+/* SOLO brand mark (full color, not tinted) */
+.bog-loyalty-badge[data-type="solo"]::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background: url("../icons/solo.svg") center / contain no-repeat;
+}
+.bog-loyalty-badge[data-state="skeleton"] {
+  min-width: 48px;
+  padding: 0;
+  border-radius: var(--radius-x-small);
+  background: var(--support-skeleton-background);
+  color: transparent;
+}
+.bog-loyalty-badge[data-state="skeleton"]::before { visibility: hidden; }
+
+/* ---- Feature Badge ----------------------------------------------------- */
+.bog-feature-badge {
+  height: 20px;
+  padding: var(--spacing-padding-2x-small) var(--spacing-padding-x-small);
+  border-radius: var(--radius-full);
+  background: var(--badge-feature-purple-layer-01);
+  color: var(--badge-feature-purple-layer-03);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: 700;
+}
+.bog-feature-badge[data-type="beta"]         { background: var(--badge-feature-cyan-layer-01); color: var(--badge-feature-cyan-layer-03); }
+.bog-feature-badge[data-type="availability"] { background: var(--badge-feature-lima-layer-01); color: var(--badge-feature-lima-layer-03); }
+.bog-feature-badge[data-disabled] { background: var(--layer-disabled); color: var(--text-disabled); }
+
+/* ==========================================================================
+   Notification Badge — Figma: Notification Badge (33453:5224)
+     <span class="bog-notification-badge">4</span>        Single Number (16×16)
+     <span class="bog-notification-badge">44+</span>      Multi Number (pill)
+     <span class="bog-notification-badge"></span>         Dot (8×8) — leave it empty
+       data-status      accent (default) | negative | warning | positive | neutral | neutral-static
+       data-appearance  inverse
+   Inside an Icon Button, Chip, Avatar, Media Circle or Icon Placeholder it sits on the top-right corner.
+   ========================================================================== */
+.bog-notification-badge {
+  --_bg: var(--status-accent-02);
+  --_fg: var(--text-inverse-primary);
+  --_line: transparent;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 3px; /* 26px for "44+" like Figma */
+  border-radius: var(--radius-full);
+  background: var(--_bg);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--_line);
+  color: var(--_fg);
+  font-family: var(--font-family-bog);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: 700;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.bog-notification-badge:empty { min-width: 8px; width: 8px; height: 8px; padding: 0; }
+.bog-notification-badge[data-status="negative"] { --_bg: var(--status-error-02); }
+.bog-notification-badge[data-status="positive"] { --_bg: var(--status-success-02); }
+.bog-notification-badge[data-status="warning"]  { --_bg: var(--status-warning-02); --_fg: var(--text-black); }
+.bog-notification-badge[data-status="neutral"]  { --_bg: var(--status-neutral-02); --_fg: var(--text-primary); --_line: var(--border-border-01); }
+.bog-notification-badge[data-status="neutral-static"] { --_bg: var(--status-neutral-01); --_fg: var(--text-black); }
+.bog-notification-badge[data-appearance="inverse"] { --_bg: var(--background-inverse-accent-static); --_fg: var(--text-black); }
+.bog-notification-badge[data-appearance="inverse"][data-status="negative"] { --_bg: var(--status-error-static-02); }
+.bog-notification-badge[data-appearance="inverse"][data-status="positive"] { --_bg: var(--status-inverse-success-static); }
+.bog-notification-badge[data-appearance="inverse"][data-status="warning"]  { --_bg: var(--status-warning-02); }
+.bog-notification-badge[data-appearance="inverse"][data-status="neutral"]  { --_bg: var(--status-neutral-static-02); --_fg: var(--text-white-secondary); --_line: var(--support-static-02); }
+
+/* Corner placement inside other components */
+:is(.bog-icon-btn, .bog-chip, .bog-avatar, .bog-media-circle, .bog-icon-holder, .bog-action-item__circle) > .bog-notification-badge {
+  position: absolute;
+  z-index: 1;
+  top: -4px;
+  right: -4px;
+}
+:is(.bog-icon-btn, .bog-chip, .bog-avatar, .bog-media-circle, .bog-icon-holder, .bog-action-item__circle) > .bog-notification-badge:empty { top: 1px; right: 4px; }

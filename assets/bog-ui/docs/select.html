@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Select — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+<style>
+  .phones { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  .phone { position: relative; width: 375px; height: 700px; border-radius: 32px; background: #fff; box-shadow: 0 0 0 8px #1b1c1d, 0 12px 40px #1b1c1d33; }
+  .phone__screen { display: flex; flex-direction: column; gap: 16px; padding: 56px 16px 16px; }
+  .phone__screen h3 { margin: 0 0 4px; font-size: 22px; }
+  .phone .bog-sheet__panel { max-height: calc(100% - 40px); }
+  .caption { margin: 12px 0 0; color: var(--support-static-02); font-size: 12px; text-align: center; }
+
+</style>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="select"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Select</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Looks like a Text Input with a chevron. Tapping it opens a <strong>Bottom Sheet</strong> with the options; picking one fills the Select and closes the sheet. List the options in a hidden native <code>&lt;select&gt;</code> and the sheet is built automatically, or point it at your own sheet for custom rows (flags, subtitles).</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;!-- Quickest: options in a hidden native &lt;select&gt;; the bottom sheet is built for you --&gt;
+&lt;div class="bog-select"&gt;
+  &lt;button type="button" class="bog-select__box"&gt;
+    &lt;span class="bog-select__text"&gt;
+      &lt;span class="bog-select__label"&gt;Country&lt;/span&gt;
+      &lt;span class="bog-select__value"&gt;&lt;/span&gt;
+    &lt;/span&gt;
+    &lt;span class="bog-select__chevron"&gt;&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;select class="bog-select__native" name="country"&gt;
+    &lt;option value="GE"&gt;Georgia&lt;/option&gt;
+    &lt;option value="US"&gt;United States&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;
+
+&lt;!-- Custom sheet (flags, subtitles…): point data-sheet at a Bottom Sheet whose
+     .bog-list-item options have data-value --&gt;
+&lt;div class="bog-select" data-sheet="currency-sheet"&gt; …same button… &lt;/div&gt;
+&lt;div class="bog-sheet" id="currency-sheet" hidden&gt; …
+  &lt;button type="button" class="bog-list-item" data-value="GEL"&gt;
+    &lt;span class="bog-flag" data-size="32"&gt;&lt;img src="bog-ui/assets/flags/ge.svg" alt=""&gt;&lt;/span&gt;
+    &lt;span class="bog-list-item__content"&gt;&lt;span class="bog-list-item__label"&gt;GEL&lt;/span&gt;&lt;/span&gt;
+  &lt;/button&gt; …
+&lt;/div&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <div class="phones">
+      <div>
+        <div class="phone bog-sheet-host">
+          <div class="phone__screen">
+            <h3>Transfer</h3>
+            <div class="bog-select">
+              <button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Country</span><span class="bog-select__value"></span></span><span class="bog-select__chevron"></span></button>
+              <select class="bog-select__native" name="country"><option value="GE">Georgia</option><option value="US">United States</option><option value="DE">Germany</option><option value="GB">United Kingdom</option><option value="TR">Türkiye</option><option value="AE" disabled>United Arab Emirates (unavailable)</option></select>
+              <p class="bog-select__message">Options come from a native &lt;select&gt;</p>
+            </div>
+            <div class="bog-select" data-sheet="currency-sheet">
+              <button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Currency</span><span class="bog-select__value">GEL · Georgian Lari</span></span><span class="bog-select__chevron"></span></button>
+              <p class="bog-select__message">Custom sheet with flags</p>
+            </div>
+            <p id="select-log" class="caption" style="text-align:left">Pick something…</p>
+          </div>
+          <div class="bog-sheet" id="currency-sheet" hidden data-home-indicator>
+            <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="cur-title">
+              <header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title" id="cur-title">Currency</h2><p class="bog-sheet__desc">Choose the account currency</p></div></header>
+              <div class="bog-sheet__content" data-type="list"><div class="bog-list" role="listbox"><button type="button" class="bog-list-item" data-value="GEL" data-label="GEL · Georgian Lari"><span class="bog-flag" data-size="32"><img src="../assets/flags/ge.svg" alt=""></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">GEL</span><span class="bog-list-item__label">Georgian Lari</span></span></button><button type="button" class="bog-list-item" data-value="USD" data-label="USD · US Dollar"><span class="bog-flag" data-size="32"><img src="../assets/flags/us.svg" alt=""></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">USD</span><span class="bog-list-item__label">US Dollar</span></span></button><button type="button" class="bog-list-item" data-value="EUR" data-label="EUR · Euro"><span class="bog-flag" data-size="32"><img src="../assets/flags/eu.svg" alt=""></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">EUR</span><span class="bog-list-item__label">Euro</span></span></button><button type="button" class="bog-list-item" data-value="GBP" data-label="GBP · British Pound"><span class="bog-flag" data-size="32"><img src="../assets/flags/gb.svg" alt=""></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">GBP</span><span class="bog-list-item__label">British Pound</span></span></button></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Variants</h2>
+    <div class="panel"><div class="fields"><div class="row-label"><code>Default</code></div><div class="bog-select"><button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Select an option</span><span class="bog-select__value"></span></span><span class="bog-select__chevron"></span></button></div><div class="row-label"><code>Filled</code></div><div class="bog-select"><button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Option</span><span class="bog-select__value">Value</span></span><span class="bog-select__chevron"></span></button></div><div class="row-label"><code>Pressed (tap it)</code></div><div class="bog-select"><button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Select an option</span><span class="bog-select__value"></span></span><span class="bog-select__chevron"></span></button></div><div class="row-label"><code>Default · Error</code></div><div class="bog-select" data-validation="error"><button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Select an option</span><span class="bog-select__value"></span></span><span class="bog-select__chevron"></span></button><p class="bog-select__message">Message text</p></div><div class="row-label"><code>Filled · Error</code></div><div class="bog-select" data-validation="error"><button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Option</span><span class="bog-select__value">Value</span></span><span class="bog-select__chevron"></span></button><p class="bog-select__message">Message text</p></div><div class="row-label"><code>Filled · Warning</code></div><div class="bog-select" data-validation="warning"><button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Option</span><span class="bog-select__value">Value</span></span><span class="bog-select__chevron"></span></button><p class="bog-select__message">Message text</p></div><div class="row-label"><code>Filled · Success</code></div><div class="bog-select" data-validation="success"><button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Option</span><span class="bog-select__value">Value</span></span><span class="bog-select__chevron"></span></button><p class="bog-select__message">Message text</p></div><div class="row-label"><code>Read-only</code></div><div class="bog-select"><button type="button" class="bog-select__box" aria-readonly="true"><span class="bog-select__text"><span class="bog-select__label">Option</span><span class="bog-select__value">Value</span></span><span class="bog-select__chevron"></span></button></div><div class="row-label"><code>Disabled · Filled</code></div><div class="bog-select"><button type="button" class="bog-select__box" disabled><span class="bog-select__text"><span class="bog-select__label">Option</span><span class="bog-select__value">Value</span></span><span class="bog-select__chevron"></span></button></div><div class="row-label"><code>Disabled · Default</code></div><div class="bog-select"><button type="button" class="bog-select__box" disabled><span class="bog-select__text"><span class="bog-select__label">Select an option</span><span class="bog-select__value"></span></span><span class="bog-select__chevron"></span></button></div><div class="row-label"><code>Left icon</code></div><div class="bog-select"><button type="button" class="bog-select__box"><span class="bog-icon"></span><span class="bog-select__text"><span class="bog-select__label">Select an option</span><span class="bog-select__value"></span></span><span class="bog-select__chevron"></span></button></div><div class="row-label"><code>Skeleton</code></div><div class="bog-select" data-state="skeleton"><button type="button" class="bog-select__box"><span class="bog-select__text"><span class="bog-select__label">Select an option</span><span class="bog-select__value"></span></span><span class="bog-select__chevron"></span></button></div></div></div>
+<script>
+  document.querySelector('[data-sheet="currency-sheet"]').setAttribute("data-value", "GEL");
+  document.addEventListener("change", e => {
+    if (e.target.classList && e.target.classList.contains("bog-select")) document.getElementById("select-log").textContent = "change → " + e.detail.value + " (" + e.detail.label + ")";
+  });
+</script>
+  </main>
+</div>
+</body>
+</html>

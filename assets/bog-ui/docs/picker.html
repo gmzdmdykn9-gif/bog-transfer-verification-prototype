@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account Picker — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+<style>
+  .pickers { display: grid; grid-template-columns: repeat(auto-fill, 343px); gap: 24px; align-items: start; }
+  .pickers .cell { width: 343px; }
+</style>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="picker"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Account Picker</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Selectable account card. It's assembled from library parts: <strong>Amount</strong> (medium), account balances, and a <strong>UI Element</strong> in the media slot (card art, illustration or media circle). Currency chips use <strong>Country Flags</strong>. Put pickers in a <code>.bog-picker-group</code> to make them single-select.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-picker-group"&gt;
+  &lt;div class="bog-picker" data-selected&gt;
+    &lt;div class="bog-picker__box" role="button" tabindex="0"&gt;
+      &lt;div class="bog-picker__head"&gt;
+        &lt;div class="bog-picker__info"&gt;
+          &lt;span class="bog-picker__title"&gt;Multi-currency Account&lt;/span&gt;
+          &lt;div class="bog-amount" data-size="medium"&gt;&lt;div class="bog-amount__main"&gt;
+            &lt;span class="bog-amount__value"&gt;1,000.00&lt;/span&gt;&lt;span class="bog-amount__currency"&gt;₾&lt;/span&gt;
+          &lt;/div&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;span class="bog-card-art" data-size="56"&gt;&lt;img src="card.png" alt=""&gt;&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="bog-amount__balances"&gt;
+        &lt;span class="bog-amount__balance" data-active&gt;&lt;span class="bog-amount__num"&gt;1,000.00&lt;/span&gt;₾&lt;/span&gt;
+        &lt;span class="bog-amount__balance"&gt;&lt;span class="bog-amount__num"&gt;0.00&lt;/span&gt;$&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;!-- optional: tap the card to expand and show the chips --&gt;
+      &lt;div class="bog-picker__expand"&gt;
+        &lt;div class="bog-picker__chips"&gt;
+          &lt;button type="button" class="bog-currency-chip" aria-pressed="true"&gt;
+            &lt;span class="bog-flag" data-size="20"&gt;&lt;img src="../assets/flags/ge.svg" alt=""&gt;&lt;/span&gt;₾
+          &lt;/button&gt;
+          …
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <p class="lead">Tap a multi-currency card: it gets selected and expands to show the currency chips (Figma <em>Expandable</em>). Tap it again to collapse. Opening another card closes the first. Tap a chip to switch currency.</p>
+    <div class="panel"><div class="bog-picker-group pickers" id="demo"></div></div>
+
+    <h2>Variants</h2>
+    <div class="panel"><div class="pickers" id="variants"></div></div>
+  </main>
+</div>
+<script>
+  const bal = (vals) => `<div class="bog-amount__balances">${vals.map(([n, s, a]) => `<span class="bog-amount__balance"${a ? " data-active" : ""}><span class="bog-amount__num">${n}</span>${s}</span>`).join("")}</div>`;
+  const BAL4 = bal([["1,000.00", "₾", 1], ["50.00", "$", 1], ["0.00", "€"], ["0.00", "£"]]);
+  const amount = `<div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">1,000.00</span><span class="bog-amount__currency">₾</span></div></div>`;
+  const chips = `<div class="bog-picker__chips">` + [["ge", "₾", 1], ["us", "$"], ["eu", "€"], ["gb", "£"]].map(([f, s, on]) =>
+    `<button type="button" class="bog-currency-chip" aria-pressed="${on ? "true" : "false"}"><span class="bog-flag" data-size="20"><img src="../assets/flags/${f}.svg" alt=""></span>${s}</button>`).join("") + `</div>`;
+  const TYPES = {
+    multi:  (o) => `<div class="bog-picker__head"><div class="bog-picker__info"><span class="bog-picker__title">Multi-currency Account${o.fav ? '<span class="bog-picker__fav"></span>' : ""}</span>${amount}</div><span class="bog-card-art" data-size="56"></span></div>${BAL4}${o.expand ? chips : ""}${o.tapExpand ? `<div class="bog-picker__expand">${chips}</div>` : ""}`,
+    single: () => `<div class="bog-picker__head"><div class="bog-picker__info"><span class="bog-picker__title">Single-currency Account</span>${amount}</div><span class="bog-illustration" data-size="56"></span></div>`,
+    loyalty:() => `<div class="bog-picker__head"><div class="bog-picker__info"><span class="bog-picker__title">Loyalty</span><span class="bog-picker__points">2,000 Plus</span>${bal([["2.00", "₾", 1], ["0.00", "$"]])}</div><span class="bog-illustration" data-size="56"></span></div>`,
+    card:   () => `<div class="bog-picker__head"><div class="bog-picker__info"><span class="bog-picker__title">Account Name</span><span class="bog-picker__number">****0000</span></div><span class="bog-card-art" data-size="56"></span></div>`,
+    iban:   () => `<div class="bog-picker__head"><div class="bog-picker__info"><span class="bog-picker__number">GE** BG** **** 0000</span></div><span class="bog-media-circle" data-size="48"></span></div>${BAL4}`,
+    skeleton: () => `<div class="bog-picker__head"><div class="bog-picker__skeleton"><span></span><span></span></div><span class="bog-card-art" data-size="56"></span></div>`
+  };
+  function picker(type, o = {}) {
+    const a = (o.selected ? " data-selected" : "") + (o.error ? ' data-validation="error"' : "") + (o.state ? ` data-state="${o.state}"` : "");
+    return `<div class="bog-picker"${a}><div class="bog-picker__box" role="button" tabindex="0">${TYPES[type](o)}</div>${o.error ? '<p class="bog-picker__message">Message text</p>' : ""}</div>`;
+  }
+  const VARIANTS = [
+    ["Balance · Multi currency", "multi", {}], ["Selected", "multi", {selected: 1}], ["Pressed", "multi", {state: "pressed"}],
+    ["Favorite", "multi", {fav: 1}], ["Expandable · Selected", "multi", {selected: 1, expand: 1}], ["Expandable · Error", "multi", {selected: 1, expand: 1, error: 1}],
+    ["Balance · Single currency", "single", {}], ["Single · Selected", "single", {selected: 1}], ["Loyalty", "loyalty", {}],
+    ["Card Number", "card", {}], ["Card Number · Error", "card", {error: 1}], ["IBAN", "iban", {}],
+    ["IBAN · Selected", "iban", {selected: 1}], ["Skeleton", "skeleton", {state: "skeleton"}]
+  ];
+  document.getElementById("variants").innerHTML = VARIANTS.map(([n, t, o]) => `<div class="cell"><small>${n}</small>${picker(t, o)}</div>`).join("");
+  document.getElementById("demo").innerHTML = picker("multi", {tapExpand: 1}) + picker("multi", {tapExpand: 1, fav: 1}) + picker("single") + picker("card");
+</script>
+</body>
+</html>

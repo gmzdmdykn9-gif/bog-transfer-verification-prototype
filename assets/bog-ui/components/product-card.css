@@ -1,0 +1,87 @@
+/* ==========================================================================
+   BOG UI — Product Card
+   Figma: Product Card (53668:7227)
+
+   <div class="bog-product-card" role="button" tabindex="0">
+     <div class="bog-product-card__info">
+       <span class="bog-product-card__title">Account</span>
+       <div class="bog-amount" data-size="medium">…value, currency, balances…</div>      Amount (medium)
+     </div>
+     <span class="bog-product-card__media" data-more><span class="bog-card-art" data-size="56"></span></span>
+   </div>
+     Empty (no product yet): replace the Amount with
+       <span class="bog-inline-message" data-status="info" data-size="small">Order a card</span>  and add data-empty
+     data-more on the media shows the "more cards" stack behind the card.
+     Media can also be .bog-illustration 56, .bog-avatar 56 or .bog-media-rect 56.
+     data-state="pressed" | "skeleton"
+   ========================================================================== */
+
+.bog-product-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-gap-small);
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-padding-default);
+  border-radius: var(--radius-default);
+  background-color: var(--layer-layer-02);
+  color: var(--text-primary);
+  font-family: var(--font-family-bog);
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-product-card:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 2px; }
+.bog-product-card:active:not([data-state]),
+.bog-product-card[data-state="pressed"] { background-image: linear-gradient(var(--layer-alpha-pressed-01), var(--layer-alpha-pressed-01)); }
+
+.bog-product-card__info {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-gap-m-small);
+  align-self: stretch;
+}
+.bog-product-card[data-empty] .bog-product-card__info { justify-content: space-between; }
+.bog-product-card__title {
+  color: var(--text-helper);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+
+/* Media with optional "more cards" stack (79×20 tab peeking above the card) */
+.bog-product-card__media { position: relative; display: inline-flex; flex: none; }
+.bog-product-card__media[data-more] { padding-top: var(--spacing-padding-x-small); }
+.bog-product-card__media[data-more]::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 5px;
+  right: 5px;
+  height: 20px;
+  border-radius: var(--radius-x-small);
+  background: var(--layer-alpha-pressed-02);
+  box-shadow: inset 0 0 0 0.7px var(--border-alpha-01);
+}
+.bog-product-card__media > * { position: relative; }
+.bog-product-card__media .bog-card-art { --_r: var(--radius-x-small); }
+
+/* ---- Skeleton: 96×12 + 155×8 bars, 48px gap, card skeleton -------------- */
+.bog-product-card[data-state="skeleton"] { gap: 48px; background: var(--support-skeleton-background); pointer-events: none; }
+.bog-product-card[data-state="skeleton"] .bog-product-card__info > * { display: none; }
+.bog-product-card[data-state="skeleton"] .bog-product-card__info {
+  flex: 0 1 174px;
+  height: 32px;
+  align-self: flex-start;
+  background:
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 0 / 96px 12px no-repeat,
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 24px / 155px 8px no-repeat;
+}
+.bog-product-card[data-state="skeleton"] .bog-product-card__media { margin-left: auto; padding-top: 0; }
+.bog-product-card[data-state="skeleton"] .bog-product-card__media::before { display: none; }
+.bog-product-card[data-state="skeleton"] .bog-product-card__media > * { background: var(--support-skeleton); }
+.bog-product-card[data-state="skeleton"] .bog-product-card__media > * > * { visibility: hidden; }

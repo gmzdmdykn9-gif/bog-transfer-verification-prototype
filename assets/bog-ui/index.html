@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOG UI — Components</title>
+<link rel="stylesheet" href="bog-ui.css">
+<link rel="stylesheet" href="docs/docs.css">
+<script src="docs/components.js"></script>
+</head>
+<body>
+  <div class="home">
+    <h1>BOG UI</h1>
+    <p class="lead">HTML/CSS components coded from the Figma file <em>Mobile Components – SwiftUI – Compose</em>. Pick a component to see every variant and the markup to copy into a prototype.</p>
+
+    <div class="cards" id="cards"></div>
+
+    <section class="setup">
+      <h2>Use in a prototype</h2>
+      <pre><code>&lt;link rel="stylesheet" href="bog-ui/bog-ui.css"&gt;
+&lt;script src="bog-ui/bog-ui.js" defer&gt;&lt;/script&gt;</code></pre>
+    </section>
+  </div>
+<script>
+  document.getElementById("cards").innerHTML = window.BOG_COMPONENTS.map(function (c) {
+    return '<a class="card" href="docs/' + c.page + '">' +
+      '<div class="card__preview" aria-hidden="true">' + c.preview.replace(/ASSETS\//g, "assets/") + '</div>' +
+      '<div class="card__body"><h2>' + c.name + '</h2><p>' + c.desc + '</p></div></a>';
+  }).join("");
+</script>
+</body>
+</html>

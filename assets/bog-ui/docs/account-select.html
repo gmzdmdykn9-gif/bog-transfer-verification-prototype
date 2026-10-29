@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account Select — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="account-select"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Account Select</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">A Select for choosing an account: card/account visual on the right, larger account name once chosen, favorite star. Tapping opens a Bottom Sheet of Account Pickers.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-select" data-variant="account" data-sheet="accounts-sheet"&gt;
+  &lt;button type="button" class="bog-select__box"&gt;
+    &lt;span class="bog-select__text"&gt;
+      &lt;span class="bog-select__label"&gt;Account&lt;span class="bog-select__fav"&gt;&lt;/span&gt;&lt;/span&gt;
+      &lt;span class="bog-select__value"&gt;&lt;/span&gt;
+    &lt;/span&gt;
+    &lt;span class="bog-card-art" data-size="40"&gt;&lt;/span&gt;
+    &lt;span class="bog-select__chevron"&gt;&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- The sheet lists Account Pickers; data-value/data-label fill the Select --&gt;
+&lt;div class="bog-sheet" id="accounts-sheet" hidden&gt; …
+  &lt;div class="bog-picker" data-value="acc-1" data-label="Main account"&gt;…&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <p class="lead">Tap the field: a Bottom Sheet with Account Pickers opens; pick one to fill the field.</p>
+    <div class="panel"><div class="bog-sheet-host" id="demo" style="position:relative;width:375px;height:640px;border-radius:24px;background:#fff;box-shadow:0 0 0 8px #1b1c1d;padding:48px 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px"></div></div>
+    <h2>Variants</h2>
+    <div class="panel"><div class="fields" id="variants"></div></div>
+
+<script>
+  const as = (o = {}) => `<div class="bog-select" data-variant="account"${o.sheet ? ' data-sheet="accounts-sheet"' : ""}${o.v ? ` data-validation="${o.v}"` : ""}${o.state ? ` data-state="${o.state}"` : ""}><button type="button" class="bog-select__box"${o.disabled ? " disabled" : ""}${o.readonly ? ' aria-readonly="true"' : ""}${o.pressed ? ' style="background-image:linear-gradient(var(--layer-alpha-pressed-01),var(--layer-alpha-pressed-01))"' : ""}><span class="bog-select__text"><span class="bog-select__label">${o.value ? "Account" : "Choose account"}<span class="bog-select__fav"></span></span><span class="bog-select__value">${o.value || ""}</span></span><span class="bog-card-art" data-size="40"></span><span class="bog-select__chevron"></span></button>${o.v ? '<p class="bog-select__message">Message text</p>' : ""}</div>`;
+  const amt = v => `<div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">${v}</span><span class="bog-amount__currency">₾</span></div></div>`;
+  const pk = (id, name, v) => `<div class="bog-picker" data-value="${id}" data-label="${name}"><div class="bog-picker__box" role="button" tabindex="0"><div class="bog-picker__head"><div class="bog-picker__info"><span class="bog-picker__title">${name}</span>${amt(v)}</div><span class="bog-card-art" data-size="56"></span></div></div></div>`;
+  document.getElementById("demo").innerHTML = '<h3 style="margin:0;font-size:22px">Pay from</h3>' + as({sheet: 1}).replace("Choose account", "Account") +
+    '<div class="bog-sheet" id="accounts-sheet" hidden><div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Accounts"><header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Choose account</h2></div></header><div class="bog-sheet__content" style="display:flex;flex-direction:column;gap:12px">' +
+    pk("main", "Main account", "1,250.00") + pk("savings", "Savings", "8,400.00") + pk("travel", "Travel card", "310.25") + "</div></div></div>";
+  const V = [["Default", {}], ["Pressed", {pressed: 1}], ["Filled", {value: "Main account"}], ["Filled · Success", {value: "Main account", v: "success"}], ["Default · Error", {v: "error"}], ["Filled · Error", {value: "Main account", v: "error"}], ["Filled · Warning", {value: "Main account", v: "warning"}], ["Read-only", {value: "Main account", readonly: 1}], ["Disabled · Filled", {value: "Main account", disabled: 1}], ["Disabled · Default", {disabled: 1}], ["Skeleton", {state: "skeleton"}]];
+  document.getElementById("variants").innerHTML = V.map(([n, o]) => `<div class="row-label"><code>${n}</code></div>${as(o)}`).join("");
+</script>
+  </main>
+</div>
+</body>
+</html>

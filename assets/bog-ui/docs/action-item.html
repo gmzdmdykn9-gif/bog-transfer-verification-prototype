@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Action Item — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="action-item"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Action Item</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">A 56px circle with a label and optional amount, used for shortcuts like transfers and saved payees. Four kinds: Primary (orange), Secondary (grey), Media (photo) and Avatar (initials). Optional badge and remove button.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-action-items"&gt;
+  &lt;div class="bog-action-item" data-type="primary"&gt;
+    &lt;button type="button" class="bog-action-item__main"&gt;
+      &lt;span class="bog-action-item__circle"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;&lt;/span&gt;
+      &lt;span class="bog-action-item__label"&gt;Transfer&lt;/span&gt;
+      &lt;span class="bog-action-item__amount"&gt;0.01 ₾&lt;/span&gt;
+    &lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="bog-action-item" data-type="secondary"&gt; … &lt;/div&gt;
+  &lt;div class="bog-action-item"&gt;
+    &lt;button type="button" class="bog-action-item__main"&gt;
+      &lt;span class="bog-action-item__circle"&gt;&lt;span class="bog-avatar" data-size="56"&gt;NB&lt;/span&gt;&lt;/span&gt;
+      &lt;span class="bog-action-item__label"&gt;Nino B.&lt;/span&gt;
+    &lt;/button&gt;
+    &lt;button type="button" class="bog-action-item__remove" aria-label="Remove"&gt;&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+    <h2>Variants</h2>
+    <div class="panel"><table id="variants"></table></div>
+
+    <h2>Badges</h2>
+    <div class="panel"><div class="row" id="badges" style="gap:32px"></div></div>
+
+    <h2>Rows — 2 and 3 Action item</h2>
+    <p class="lead">Two items sit centered 24px apart; three spread across the row. Try the remove buttons.</p>
+    <div class="panel" style="width:343px;display:flex;flex-direction:column;gap:32px">
+      <div class="bog-action-items" id="row2"></div>
+      <div class="bog-action-items" id="row3"></div>
+    </div>
+<script>
+  const LABEL = "Action item label here";
+  const CIRCLE = {
+    Primary: '<span class="bog-icon"></span>', Secondary: '<span class="bog-icon"></span>',
+    Media: '<span class="bog-media-circle" data-size="56"></span>', Avatar: '<span class="bog-avatar" data-size="56">AV</span>'
+  };
+  const item = (kind, o = {}) => {
+    const type = kind === "Secondary" ? ' data-type="secondary"' : kind === "Primary" ? ' data-type="primary"' : "";
+    const st = o.state ? ` data-state="${o.state}"` : "";
+    return `<div class="bog-action-item"${type}${st}><button type="button" class="bog-action-item__main"${o.disabled ? " disabled" : ""}>` +
+      `<span class="bog-action-item__circle">${CIRCLE[kind]}${o.badge || ""}</span><span class="bog-action-item__label">${o.label || LABEL}</span>` +
+      `${o.noAmount ? "" : '<span class="bog-action-item__amount">0.01 ₾</span>'}</button>${o.remove ? '<button type="button" class="bog-action-item__remove" aria-label="Remove"></button>' : ""}</div>`;
+  };
+  const KINDS = ["Primary", "Secondary", "Media", "Avatar"];
+  const ROWS = [["Enabled", {}], ["Pressed", {state: "pressed"}], ["Removable", {remove: 1}], ["Removable · Pressed", {remove: 1, state: "pressed"}], ["Disabled", {disabled: 1}], ["Skeleton", {state: "skeleton"}]];
+  document.getElementById("variants").innerHTML = "<tr><th></th>" + KINDS.map(k => `<th>${k}</th>`).join("") + "</tr>" +
+    ROWS.map(([n, o]) => `<tr><th>${n}</th>${KINDS.map(k => `<td style="padding:12px 16px">${item(k, o)}</td>`).join("")}</tr>`).join("");
+  document.getElementById("badges").innerHTML = [
+    ["New", '<span class="bog-action-item__badge">New</span>'], ["Notification", '<span class="bog-action-item__badge" data-badge="dot"></span>'], ["Locked", '<span class="bog-action-item__badge" data-badge="lock"></span>']
+  ].map(([n, b]) => item("Secondary", {badge: b, label: n, noAmount: 1})).join("");
+  document.getElementById("row2").innerHTML = item("Primary", {label: "Transfer", noAmount: 1}) + item("Secondary", {label: "Pay", noAmount: 1});
+  document.getElementById("row3").innerHTML = item("Avatar", {label: "Nino B.", remove: 1, noAmount: 1}) + item("Media", {label: "Utility bill", remove: 1}) + item("Secondary", {label: "Add new", noAmount: 1});
+</script>
+  </main>
+</div>
+</body>
+</html>

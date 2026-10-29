@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Badges — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="badge"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Badges</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Small labels: Status Badge (success, warning, error, info, neutral), Currency Badge (GEL, USD…), Loyalty Badge (MR, PLUS, cashback, discount, SOLO) and Feature Badge (New, Beta, 24/7).</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;span class="bog-status-badge" data-status="success"&gt;Paid&lt;/span&gt;
+&lt;span class="bog-status-badge" data-status="negative" data-contrast="high"&gt;Overdue&lt;/span&gt;
+&lt;span class="bog-status-badge" data-status="info" data-size="small"&gt;New&lt;/span&gt;
+
+&lt;span class="bog-currency-badge"&gt;GEL&lt;/span&gt;
+&lt;span class="bog-loyalty-badge" data-type="cashback"&gt;50% Cashback&lt;/span&gt;
+&lt;span class="bog-feature-badge" data-type="new"&gt;New&lt;/span&gt;</code></pre>
+
+    <h2>Status Badge</h2>
+    <div class="panel"><table id="status"></table></div>
+    <h2>Currency Badge</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="panel"><table id="cur-light"></table></div>
+      <div class="panel dark"><table id="cur-dark"></table></div>
+    </div>
+    <h2>Loyalty Badge</h2>
+    <div class="panel"><table id="loyalty"></table></div>
+    <h2>Feature Badge</h2>
+    <div class="panel"><table id="feature"></table></div>
+
+<script>
+  const ST = ["success", "warning", "negative", "info", "neutral", "neutral-static"];
+  const sb = (st, size, hc, sk) => `<span class="bog-status-badge" data-status="${st}"${size ? ' data-size="small"' : ""}${hc ? ' data-contrast="high"' : ""}${sk ? ' data-state="skeleton"' : ""}>${st.startsWith("neutral") && !size ? '<span class="bog-icon"></span>' : ""}Badge</span>`;
+  document.getElementById("status").innerHTML = "<tr><th></th><th>Medium</th><th>Medium · High contrast</th><th>Small</th><th>Small · High contrast</th></tr>" +
+    ST.map(s => `<tr><th><code>${s}</code></th><td>${sb(s)}</td><td>${sb(s, 0, 1)}</td><td>${sb(s, 1)}</td><td>${sb(s, 1, 1)}</td></tr>`).join("") +
+    `<tr><th>Skeleton</th><td>${sb("neutral", 0, 0, 1)}</td><td></td><td>${sb("neutral", 1, 0, 1)}</td><td></td></tr>`;
+  const cb = (c, size, dis) => `<span class="bog-currency-badge" data-color="${c}"${size ? ' data-size="small"' : ""}${dis ? " data-disabled" : ""}>GEL</span>`;
+  const curRows = cs => "<tr><th></th><th>Large</th><th>Small</th><th>Large · Disabled</th><th>Small · Disabled</th></tr>" + cs.map(c => `<tr><th><code>${c}</code></th><td>${cb(c)}</td><td>${cb(c, 1)}</td><td>${cb(c, 0, 1)}</td><td>${cb(c, 1, 1)}</td></tr>`).join("");
+  document.getElementById("cur-light").innerHTML = curRows(["default", "black"]);
+  document.getElementById("cur-dark").innerHTML = curRows(["white", "inverse"]);
+  const LY = [["mr", "5X MR Points"], ["plus", "2X PLUS Points"], ["cashback", "50% Cashback"], ["discount", "-25% Discount"], ["solo", "SOLO"], ["other", "Other"]];
+  document.getElementById("loyalty").innerHTML = "<tr><th></th><th>Default</th><th>High contrast</th></tr>" +
+    LY.map(([t, l]) => `<tr><th><code>${t}</code></th><td><span class="bog-loyalty-badge" data-type="${t}">${l}</span></td><td><span class="bog-loyalty-badge" data-type="${t}" data-contrast="high">${l}</span></td></tr>`).join("") +
+    '<tr><th>Skeleton</th><td><span class="bog-loyalty-badge" data-type="plus" data-state="skeleton">2X PLUS</span></td><td></td></tr>';
+  const FT = [["new", "New"], ["beta", "Beta"], ["availability", "24/7"]];
+  document.getElementById("feature").innerHTML = "<tr><th></th><th>Default</th><th>Disabled</th></tr>" +
+    FT.map(([t, l]) => `<tr><th><code>${t}</code></th><td><span class="bog-feature-badge" data-type="${t}">${l}</span></td><td><span class="bog-feature-badge" data-type="${t}" data-disabled>${l}</span></td></tr>`).join("");
+</script>
+  </main>
+</div>
+</body>
+</html>

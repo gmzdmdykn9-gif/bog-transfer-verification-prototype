@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Action Card — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+<style>.grid{display:grid;grid-template-columns:repeat(auto-fill,343px);gap:20px 24px;align-items:start}.grid .cell{width:343px}</style>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="action-card"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Action Card</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Tappable bordered card: a UI Element on the left, title and secondary text, optional status message or extra content, chevron on the right. Use a group to stack them or scroll them sideways.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;button type="button" class="bog-action-card"&gt;
+  &lt;span class="bog-icon-holder" data-size="40"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;&lt;/span&gt;
+  &lt;span class="bog-action-card__content"&gt;
+    &lt;span class="bog-action-card__title"&gt;Primary text&lt;/span&gt;
+    &lt;span class="bog-action-card__text"&gt;Secondary text&lt;/span&gt;
+  &lt;/span&gt;
+  &lt;span class="bog-action-card__chevron"&gt;&lt;/span&gt;
+&lt;/button&gt;
+
+&lt;!-- a list of cards (12px apart), or a horizontal scroller --&gt;
+&lt;div class="bog-action-card-group"&gt; …cards… &lt;/div&gt;
+&lt;div class="bog-action-card-group" data-horizontal&gt; …cards… &lt;/div&gt;</code></pre>
+
+    <h2>Variants</h2>
+    <div class="panel"><div class="grid" id="variants"></div></div>
+
+    <h2>Leading slot options</h2>
+    <p class="lead">Any UI Element at size 40 (Figma "Action Card Slot").</p>
+    <div class="panel"><div class="grid" id="slots"></div></div>
+
+    <h2>Group — vertical</h2>
+    <div class="panel"><div style="width:343px" id="group-v"></div></div>
+
+    <h2>Group — horizontal scroll</h2>
+    <div class="panel"><div style="width:375px;background:#fff" id="group-h"></div></div>
+<script>
+  const SLOT = '<span class="bog-icon-holder" data-size="40"><span class="bog-icon"></span></span>';
+  const card = (o = {}) => {
+    const a = (o.layout ? ` data-layout="${o.layout}"` : "") + (o.align ? ` data-align="${o.align}"` : "") + (o.order ? ' data-order="reversed"' : "") + (o.state ? ` data-state="${o.state}"` : "") + (o.disabled ? " disabled" : "");
+    return `<button type="button" class="bog-action-card"${a}>${o.slot || SLOT}<span class="bog-action-card__content"><span class="bog-action-card__title">${o.title || "Primary text"}</span><span class="bog-action-card__text">${o.text || "Secondary text"}</span>${o.msg ? `<span class="bog-action-card__message" data-status="${o.msg}">Message text</span>` : ""}</span><span class="bog-action-card__chevron"></span></button>`;
+  };
+  const V = [
+    ["Row · Center", {}], ["Row · Top", {align: "top"}], ["Row · Reversed", {order: 1}], ["Row · Top · Reversed", {align: "top", order: 1}],
+    ["Pressed", {state: "pressed"}], ["Disabled", {disabled: 1}], ["Loading", {state: "loading"}], ["Skeleton", {state: "skeleton"}],
+    ["With message · warning", {msg: "warning"}], ["With message · error", {msg: "error", align: "top"}],
+    ["Column", {layout: "column"}], ["Column · Reversed", {layout: "column", order: 1}], ["Column · Disabled", {layout: "column", disabled: 1}],
+    ["Column · Loading", {layout: "column", state: "loading"}], ["Column · Pressed", {layout: "column", state: "pressed"}], ["Column · Skeleton", {layout: "column", state: "skeleton"}]
+  ];
+  document.getElementById("variants").innerHTML = V.map(([n, o]) => `<div class="cell"><small>${n}</small>${card(o)}</div>`).join("");
+  const SLOTS = [["Icon Placeholder", SLOT], ["Media Circle", '<span class="bog-media-circle" data-size="40"></span>'], ["Media Rectangle", '<span class="bog-media-rect" data-size="40"></span>'],
+    ["Illustration", '<span class="bog-illustration" data-size="40"></span>'], ["Card Placeholder", '<span class="bog-card-art" data-size="40"></span>'], ["Flag", '<span class="bog-flag" data-size="40"><img src="../assets/flags/ge.svg" alt=""></span>']];
+  document.getElementById("slots").innerHTML = SLOTS.map(([n, s]) => `<div class="cell"><small>${n}</small>${card({slot: s, title: n})}</div>`).join("");
+  const four = o => [1, 2, 3, 4].map(i => card({...o, title: "Action " + i})).join("");
+  document.getElementById("group-v").innerHTML = `<div class="bog-action-card-group">${four({})}</div>`;
+  document.getElementById("group-h").innerHTML = `<div class="bog-action-card-group" data-horizontal>${four({})}</div><div class="bog-action-card-group" data-horizontal style="margin-top:12px">${four({layout: "column"})}</div>`;
+</script>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+/* ==========================================================================
+   BOG UI — Chips (BOG Design source; Liquid Glass excluded)
+   Figma: Chip page (41453:45819) — Assist chip, Suggestion chip, Filter chip, Icon only chip, Chip group
+
+   Assist / Suggestion chip
+     <button type="button" class="bog-chip">Chip text</button>
+     <button type="button" class="bog-chip"><span class="bog-icon"></span>Chip text</button>      leading icon
+     <button type="button" class="bog-chip"><span class="bog-flag" data-size="20"><img …></span>GEL</button>
+     2 Line:  <button class="bog-chip"><span class="bog-chip__text"><span class="bog-chip__title">Title</span>Chip text</span></button>
+
+   Filter chip (selected adds a check and peach fill; data-dropdown adds a chevron)
+     <button type="button" class="bog-chip" data-type="filter" aria-pressed="false">Chip text</button>
+     <button type="button" class="bog-chip" data-type="filter" data-dropdown aria-pressed="false">Period</button>
+       data-placement="overlay" — white chip without border, for use on images/colored areas
+
+   Icon only chip
+     <button type="button" class="bog-chip" data-type="icon" aria-pressed="false" aria-label="Filter">
+       <span class="bog-icon"></span><span class="bog-chip__count">4</span>                       count optional
+     </button>
+
+   States: :active (pressed) · data-state="pressed" | "skeleton" · disabled
+   Group: <div class="bog-chip-group">…</div> one scrolling row · add data-wrap for multiple rows
+   bog-ui.js toggles aria-pressed on chips that have it.
+   ========================================================================== */
+
+.bog-chip {
+  --_bg: var(--chip-default);
+  --_bg-pressed: var(--chip-pressed);
+  --_line: var(--border-border-02);
+  --_fg: var(--text-primary);
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  box-sizing: border-box;
+  height: 32px;
+  margin: 0;
+  padding: var(--spacing-padding-x-small) var(--spacing-padding-medium); /* 8 + the label's own 4px */
+  border: 0;
+  border-radius: var(--radius-button-small);
+  background: var(--_bg);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--_line);
+  color: var(--_fg);
+  font-family: var(--font-family-bog);
+  font-size: var(--label-medium-size);
+  line-height: var(--label-medium-line-height);
+  font-weight: var(--label-medium-weight);
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-chip:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 2px; }
+.bog-chip:active:not(:disabled, [data-state="skeleton"]),
+.bog-chip[data-state="pressed"] { background: var(--_bg-pressed); }
+.bog-chip > .bog-icon { color: var(--icon-primary); }
+/* Leading icon / flag / check sit 8px from the edge, then 4px gap + 4px label padding */
+.bog-chip > :is(.bog-icon, .bog-flag, .bog-media-circle):first-child { margin-left: calc(-1 * var(--spacing-padding-x-small)); margin-right: var(--spacing-padding-x-small); }
+.bog-chip > :is(.bog-flag, .bog-media-circle):first-child { margin-left: calc(-1 * var(--spacing-padding-small)); }
+
+/* 2 Line */
+.bog-chip:has(.bog-chip__title) { height: 40px; padding: var(--spacing-padding-2x-small) var(--spacing-padding-medium); }
+.bog-chip__text { display: flex; flex-direction: column; align-items: flex-start; }
+.bog-chip__title {
+  color: var(--text-secondary);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: var(--label-xsmall-weight);
+}
+
+/* ---- Filter chip ------------------------------------------------------- */
+/* Dropdown chevron (optional): data-dropdown */
+.bog-chip[data-dropdown] { padding-right: var(--spacing-padding-small); }
+.bog-chip[data-dropdown]::after {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  margin: 0 var(--spacing-padding-2x-small) 0 var(--spacing-padding-x-small);
+  background-color: currentColor;
+  -webkit-mask: url("../icons/chevron-down.svg") center / contain no-repeat;
+          mask: url("../icons/chevron-down.svg") center / contain no-repeat;
+}
+.bog-chip[data-placement="overlay"] { --_bg: var(--layer-layer-05); --_line: transparent; }
+.bog-chip:is([data-type="filter"], [data-type="icon"])[aria-pressed="true"] {
+  --_bg: var(--chip-selected);
+  --_bg-pressed: var(--chip-selected-pressed);
+  --_line: transparent;
+}
+.bog-chip[data-type="filter"][aria-pressed="true"] { --_fg: var(--text-accent-strong); }
+.bog-chip[data-type="filter"][aria-pressed="true"]::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin-left: calc(-1 * var(--spacing-padding-x-small));
+  margin-right: var(--spacing-padding-x-small);
+  background-color: var(--icon-accent-strong);
+  -webkit-mask: url("../icons/check-12.svg") center / 12px no-repeat;
+          mask: url("../icons/check-12.svg") center / 12px no-repeat;
+}
+
+/* ---- Icon only chip ---------------------------------------------------- */
+.bog-chip[data-type="icon"] { justify-content: center; width: 32px; padding: var(--spacing-padding-small); }
+.bog-chip__count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--radius-full);
+  background: var(--status-accent-02);
+  color: var(--text-inverse-primary);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: 700;
+}
+
+/* ---- Disabled / Skeleton ---------------------------------------------- */
+.bog-chip:disabled { --_line: var(--border-disabled); --_fg: var(--text-disabled); cursor: default; }
+.bog-chip:disabled > .bog-icon { color: var(--icon-disabled); }
+.bog-chip[data-placement="overlay"]:disabled { --_bg: var(--button-disabled); --_line: transparent; }
+.bog-chip:disabled > :is(.bog-flag, .bog-media-circle) { opacity: 0.5; }
+.bog-chip[data-state="skeleton"] {
+  overflow: hidden;
+  background: var(--support-skeleton);
+  box-shadow: none;
+  color: transparent;
+  pointer-events: none;
+}
+.bog-chip[data-state="skeleton"] > *,
+.bog-chip[data-state="skeleton"]::before { visibility: hidden; }
+.bog-chip[data-state="skeleton"]::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -64px;
+  width: 64px;
+  -webkit-mask: none;
+          mask: none;
+  background: linear-gradient(90deg, #77777700 0%, #6c70751a 48.4%, #77777700 100%);
+  animation: bog-shimmer 1.4s ease-in-out infinite;
+}
+
+/* ---- Chip group -------------------------------------------------------- */
+.bog-chip-group {
+  display: flex;
+  gap: var(--spacing-gap-small);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.bog-chip-group::-webkit-scrollbar { display: none; }
+.bog-chip-group[data-wrap] { flex-wrap: wrap; row-gap: var(--spacing-gap-medium); overflow: visible; }

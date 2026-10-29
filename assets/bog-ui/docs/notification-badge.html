@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Notification Badge — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="notification-badge"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Notification Badge</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Count or dot that marks something new: single number, multi number (44+) and dot, in accent, negative, warning, positive and neutral. Sits on the corner of icon buttons, chips and avatars automatically.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;span class="bog-notification-badge"&gt;4&lt;/span&gt;
+&lt;span class="bog-notification-badge" data-status="negative"&gt;44+&lt;/span&gt;
+&lt;span class="bog-notification-badge"&gt;&lt;/span&gt;                 &lt;!-- dot --&gt;
+
+&lt;button class="bog-icon-btn" data-type="neutral" aria-label="Notifications"&gt;
+  &lt;span class="bog-icon"&gt;&lt;/span&gt;&lt;span class="bog-notification-badge"&gt;3&lt;/span&gt;
+&lt;/button&gt;</code></pre>
+
+    <h2>Statuses</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="panel"><table id="light"></table></div>
+      <div class="panel dark"><table id="dark"></table></div>
+    </div>
+    <h2>On other components</h2>
+    <div class="panel"><div class="row" id="onto" style="gap:32px;align-items:center"></div></div>
+
+<script>
+  const ST = ["accent", "negative", "warning", "positive", "neutral", "neutral-static"];
+  const nb = (st, txt, inv) => `<span class="bog-notification-badge" data-status="${st}"${inv ? ' data-appearance="inverse"' : ""}>${txt}</span>`;
+  const t = inv => "<tr><th></th><th>Multi Number</th><th>Single Number</th><th>Dot</th></tr>" + ST.filter(s => !(inv && s === "neutral-static")).map(s => `<tr><th><code>${s}</code></th><td>${nb(s, "44+", inv)}</td><td>${nb(s, "4", inv)}</td><td>${s.startsWith("neutral") ? "" : nb(s, "", inv)}</td></tr>`).join("");
+  document.getElementById("light").innerHTML = t(false);
+  document.getElementById("dark").innerHTML = t(true);
+  document.getElementById("onto").innerHTML =
+    '<button class="bog-icon-btn" data-type="neutral" aria-label="Notifications"><span class="bog-icon"></span><span class="bog-notification-badge">3</span></button>' +
+    '<button class="bog-icon-btn" data-type="neutral" aria-label="Messages"><span class="bog-icon"></span><span class="bog-notification-badge"></span></button>' +
+    '<button class="bog-chip" data-type="icon" aria-pressed="true" aria-label="Filters"><span class="bog-icon"></span><span class="bog-notification-badge">4</span></button>' +
+    '<span class="bog-avatar" data-size="48">NB<span class="bog-notification-badge" data-status="negative">12</span></span>' +
+    '<span class="bog-icon-holder" data-size="40"><span class="bog-icon"></span><span class="bog-notification-badge"></span></span>';
+</script>
+  </main>
+</div>
+</body>
+</html>

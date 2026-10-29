@@ -1,0 +1,201 @@
+/* ==========================================================================
+   BOG UI — Avatar (+ Avatar Button, Avatar Group, diagonal pair)
+   Figma: Avatar page (41392:4706) — Avatar, _Avatar Button, Avatar Group Horizontal, Avatar Group Diagonal
+
+   Avatar
+     <span class="bog-avatar" data-size="40">NB</span>                              Initial
+     <span class="bog-avatar" data-size="40" data-type="icon"></span>               Icon (user)
+     <span class="bog-avatar" data-size="40"><img src="photo.jpg" alt=""></span>    Image
+       data-size     16 | 24 | 32 | 40 | 48 | 56 | 64
+       data-disabled · data-state="skeleton"
+     Bottom content (optional, one of):
+       <span class="bog-avatar__status" data-status="verify|favorite|react"></span>       top-right (32+)
+       <span class="bog-avatar__action"><button class="bog-icon-btn" data-type="neutral"
+             data-size="small" aria-label="Edit"><span class="bog-icon"></span></button></span>  bottom-right (48+)
+
+   Avatar Button (add / overflow)
+     <button type="button" class="bog-avatar-btn" data-size="40" aria-label="Add"></button>
+     <button type="button" class="bog-avatar-btn" data-size="40" data-type="overflow">+9</button>
+
+   Group — overlapping row (12px overlap, 1px light ring)
+     <div class="bog-avatar-group"> …avatars… <button class="bog-avatar-btn">…</button></div>
+   Diagonal pair
+     <span class="bog-avatar-pair" data-size="48"><span class="bog-avatar">A</span><span class="bog-avatar">B</span></span>
+     (sizes 24 · 32 · 40 · 48 · 64; the avatars inside are sized automatically)
+   ========================================================================== */
+
+.bog-avatar, .bog-avatar-btn {
+  --s: 40px;
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: var(--s);
+  height: var(--s);
+  border-radius: var(--radius-full);
+  font-family: var(--font-family-bog);
+  vertical-align: middle;
+}
+:is(.bog-avatar, .bog-avatar-btn)[data-size="16"] { --s: 16px; }
+:is(.bog-avatar, .bog-avatar-btn)[data-size="24"] { --s: 24px; }
+:is(.bog-avatar, .bog-avatar-btn)[data-size="32"] { --s: 32px; }
+:is(.bog-avatar, .bog-avatar-btn)[data-size="40"] { --s: 40px; }
+:is(.bog-avatar, .bog-avatar-btn)[data-size="48"] { --s: 48px; }
+:is(.bog-avatar, .bog-avatar-btn)[data-size="56"] { --s: 56px; }
+:is(.bog-avatar, .bog-avatar-btn)[data-size="64"] { --s: 64px; }
+
+/* ---- Avatar: Initial (default) ---------------------------------------- */
+.bog-avatar {
+  background: var(--avatar-background);
+  color: var(--avatar-leyer);
+  /* 24–40: Subtitle/Medium */
+  font-size: var(--subtitle-medium-size);
+  line-height: var(--subtitle-medium-line-height);
+  font-weight: var(--subtitle-medium-weight);
+  text-transform: uppercase;
+}
+.bog-avatar[data-size="16"] { font-size: var(--label-xsmall-size); line-height: var(--label-xsmall-line-height); font-weight: var(--label-xsmall-weight); }
+.bog-avatar:is([data-size="48"], [data-size="56"], [data-size="64"]) { font-size: var(--title-medium-size); line-height: var(--title-medium-line-height); font-weight: var(--title-medium-weight); }
+
+/* ---- Icon type: user icon, 16px up to 32, 24px from 40 ---------------- */
+.bog-avatar[data-type="icon"]::before {
+  content: "";
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  -webkit-mask: url("../icons/user-business.svg") center / contain no-repeat;
+          mask: url("../icons/user-business.svg") center / contain no-repeat;
+}
+.bog-avatar[data-type="icon"]:is([data-size="16"], [data-size="24"], [data-size="32"])::before { width: 16px; height: 16px; }
+.bog-avatar[data-size="16"][data-type="icon"]::before { width: 12px; height: 12px; }
+
+/* ---- Image type -------------------------------------------------------- */
+.bog-avatar:has(> img) { background: none; }
+.bog-avatar > img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+.bog-avatar > img + * { position: absolute; }
+.bog-avatar:has(> img)::after { /* Media Circle hairline */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 var(--border-width-thin) var(--border-alpha-01);
+  pointer-events: none;
+}
+
+/* ---- Disabled / Skeleton ---------------------------------------------- */
+.bog-avatar[data-disabled] { background: var(--button-disabled); color: var(--text-disabled); }
+.bog-avatar[data-disabled][data-type="icon"] { color: var(--icon-disabled); }
+.bog-avatar[data-disabled]:has(> img) { background: none; }
+.bog-avatar[data-disabled] > img { opacity: 0.5; }
+.bog-avatar[data-disabled] > :is(.bog-avatar__status, .bog-avatar__action) { display: none; }
+.bog-avatar[data-state="skeleton"] { overflow: hidden; background: var(--support-skeleton); color: transparent; }
+.bog-avatar[data-state="skeleton"]::before,
+.bog-avatar[data-state="skeleton"] > * { visibility: hidden; }
+.bog-avatar[data-state="skeleton"]::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -64px;
+  width: 64px;
+  box-shadow: none;
+  border-radius: 0;
+  background: linear-gradient(90deg, #77777700 0%, #6c70751a 48.4%, #77777700 100%);
+  animation: bog-shimmer 1.4s ease-in-out infinite;
+}
+
+/* ---- Status (top-right, 16px + 1px ring) ------------------------------- */
+.bog-avatar__status {
+  position: absolute;
+  z-index: 1;
+  top: -1px;
+  right: -1px;
+  width: 18px;
+  height: 18px;
+  background: url("../assets/avatar-status/verify.svg") center / contain no-repeat;
+}
+.bog-avatar__status[data-status="favorite"] { background-image: url("../assets/avatar-status/favorite.svg"); }
+.bog-avatar__status[data-status="react"]    { background-image: url("../assets/avatar-status/react.svg"); }
+.bog-avatar[data-size="32"] > .bog-avatar__status { top: -5px; right: -5px; }
+.bog-avatar[data-size="40"] > .bog-avatar__status { top: -3px; right: -3px; }
+.bog-avatar:is([data-size="16"], [data-size="24"]) > .bog-avatar__status { display: none; }
+
+/* ---- Action (bottom-right Icon Button on a white disc) ----------------- */
+.bog-avatar__action {
+  position: absolute;
+  z-index: 1;
+  right: -8px;
+  bottom: -8px;
+  display: inline-flex;
+  border-radius: var(--radius-full);
+  background: var(--layer-layer-05);
+}
+.bog-avatar[data-size="48"] > .bog-avatar__action { right: -10px; bottom: -10px; }
+.bog-avatar[data-size="64"] > .bog-avatar__action { right: -6px; bottom: -6px; }
+.bog-avatar:is([data-size="16"], [data-size="24"], [data-size="32"], [data-size="40"]) > .bog-avatar__action { display: none; }
+
+/* ---- Avatar Button: add (+) / overflow (+9) ----------------------------- */
+.bog-avatar-btn {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: var(--layer-layer-01);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--border-border-01);
+  color: var(--text-primary);
+  font-size: calc(var(--s) * 0.4);
+  line-height: 1;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-avatar-btn[data-size="56"], .bog-avatar-btn[data-size="64"] { font-size: 24px; }
+.bog-avatar-btn:not([data-type="overflow"])::before {
+  content: "";
+  width: calc(var(--s) * 0.4);
+  height: calc(var(--s) * 0.4);
+  background-color: var(--icon-primary);
+  -webkit-mask: url("../icons/plus.svg") center / contain no-repeat;
+          mask: url("../icons/plus.svg") center / contain no-repeat;
+}
+.bog-avatar-btn:is([data-size="56"], [data-size="64"]):not([data-type="overflow"])::before { width: 24px; height: 24px; }
+.bog-avatar-btn:active:not(:disabled) { background-image: linear-gradient(var(--layer-alpha-pressed-01), var(--layer-alpha-pressed-01)); }
+.bog-avatar-btn:disabled {
+  background-color: var(--button-disabled);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--border-disabled);
+  color: var(--text-disabled);
+  cursor: default;
+}
+.bog-avatar-btn:disabled::before { background-color: var(--icon-disabled); }
+
+/* ---- Group: overlapping row ------------------------------------------- */
+.bog-avatar-group { display: inline-flex; align-items: center; }
+.bog-avatar-group > * + * { margin-left: -12px; }
+.bog-avatar-group > .bog-avatar:not(:has(> img)) { box-shadow: inset 0 0 0 var(--border-width-default) var(--border-inverse-primary); }
+
+/* ---- Diagonal pair ----------------------------------------------------- */
+.bog-avatar-pair {
+  --s: 48px;
+  --a: 32px;
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: var(--s);
+  height: var(--s);
+  vertical-align: middle;
+}
+.bog-avatar-pair[data-size="24"] { --s: 24px; --a: 16px; }
+.bog-avatar-pair[data-size="32"] { --s: 32px; --a: 20px; }
+.bog-avatar-pair[data-size="40"] { --s: 40px; --a: 24px; }
+.bog-avatar-pair[data-size="64"] { --s: 64px; --a: 40px; }
+.bog-avatar-pair > .bog-avatar {
+  --s: var(--a);
+  position: absolute;
+  font-size: calc(var(--a) * 0.42);
+}
+.bog-avatar-pair > .bog-avatar:first-child { top: 0; left: 0; }
+.bog-avatar-pair > .bog-avatar:last-child { right: 0; bottom: 0; box-shadow: 0 0 0 var(--border-width-default) var(--border-inverse-primary); }

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Currency Input — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="currency-input"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Currency Input</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Amount field with a currency symbol and a currency picker (flag + code) that opens a Bottom Sheet. Selectable, fixed or hidden currency; every Text Input state. Plus the compact 96px Currency Small Input.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-field bog-currency-input"&gt;
+  &lt;label class="bog-field__box"&gt;
+    &lt;span class="bog-field__text"&gt;
+      &lt;span class="bog-field__label"&gt;Amount&lt;/span&gt;
+      &lt;span class="bog-currency-input__value"&gt;
+        &lt;input class="bog-field__input" inputmode="decimal" placeholder="0.00"&gt;
+        &lt;span class="bog-currency-input__symbol"&gt;₾&lt;/span&gt;
+      &lt;/span&gt;
+    &lt;/span&gt;
+    &lt;button type="button" class="bog-currency-input__currency" data-sheet-open="currency-sheet"&gt;
+      &lt;span class="bog-flag" data-size="16"&gt;&lt;img src="bog-ui/assets/flags/ge.svg" alt=""&gt;&lt;/span&gt;GEL
+    &lt;/button&gt;
+  &lt;/label&gt;
+&lt;/div&gt;
+&lt;!-- sheet rows: &lt;button class="bog-list-item" data-currency="USD" data-symbol="$" data-flag="…/us.svg"&gt;…&lt;/button&gt; --&gt;
+
+&lt;div class="bog-currency-small"&gt;
+  &lt;label class="bog-currency-small__box"&gt;
+    &lt;input class="bog-currency-small__input" inputmode="decimal" placeholder="0.00"&gt;
+    &lt;span class="bog-currency-small__symbol"&gt;₾&lt;/span&gt;
+  &lt;/label&gt;
+&lt;/div&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <p class="lead">Type an amount; tap the currency to pick another one from a Bottom Sheet.</p>
+    <div class="panel" style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap">
+      <div class="bog-sheet-host" style="position:relative;width:375px;height:520px;border-radius:24px;background:#fff;box-shadow:0 0 0 8px #1b1c1d;padding:48px 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:24px" id="demo"></div>
+    </div>
+
+    <h2>Currency Input — variants</h2>
+    <div class="panel"><table id="large"></table></div>
+
+    <h2>Currency Small Input</h2>
+    <div class="panel"><table id="small"></table></div>
+
+<script>
+  const CUR = [["ge", "GEL", "₾", "Georgian Lari"], ["us", "USD", "$", "US Dollar"], ["eu", "EUR", "€", "Euro"], ["gb", "GBP", "£", "British Pound"]];
+  const flag = (f, s = 16) => `<span class="bog-flag" data-size="${s}"><img src="../assets/flags/${f}.svg" alt=""></span>`;
+  const ci = (o = {}) => {
+    const cur = o.currency === "hidden" ? "" : o.currency === "fixed" ? `<span class="bog-currency-input__currency">${flag("ge")}GEL</span>`
+      : `<button type="button" class="bog-currency-input__currency"${o.sheet ? ' data-sheet-open="currency-sheet"' : ""}>${flag("ge")}GEL</button>`;
+    return `<div class="bog-field bog-currency-input"${o.state ? ` data-state="${o.state}"` : ""}${o.v ? ` data-validation="${o.v}"` : ""}><label class="bog-field__box"><span class="bog-field__text"><span class="bog-field__label">Amount</span><span class="bog-currency-input__value"><input class="bog-field__input" inputmode="decimal" placeholder="0.00"${o.value ? ` value="${o.value}"` : ""}${o.readonly ? " readonly" : ""}${o.disabled ? " disabled" : ""}><span class="bog-currency-input__symbol">₾</span></span></span>${cur}</label>${o.v ? '<p class="bog-field__message">Message text</p>' : ""}</div>`;
+  };
+  document.getElementById("demo").innerHTML = '<h3 style="margin:0;font-size:22px">Transfer</h3>' + ci({sheet: 1}) +
+    '<div class="bog-sheet" id="currency-sheet" hidden><div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Currency"><header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Currency</h2></div></header><div class="bog-sheet__content" data-type="list"><div class="bog-list" role="listbox">' +
+    CUR.map(([f, c, s, n]) => `<button type="button" class="bog-list-item" data-currency="${c}" data-symbol="${s}" data-flag="../assets/flags/${f}.svg" aria-selected="${c === "GEL"}">${flag(f, 32)}<span class="bog-list-item__content"><span class="bog-list-item__subtitle">${c}</span><span class="bog-list-item__label">${n}</span></span></button>`).join("") + "</div></div></div></div>";
+  const ROWS = [["Default", {}], ["Active", {state: "active"}], ["Typing", {state: "typing", value: "0.01"}], ["Filled", {value: "0.01"}], ["Typing · Success", {state: "typing", value: "0.01", v: "success"}], ["Default · Error", {v: "error"}], ["Filled · Error", {value: "0.01", v: "error"}], ["Filled · Warning", {value: "0.01", v: "warning"}], ["Read-only", {value: "0.01", readonly: 1}], ["Disabled · Filled", {value: "0.01", disabled: 1}], ["Skeleton", {state: "skeleton"}]];
+  document.getElementById("large").innerHTML = "<tr><th></th><th>Selectable</th><th>Fixed</th><th>Hidden</th></tr>" + ROWS.map(([n, o]) => `<tr><th>${n}</th>${["selectable", "fixed", "hidden"].map(c => `<td style="width:316px;vertical-align:top">${n === "Read-only" && c === "selectable" ? "" : ci({...o, currency: c})}</td>`).join("")}</tr>`).join("");
+  const cs = (o = {}) => `<div class="bog-currency-small"${o.v ? ` data-validation="${o.v}"` : ""}${o.state ? ` data-state="${o.state}"` : ""}><label class="bog-currency-small__box"><input class="bog-currency-small__input" inputmode="decimal" placeholder="0.00"${o.value ? ` value="${o.value}"` : ""}${o.readonly ? " readonly" : ""}${o.disabled ? " disabled" : ""}><span class="bog-currency-small__symbol">₾</span></label>${o.v && o.v !== "success" ? '<p class="bog-currency-small__message">0.00 ₾</p>' : ""}</div>`;
+  const SR = [["Default", {}], ["Filled", {value: "20"}], ["Success", {value: "20", v: "success"}], ["Error", {value: "0.00", v: "error"}], ["Warning", {value: "20", v: "warning"}], ["Read-only", {value: "20", readonly: 1}], ["Disabled", {value: "20", disabled: 1}], ["Skeleton", {state: "skeleton"}]];
+  document.getElementById("small").innerHTML = "<tr>" + SR.map(([n]) => `<th>${n}</th>`).join("") + "</tr><tr>" + SR.map(([, o]) => `<td style="vertical-align:top">${cs(o)}</td>`).join("") + "</tr>";
+</script>
+  </main>
+</div>
+</body>
+</html>

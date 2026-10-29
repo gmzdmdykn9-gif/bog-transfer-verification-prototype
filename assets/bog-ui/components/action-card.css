@@ -1,0 +1,206 @@
+/* ==========================================================================
+   BOG UI — Action Card (+ Action Card Group)
+   Figma: Action Card (49354:36678), Action Card Group (49675:9324), Action Card Slot
+
+   Markup
+     <button type="button" class="bog-action-card">
+       <span class="bog-icon-holder" data-size="40"><span class="bog-icon"></span></span>   leading slot (UI Element, 40)
+       <span class="bog-action-card__content">
+         <span class="bog-action-card__title">Primary text</span>
+         <span class="bog-action-card__text">Secondary text</span>                    optional
+         <span class="bog-action-card__message" data-status="warning">Message</span>  optional (Message)
+         <span class="bog-action-card__extra">…badges / any content…</span>           optional (Badges / Slot)
+       </span>
+       <span class="bog-action-card__chevron"></span>                                 optional (Right Slot)
+     </button>
+   Use an <a> instead of <button> for navigation.
+
+   Leading slot (Figma "Action Card Slot"): .bog-icon-holder, .bog-media-circle, .bog-media-rect,
+   .bog-illustration, .bog-card-art — all data-size="40".
+
+   Attributes
+     data-layout  row (default, 72px) | column (120px: slot + chevron on top, text below)
+     data-align   center (default) | top            (row only)
+     data-order   reversed — secondary text above the title (Text Order=Reversed)
+     data-state   pressed | loading | skeleton      (pressed also happens on tap)
+     disabled     Disabled=True (or aria-disabled="true" on <a>)
+   Message status: data-status="warning | error | success | neutral".
+
+   Group
+     <div class="bog-action-card-group">…cards…</div>                 vertical, 12px gap
+     <div class="bog-action-card-group" data-horizontal>…</div>       horizontal scroll, 343px cards
+   ========================================================================== */
+
+.bog-action-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-small);
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 72px;
+  margin: 0;
+  padding: var(--spacing-padding-default);
+  border: 0;
+  border-radius: var(--radius-medium);
+  background: transparent;
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--border-border-01);
+  color: var(--text-primary);
+  font-family: var(--font-family-bog);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-action-card:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 2px; }
+.bog-action-card:active:not(:disabled, [aria-disabled="true"], [data-state]),
+.bog-action-card[data-state="pressed"] { background: var(--layer-alpha-pressed-01); }
+
+.bog-action-card > :first-child:not(.bog-action-card__content) { flex: none; }
+
+.bog-action-card__content {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--spacing-gap-2x-small);
+}
+.bog-action-card__title {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: var(--label-large-size);
+  line-height: var(--label-large-line-height);
+  font-weight: var(--label-large-weight);
+  text-overflow: ellipsis;
+}
+.bog-action-card__text {
+  color: var(--text-secondary);
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-line-height);
+  font-weight: var(--body-small-weight);
+}
+/* Reversed text order: secondary text above the title */
+.bog-action-card[data-order="reversed"] .bog-action-card__title { order: 2; }
+.bog-action-card[data-order="reversed"] .bog-action-card__text { order: 1; }
+.bog-action-card__message, .bog-action-card__extra { order: 3; margin-top: calc(var(--spacing-gap-small) - var(--spacing-gap-2x-small)); }
+
+/* Message — Figma Inline Message, Size=Small (12px icon + Label/Small) */
+.bog-action-card__message {
+  --_c: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  color: var(--_c);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-action-card__message::before {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  background-color: var(--_i, var(--_c));
+  -webkit-mask: url("../icons/status-alert.svg") center / contain no-repeat;
+          mask: url("../icons/status-alert.svg") center / contain no-repeat;
+}
+.bog-action-card__message[data-status="warning"] { --_c: var(--text-warning); --_i: var(--icon-warning); }
+.bog-action-card__message[data-status="error"]   { --_c: var(--text-error);   --_i: var(--icon-error); }
+.bog-action-card__message[data-status="success"] { --_c: var(--text-success); --_i: var(--icon-success); }
+.bog-action-card__message[data-status="success"]::before { -webkit-mask-image: url("../icons/status-success.svg"); mask-image: url("../icons/status-success.svg"); }
+.bog-action-card__message:not([data-status])::before,
+.bog-action-card__message[data-status="neutral"]::before { -webkit-mask-image: url("../icons/info.svg"); mask-image: url("../icons/info.svg"); }
+
+.bog-action-card__extra { display: flex; flex-wrap: wrap; gap: var(--spacing-gap-x-small); }
+
+/* Trailing chevron */
+.bog-action-card__chevron {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--icon-primary);
+  -webkit-mask: url("../icons/chevron-right.svg") center / contain no-repeat;
+          mask: url("../icons/chevron-right.svg") center / contain no-repeat;
+}
+
+/* ---- Alignment: Top (row) ------------------------------------------- */
+.bog-action-card[data-align="top"] { align-items: flex-start; }
+.bog-action-card[data-align="top"] .bog-action-card__chevron { margin-top: var(--spacing-padding-x-small); }
+.bog-action-card[data-align="top"] .bog-action-card__content { justify-content: flex-start; }
+
+/* ---- Layout: Column --------------------------------------------------- */
+.bog-action-card[data-layout="column"] {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: "slot . chevron" "content content content";
+  align-items: center;
+  row-gap: var(--spacing-gap-small);
+  column-gap: 0;
+  min-height: 120px;
+}
+.bog-action-card[data-layout="column"] > :first-child:not(.bog-action-card__content) { grid-area: slot; }
+.bog-action-card[data-layout="column"] .bog-action-card__content { grid-area: content; }
+.bog-action-card[data-layout="column"] .bog-action-card__chevron { grid-area: chevron; margin-top: 0; }
+
+/* ---- Disabled / Loading ---------------------------------------------- */
+.bog-action-card:is(:disabled, [aria-disabled="true"], [data-state="loading"]) { cursor: default; }
+.bog-action-card:is(:disabled, [aria-disabled="true"], [data-state="loading"]) :is(.bog-action-card__title, .bog-action-card__text) { color: var(--text-disabled); }
+.bog-action-card:is(:disabled, [aria-disabled="true"], [data-state="loading"]) .bog-action-card__chevron { background-color: var(--icon-disabled); }
+.bog-action-card:is(:disabled, [aria-disabled="true"], [data-state="loading"]) .bog-icon-holder,
+.bog-action-card:is(:disabled, [aria-disabled="true"], [data-state="loading"]) .bog-counter { color: var(--icon-disabled); }
+.bog-action-card:is(:disabled, [aria-disabled="true"], [data-state="loading"]) > :is(.bog-media-circle, .bog-media-square, .bog-media-rect, .bog-illustration, .bog-card-art, .bog-flag) { opacity: 0.5; }
+.bog-action-card[data-state="loading"] { pointer-events: none; }
+/* Loading: orange 16px spinner replaces the chevron */
+.bog-action-card[data-state="loading"] .bog-action-card__chevron {
+  background-color: var(--border-selected);
+  -webkit-mask-image: url("../icons/spinner.svg");
+          mask-image: url("../icons/spinner.svg");
+  animation: bog-spin 800ms linear infinite;
+}
+
+/* ---- Skeleton: 32px block + 128×8 and 96×8 bars; border in skeleton color */
+.bog-action-card[data-state="skeleton"] {
+  min-height: 64px;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--support-skeleton);
+}
+.bog-action-card[data-state="skeleton"] > * { display: none; }
+.bog-action-card[data-state="skeleton"]::before {
+  content: "";
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 2.67px;
+  background: var(--support-skeleton);
+}
+.bog-action-card[data-state="skeleton"]::after {
+  content: "";
+  width: 128px;
+  height: 24px;
+  background:
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 0 / 128px 8px no-repeat,
+    linear-gradient(var(--support-skeleton), var(--support-skeleton)) 0 16px / 96px 8px no-repeat;
+}
+.bog-action-card[data-state="skeleton"][data-layout="column"] {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 96px;
+}
+
+/* ---- Group ------------------------------------------------------------- */
+.bog-action-card-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-medium);
+}
+.bog-action-card-group[data-horizontal] {
+  flex-direction: row;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.bog-action-card-group[data-horizontal]::-webkit-scrollbar { display: none; }
+.bog-action-card-group[data-horizontal] > .bog-action-card { flex: none; width: 343px; scroll-snap-align: start; }

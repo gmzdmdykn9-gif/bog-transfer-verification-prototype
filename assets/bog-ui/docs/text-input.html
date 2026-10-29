@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text Input — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="text-input"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Text Input</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">States follow real interaction: tap a field, type, clear, tap away. Validation, read-only, disabled and loading are set with attributes.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-field"&gt;
+  &lt;label class="bog-field__box"&gt;
+    &lt;span class="bog-field__text"&gt;
+      &lt;span class="bog-field__label"&gt;Full name&lt;/span&gt;
+      &lt;input class="bog-field__input" placeholder="Name Surname"&gt;
+    &lt;/span&gt;
+    &lt;button type="button" class="bog-field__clear" aria-label="Clear"&gt;&lt;/button&gt;
+  &lt;/label&gt;
+  &lt;p class="bog-field__message"&gt;As shown on your ID card&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+  <h2>Text Input — try it</h2>
+  <div class="panel" style="display:grid; grid-template-columns: repeat(auto-fill, 316px); gap: 24px;">
+    <div class="bog-field">
+      <label class="bog-field__box">
+        <span class="bog-field__text"><span class="bog-field__label">Full name</span><input class="bog-field__input" placeholder="Name Surname"></span>
+        <button type="button" class="bog-field__clear" aria-label="Clear"></button>
+        <button type="button" class="bog-field__info" aria-label="More info"></button>
+      </label>
+      <p class="bog-field__message">As shown on your ID card</p>
+    </div>
+    <div class="bog-field" data-validation="error">
+      <label class="bog-field__box">
+        <span class="bog-field__text"><span class="bog-field__label">IBAN</span><input class="bog-field__input" placeholder="GE00BG0000000000000000" value="GE29BG00"></span>
+        <button type="button" class="bog-field__clear" aria-label="Clear"></button>
+        <span class="bog-icon"></span>
+      </label>
+      <p class="bog-field__message">IBAN must be 22 characters</p>
+    </div>
+    <div class="panel dark" style="padding:12px; border-radius:16px;">
+      <div class="bog-field" data-appearance="inverse">
+        <label class="bog-field__box">
+          <span class="bog-field__text"><span class="bog-field__label">Amount</span><input class="bog-field__input" inputmode="decimal" placeholder="0.00"></span>
+          <button type="button" class="bog-field__clear" aria-label="Clear"></button>
+        </label>
+        <p class="bog-field__message">Inverse Static</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Text Input — all variants</h2>
+  <div style="display:flex; gap:24px; flex-wrap:wrap;">
+    <div class="panel"><div class="fields" id="field-themed"></div></div>
+    <div class="panel dark"><div class="fields" id="field-inverse"></div></div>
+  </div>
+
+
+  </main>
+</div>
+<script>
+  const FIELD_ROWS = [
+    ["Default", {}], ["Active", {state: "active"}], ["Typing", {state: "typing", value: "Value"}],
+    ["Filled", {state: "filled", value: "Value"}], ["Loading", {state: "loading", value: "Value"}],
+    ["Typing · Success", {state: "typing", value: "Value", v: "success"}], ["Filled · Success", {value: "Value", v: "success"}],
+    ["Default · Error", {v: "error"}], ["Typing · Error", {state: "typing", value: "Value", v: "error"}],
+    ["Filled · Error", {value: "Value", v: "error"}], ["Typing · Warning", {state: "typing", value: "Value", v: "warning"}],
+    ["Filled · Warning", {value: "Value", v: "warning"}], ["Read-only", {value: "Value", readonly: true}],
+    ["Disabled · Filled", {value: "Value", disabled: true}], ["Disabled · Default", {disabled: true}],
+    ["Skeleton", {state: "skeleton"}]
+  ];
+  function field(o, inverse) {
+    const a = (o.state ? ` data-state="${o.state}"` : "") + (o.v ? ` data-validation="${o.v}"` : "") + (inverse ? ` data-appearance="inverse"` : "");
+    const inp = `<input class="bog-field__input" placeholder="Placeholder"${o.value ? ` value="${o.value}"` : ""}${o.readonly ? " readonly" : ""}${o.disabled ? " disabled" : ""}>`;
+    return `<div class="bog-field"${a}><label class="bog-field__box"><span class="bog-field__text"><span class="bog-field__label">Input text</span>${inp}</span>` +
+      `<button type="button" class="bog-field__clear" aria-label="Clear"></button><span class="bog-icon"></span>` +
+      `<button type="button" class="bog-field__info" aria-label="More info"></button></label><p class="bog-field__message">Message text</p></div>`;
+  }
+  for (const [id, inv] of [["field-themed", false], ["field-inverse", true]])
+    document.getElementById(id).innerHTML = FIELD_ROWS.map(([name, o]) => `<div class="row-label"><code>${name}</code></div>${field(o, inv)}`).join("");
+
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chip — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="chip"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Chip</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Compact buttons for quick actions, suggestions and filters: Assist, Suggestion (incl. 2-line), Filter (with selected state and overlay placement) and Icon-only chips, plus single-row or wrapping groups.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;button type="button" class="bog-chip"&gt;Chip text&lt;/button&gt;
+&lt;button type="button" class="bog-chip" data-type="filter" aria-pressed="true"&gt;Last 30 days&lt;/button&gt;
+&lt;button type="button" class="bog-chip" data-type="icon" aria-pressed="false" aria-label="Filters"&gt;
+  &lt;span class="bog-icon"&gt;&lt;/span&gt;&lt;span class="bog-chip__count"&gt;4&lt;/span&gt;
+&lt;/button&gt;
+
+&lt;div class="bog-chip-group"&gt;…chips in one scrolling row…&lt;/div&gt;
+&lt;div class="bog-chip-group" data-wrap&gt;…chips on multiple rows…&lt;/div&gt;</code></pre>
+
+    <h2>Assist / Suggestion chip</h2>
+    <div class="panel"><table id="assist"></table></div>
+    <h2>Filter chip</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="panel"><table id="filter-page"></table></div>
+      <div class="panel orange"><table id="filter-overlay"></table></div>
+    </div>
+    <h2>Icon only chip</h2>
+    <div class="panel"><table id="icon"></table></div>
+    <h2>Chip group</h2>
+    <p class="lead">Tap the filter chips to toggle them.</p>
+    <div class="panel" style="width:335px;display:flex;flex-direction:column;gap:24px" id="groups"></div>
+
+<script>
+  const STATES = [["Enabled", ""], ["Pressed", ' data-state="pressed"'], ["Disabled", " disabled"], ["Skeleton", ' data-state="skeleton"']];
+  const chip = (inner, a = "") => `<button type="button" class="bog-chip"${a}>${inner}</button>`;
+  const A = [["Default", "Chip text"], ["Leading icon", '<span class="bog-icon"></span>Chip text'], ["Flag", '<span class="bog-flag" data-size="20"><img src="../assets/flags/ge.svg" alt=""></span>GEL'], ["2 Line", '<span class="bog-chip__text"><span class="bog-chip__title">Title</span>Chip text</span>']];
+  document.getElementById("assist").innerHTML = "<tr><th></th>" + STATES.map(([n]) => `<th>${n}</th>`).join("") + "</tr>" + A.map(([n, i]) => `<tr><th>${n}</th>${STATES.map(([, a]) => `<td>${chip(i, a)}</td>`).join("")}</tr>`).join("");
+  const F = ov => "<tr><th></th>" + STATES.map(([n]) => `<th>${n}</th>`).join("") + "</tr>" + [["Not selected", "false"], ["Selected", "true"], ["Dropdown", "false\" data-dropdown x=\""]].map(([n, p]) => `<tr><th>${n}</th>${STATES.map(([sn, a]) => `<td>${sn === "Disabled" && p === "true" ? "" : chip("Chip text", ` data-type="filter" aria-pressed="${p}"${ov ? ' data-placement="overlay"' : ""}${a}`)}</td>`).join("")}</tr>`).join("");
+  document.getElementById("filter-page").innerHTML = F(false);
+  document.getElementById("filter-overlay").innerHTML = F(true);
+  const IS = [["Enabled", 'aria-pressed="false"', ""], ["Pressed", 'aria-pressed="false" data-state="pressed"', ""], ["Selected", 'aria-pressed="true"', '<span class="bog-chip__count">4</span>'], ["Selected · Pressed", 'aria-pressed="true" data-state="pressed"', '<span class="bog-chip__count">4</span>'], ["Disabled", 'aria-pressed="false" disabled', ""], ["Skeleton", 'data-state="skeleton"', ""]];
+  document.getElementById("icon").innerHTML = "<tr>" + IS.map(([n]) => `<th>${n}</th>`).join("") + "</tr><tr>" + IS.map(([, a, c]) => `<td style="padding:8px 12px">${chip('<span class="bog-icon"></span>' + c, ` data-type="icon" aria-label="Filter" ${a}`)}</td>`).join("") + "</tr>";
+  const many = ["All", "Transfers", "Payments", "Cards", "Deposits", "Loans", "Insurance", "Investments"];
+  document.getElementById("groups").innerHTML =
+    `<div class="bog-chip-group">${many.map((t, i) => chip(t, ` data-type="filter" aria-pressed="${i === 0}"`)).join("")}</div>` +
+    `<div class="bog-chip-group" data-wrap>${many.map(t => chip(t)).join("")}</div>`;
+</script>
+  </main>
+</div>
+</body>
+</html>

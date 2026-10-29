@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Number Input — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="number-input"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Number Input</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Text Input with − / + Icon Buttons for stepping a quantity.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-field bog-number-input"&gt;
+  &lt;label class="bog-field__box"&gt;
+    &lt;span class="bog-field__text"&gt;
+      &lt;span class="bog-field__label"&gt;Enter amount&lt;/span&gt;
+      &lt;input class="bog-field__input" inputmode="numeric" placeholder=" " data-min="0" data-max="10"&gt;
+    &lt;/span&gt;
+    &lt;span class="bog-number-input__stepper"&gt;
+      &lt;button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" data-step="down" aria-label="Decrease"&gt;&lt;span class="bog-icon" data-icon="minus"&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" data-step="up" aria-label="Increase"&gt;&lt;span class="bog-icon" data-icon="plus"&gt;&lt;/span&gt;&lt;/button&gt;
+    &lt;/span&gt;
+  &lt;/label&gt;
+  &lt;p class="bog-field__message"&gt;Helper text&lt;/p&gt;
+&lt;/div&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <p class="lead">Type a number or use − / +. Limits: 0–10.</p>
+    <div class="panel"><div style="width:316px;min-width:316px" id="demo"></div></div>
+
+    <h2>States</h2>
+    <div class="panel"><table id="matrix"></table></div>
+
+<script>
+
+  const ni = (o = {}) => `<div class="bog-field bog-number-input"${o.state ? ` data-state="${o.state}"` : ""}${o.v ? ` data-validation="${o.v}"` : ""}><label class="bog-field__box"><span class="bog-field__text"><span class="bog-field__label">Enter amount</span><input class="bog-field__input" inputmode="numeric" placeholder=" "${o.limits ? ' data-min="0" data-max="10"' : ""}${o.value ? ` value="${o.value}"` : ""}${o.readonly ? " readonly" : ""}${o.disabled ? " disabled" : ""}></span><span class="bog-number-input__stepper"><button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" data-step="down" aria-label="Decrease"${o.disabled ? " disabled" : ""}><span class="bog-icon" data-icon="minus"></span></button><button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" data-step="up" aria-label="Increase"${o.disabled ? " disabled" : ""}><span class="bog-icon" data-icon="plus"></span></button></span></label>${o.v || o.msg ? '<p class="bog-field__message">Message text</p>' : ""}</div>`;
+  document.getElementById("demo").innerHTML = ni({ value: "1", msg: 1, limits: 1 });
+  const ROWS = [["Default", {}], ["Active", {state: "active"}], ["Typing", {state: "typing", value: "100"}], ["Filled", {value: "100"}], ["Typing · Success", {state: "typing", value: "100", v: "success"}], ["Filled · Success", {value: "100", v: "success"}], ["Default · Error", {v: "error"}], ["Filled · Error", {value: "100", v: "error"}], ["Filled · Warning", {value: "100", v: "warning"}], ["Read-only", {value: "100", readonly: 1}], ["Disabled", {disabled: 1}], ["Disabled · Filled", {value: "100", disabled: 1}], ["Skeleton", {state: "skeleton"}]];
+  document.getElementById("matrix").innerHTML = ROWS.map(([n, o]) => `<tr><th>${n}</th><td style="width:316px;min-width:316px">${ni(o)}</td></tr>`).join("");
+
+</script>
+  </main>
+</div>
+</body>
+</html>

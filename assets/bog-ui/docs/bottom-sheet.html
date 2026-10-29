@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bottom Sheet — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+<style>
+  .phones { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+  .phone { position: relative; width: 375px; height: 700px; border-radius: 32px; background: #fff; box-shadow: 0 0 0 8px #1b1c1d, 0 12px 40px #1b1c1d33; }
+  .phone__screen { display: flex; flex-direction: column; gap: 16px; padding: 56px 16px 16px; }
+  .phone__screen h3 { margin: 0 0 4px; font-size: 22px; }
+  .phone .bog-sheet__panel { max-height: calc(100% - 40px); }
+  .caption { margin: 12px 0 0; color: var(--support-static-02); font-size: 12px; text-align: center; }
+
+</style>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="bottom-sheet"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Bottom Sheet</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Slides up from the bottom over a dark overlay. The content area is a free slot: put any component inside. The header can have a title, description, both, or be blank. There's an optional sticky bar with a message and buttons at the bottom. Every sheet has an X close button by default (<code>data-close="false"</code> to hide it). You can also close it by tapping the overlay, pressing Escape, dragging the handle down, or with any <code>data-sheet-close</code> button.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-sheet" id="my-sheet" hidden&gt;
+  &lt;div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="my-sheet-title"&gt;
+    &lt;header class="bog-sheet__nav"&gt;
+      &lt;div class="bog-sheet__heading"&gt;
+        &lt;h2 class="bog-sheet__title" id="my-sheet-title"&gt;Title&lt;/h2&gt;
+        &lt;p class="bog-sheet__desc"&gt;Description&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/header&gt;
+    &lt;div class="bog-sheet__content"&gt;
+      …any content: text, inputs, lists, amounts…
+    &lt;/div&gt;
+    &lt;div class="bog-sheet__bar"&gt;
+      &lt;p class="bog-sheet__bar-text"&gt;Message text&lt;/p&gt;
+      &lt;button class="bog-btn" data-type="primary" data-width="fill" data-sheet-close&gt;Primary&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;button class="bog-btn" data-type="primary" data-sheet-open="my-sheet"&gt;Open sheet&lt;/button&gt;
+&lt;!-- or from JS: BOG.openSheet("my-sheet"); BOG.closeSheet(); --&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <div class="phones">
+      <div>
+        <div class="phone bog-sheet-host">
+          <div class="phone__screen">
+            <h3>Payments</h3>
+            <button class="bog-btn" data-type="primary" data-sheet-open="s-list">List + sticky bar</button>
+            <button class="bog-btn" data-type="secondary" data-sheet-open="s-free">Free content</button>
+            <button class="bog-btn" data-type="neutral" data-sheet-open="s-buttons">Header buttons</button>
+            <button class="bog-btn" data-type="neutral" data-sheet-open="s-nooverlay">No overlay</button>
+          </div>
+          <div class="bog-sheet" id="s-list" hidden data-home-indicator>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2></div></header>
+          <div class="bog-sheet__content" data-type="list">
+          <div class="bog-list">
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+          </div>
+          </div>
+          <div class="bog-sheet__bar"><p class="bog-sheet__bar-text">Message text</p><button class="bog-btn" data-type="primary" data-width="fill" data-sheet-close>Primary</button></div>
+        </div>
+      </div>
+          <div class="bog-sheet" id="s-free" hidden data-home-indicator>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2><p class="bog-sheet__desc">Description</p></div></header>
+          <div class="bog-sheet__content">
+          <p style="margin:0 0 16px;color:var(--text-secondary);font-size:14px;line-height:20px">Free content: put anything here — text, amounts, inputs, pickers.</p>
+          <div class="bog-field"><label class="bog-field__box"><span class="bog-field__text"><span class="bog-field__label">Amount</span><input class="bog-field__input" inputmode="decimal" placeholder="0.00"></span><button type="button" class="bog-field__clear" aria-label="Clear"></button></label></div>
+          </div>
+          
+        </div>
+      </div>
+          <div class="bog-sheet" id="s-buttons" hidden data-home-indicator>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><button type="button" class="bog-icon-btn" data-type="neutral" aria-label="Back"><span class="bog-icon"></span></button><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2></div><button type="button" class="bog-icon-btn" data-type="neutral" aria-label="Close" data-sheet-close><span class="bog-icon" data-icon="close"></span></button></header>
+          <div class="bog-sheet__content" data-type="list">
+          <div class="bog-list">
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+          </div>
+          </div>
+          
+        </div>
+      </div>
+          <div class="bog-sheet" id="s-nooverlay" hidden data-overlay="false" data-home-indicator>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><p class="bog-sheet__desc">Description</p></div></header>
+          <div class="bog-sheet__content" data-type="list">
+          <div class="bog-list">
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+          </div>
+          </div>
+          
+        </div>
+      </div>
+        </div>
+        <p class="caption">Tap a button · drag the handle down to close</p>
+      </div>
+    </div>
+
+    <h2>Variants</h2>
+    <div class="phones">
+      <div><div class="phone bog-sheet-host" style="height:560px"><div class="bog-sheet" id="v1" data-open data-home-indicator>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2></div></header>
+          <div class="bog-sheet__content" data-type="list">
+          <div class="bog-list">
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+          </div>
+          </div>
+          <div class="bog-sheet__bar"><p class="bog-sheet__bar-text">Message text</p><button class="bog-btn" data-type="primary" data-width="fill" data-sheet-close>Primary</button></div>
+        </div>
+      </div></div><p class="caption">Title only · List · Sticky Bar</p></div>
+      <div><div class="phone bog-sheet-host" style="height:560px"><div class="bog-sheet" id="v2" data-open data-home-indicator>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2><p class="bog-sheet__desc">Description</p></div></header>
+          <div class="bog-sheet__content" data-type="list">
+          <div class="bog-list">
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+          </div>
+          </div>
+          
+        </div>
+      </div></div><p class="caption">Title + description · no Sticky Bar</p></div>
+      <div><div class="phone bog-sheet-host" style="height:560px"><div class="bog-sheet" id="v3" data-open data-home-indicator>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"></header>
+          <div class="bog-sheet__content">
+          <p style="margin:0 0 16px;color:var(--text-secondary);font-size:14px;line-height:20px">Free content: put anything here — text, amounts, inputs, pickers.</p>
+          <div class="bog-field"><label class="bog-field__box"><span class="bog-field__text"><span class="bog-field__label">Amount</span><input class="bog-field__input" inputmode="decimal" placeholder="0.00"></span><button type="button" class="bog-field__clear" aria-label="Clear"></button></label></div>
+          </div>
+          
+        </div>
+      </div></div><p class="caption">Blank header · Free content (Slot)</p></div>
+      <div><div class="phone bog-sheet-host" style="height:560px"><div class="bog-sheet" id="v4" data-open data-overlay="false" data-home-indicator>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><p class="bog-sheet__desc">Description</p></div></header>
+          <div class="bog-sheet__content" data-type="list">
+          <div class="bog-list">
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+          </div>
+          </div>
+          <div class="bog-sheet__bar"><p class="bog-sheet__bar-text">Message text</p><button class="bog-btn" data-type="primary" data-width="fill" data-sheet-close>Primary</button></div>
+        </div>
+      </div></div><p class="caption">Description only · Overlay=False</p></div>
+    </div>
+  </main>
+</div>
+</body>
+</html>

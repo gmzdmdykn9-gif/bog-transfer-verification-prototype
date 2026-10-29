@@ -1,0 +1,203 @@
+/* ==========================================================================
+   BOG UI — Checkbox (+ Checkbox + Label, Checkbox Group)
+   Figma: Checkbox page (38613:9869)
+
+   Checkbox only
+     <input type="checkbox" class="bog-checkbox__input" aria-label="Select">
+
+   Checkbox + Label
+     <label class="bog-checkbox">
+       <input type="checkbox" class="bog-checkbox__input">
+       <span class="bog-checkbox__text">
+         <span class="bog-checkbox__label">I agree to the <a href="#">terms ↗</a></span>
+         <span class="bog-checkbox__desc">Description</span>                         optional
+         <span class="bog-checkbox__message">Message text</span>                     optional (error)
+       </span>
+     </label>
+
+   Group
+     <fieldset class="bog-checkbox-group">
+       <legend class="bog-checkbox-group__label">Group label</legend>
+       …checkboxes…
+     </fieldset>
+
+   States (on .bog-checkbox, .bog-checkbox-group or the bare input)
+     checked / indeterminate     native (set input.indeterminate = true, or data-indeterminate)
+     disabled                    native on the input
+     data-state                  error | readonly | skeleton
+     data-appearance             inverse (Inverse Static, dark backgrounds)
+     data-align                  right — checkbox after the text (Alignment=Right)
+   ========================================================================== */
+
+.bog-checkbox__input {
+  --_line: var(--support-support-02);
+  --_fill: var(--icon-accent);
+  --_mark: var(--icon-inverse-primary);
+  position: relative;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  border-radius: 6px;
+  -webkit-appearance: none;
+          appearance: none;
+  background: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.bog-checkbox__input:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 0; }
+/* Box layer (20px at 2,2): outline when unchecked, filled when checked */
+.bog-checkbox__input::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  background-color: var(--_line);
+  -webkit-mask: url("../icons/checkbox-box.svg") center / contain no-repeat;
+          mask: url("../icons/checkbox-box.svg") center / contain no-repeat;
+}
+.bog-checkbox__input:is(:checked, :indeterminate, [data-indeterminate])::after {
+  background-color: var(--_fill);
+  -webkit-mask-image: url("../icons/checkbox-fill.svg");
+          mask-image: url("../icons/checkbox-fill.svg");
+}
+/* Mark layer: check (10×7) or dash (10×1.4) */
+.bog-checkbox__input:is(:checked, :indeterminate, [data-indeterminate])::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 8.8px;
+  left: 7px;
+  width: 10px;
+  height: 7px;
+  background-color: var(--_mark);
+  -webkit-mask: url("../icons/checkbox-check.svg") center / contain no-repeat;
+          mask: url("../icons/checkbox-check.svg") center / contain no-repeat;
+}
+.bog-checkbox__input:is(:indeterminate, [data-indeterminate])::before {
+  top: 11.3px;
+  height: 1.43px;
+  -webkit-mask-image: url("../icons/checkbox-dash.svg");
+          mask-image: url("../icons/checkbox-dash.svg");
+}
+
+/* ---- Error / Disabled / Read-only / Skeleton ---------------------------- */
+:is(.bog-checkbox, .bog-checkbox-group)[data-state="error"] .bog-checkbox__input,
+.bog-checkbox__input[data-state="error"] { --_line: var(--border-error); --_fill: var(--icon-error); }
+.bog-checkbox__input:disabled { --_line: var(--icon-disabled); --_fill: var(--icon-disabled); cursor: default; }
+/* Read-only: outline box stays, grey mark, no fill */
+:is(.bog-checkbox, .bog-checkbox-group)[data-state="readonly"] .bog-checkbox__input,
+.bog-checkbox__input[data-state="readonly"] { --_fill: var(--_line); --_mark: var(--text-secondary); pointer-events: none; }
+:is(.bog-checkbox, .bog-checkbox-group)[data-state="readonly"] .bog-checkbox__input:is(:checked, :indeterminate, [data-indeterminate])::after,
+.bog-checkbox__input[data-state="readonly"]:is(:checked, :indeterminate, [data-indeterminate])::after {
+  -webkit-mask-image: url("../icons/checkbox-box.svg");
+          mask-image: url("../icons/checkbox-box.svg");
+}
+:is(.bog-checkbox, .bog-checkbox-group)[data-state="skeleton"] .bog-checkbox__input,
+.bog-checkbox__input[data-state="skeleton"] { --_line: var(--support-skeleton); --_fill: var(--support-skeleton); --_mark: var(--support-skeleton); pointer-events: none; }
+
+/* ---- Inverse Static ---------------------------------------------------- */
+:is(.bog-checkbox, .bog-checkbox-group)[data-appearance="inverse"] .bog-checkbox__input,
+.bog-checkbox__input[data-appearance="inverse"] { --_line: var(--support-static-01); --_fill: var(--background-inverse-accent-static); --_mark: var(--icon-black); }
+:is(.bog-checkbox, .bog-checkbox-group)[data-appearance="inverse"][data-state="error"] .bog-checkbox__input { --_line: var(--status-inverse-error-static); --_fill: var(--status-inverse-error-static); }
+:is(.bog-checkbox, .bog-checkbox-group)[data-appearance="inverse"] .bog-checkbox__input:disabled { --_line: var(--support-static-02); --_fill: var(--support-static-02); }
+:is(.bog-checkbox, .bog-checkbox-group)[data-appearance="inverse"][data-state="readonly"] .bog-checkbox__input { --_mark: var(--text-white-secondary); }
+:is(.bog-checkbox, .bog-checkbox-group)[data-appearance="inverse"][data-state="skeleton"] .bog-checkbox__input { --_line: var(--support-skeleton-inverse-static); --_fill: var(--support-skeleton-inverse-static); --_mark: var(--support-skeleton-inverse-static); }
+
+/* Same states when the attributes sit on the bare input */
+.bog-checkbox__input[data-appearance="inverse"][data-state="error"] { --_line: var(--status-inverse-error-static); --_fill: var(--status-inverse-error-static); }
+.bog-checkbox__input[data-appearance="inverse"]:disabled { --_line: var(--support-static-02); --_fill: var(--support-static-02); }
+.bog-checkbox__input[data-appearance="inverse"][data-state="readonly"] { --_line: var(--support-static-01); --_fill: var(--support-static-01); --_mark: var(--text-white-secondary); }
+.bog-checkbox__input[data-appearance="inverse"][data-state="skeleton"] { --_line: var(--support-skeleton-inverse-static); --_fill: var(--support-skeleton-inverse-static); --_mark: var(--support-skeleton-inverse-static); }
+:is(.bog-checkbox, .bog-checkbox-group)[data-appearance="inverse"][data-state="readonly"] .bog-checkbox__input { --_fill: var(--support-static-01); }
+
+/* ---- Checkbox + Label --------------------------------------------------- */
+.bog-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-gap-small);
+  color: var(--text-primary);
+  font-family: var(--font-family-bog);
+  cursor: pointer;
+}
+.bog-checkbox[data-align="right"] { flex-direction: row-reverse; justify-content: space-between; }
+.bog-checkbox__text {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--spacing-gap-2x-small);
+}
+.bog-checkbox__label {
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+}
+.bog-checkbox__label a { color: var(--text-accent); }
+.bog-checkbox__desc {
+  color: var(--text-secondary);
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-line-height);
+  font-weight: var(--body-small-weight);
+}
+.bog-checkbox__message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-gap-x-small);
+  margin-top: calc(var(--spacing-gap-x-small) - var(--spacing-gap-2x-small));
+  color: var(--text-error);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-checkbox__message::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--icon-error);
+  -webkit-mask: url("../icons/status-alert.svg") center / contain no-repeat;
+          mask: url("../icons/status-alert.svg") center / contain no-repeat;
+}
+.bog-checkbox:has(.bog-checkbox__input:disabled) { cursor: default; }
+.bog-checkbox:has(.bog-checkbox__input:disabled) :is(.bog-checkbox__label, .bog-checkbox__desc, .bog-checkbox__label a) { color: var(--text-disabled); }
+:is(.bog-checkbox, .bog-checkbox-group)[data-state="readonly"] .bog-checkbox { cursor: default; }
+:is(.bog-checkbox, .bog-checkbox-group)[data-appearance="inverse"] :is(.bog-checkbox__label) { color: var(--text-white-primary); }
+:is(.bog-checkbox, .bog-checkbox-group)[data-appearance="inverse"] .bog-checkbox__desc { color: var(--text-white-secondary); }
+.bog-checkbox[data-appearance="inverse"] .bog-checkbox__label { color: var(--text-white-primary); }
+.bog-checkbox[data-appearance="inverse"] .bog-checkbox__label a,
+.bog-checkbox-group[data-appearance="inverse"] .bog-checkbox__label a { color: var(--background-inverse-accent-static); }
+/* Skeleton: box + 95×8 bar */
+:is(.bog-checkbox, .bog-checkbox-group)[data-state="skeleton"] .bog-checkbox__text > * { display: none; }
+:is(.bog-checkbox, .bog-checkbox-group)[data-state="skeleton"] .bog-checkbox__text::before {
+  content: "";
+  width: 95px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: var(--radius-2x-small);
+  background: var(--support-skeleton);
+}
+:is(.bog-checkbox, .bog-checkbox-group)[data-appearance="inverse"][data-state="skeleton"] .bog-checkbox__text::before { background: var(--support-skeleton-inverse-static); }
+
+/* ---- Group --------------------------------------------------------------- */
+.bog-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-default);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: var(--font-family-bog);
+}
+.bog-checkbox-group__label {
+  float: left; /* lets the legend take part in the flex gap */
+  width: 100%;
+  margin: 0 0 calc(var(--spacing-gap-small) - var(--spacing-gap-default));
+  padding: 0;
+  color: var(--text-helper);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-checkbox-group__label + * { clear: both; }
