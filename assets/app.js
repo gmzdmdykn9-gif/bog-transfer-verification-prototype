@@ -115,6 +115,20 @@
     "otp-passcode": ["otp", "passcode"], "otp-passkey": ["otp", "passkey"], "passcode-passkey": ["passcode", "passkey"]
   };
   function scenario() { return SCENARIOS[location.hash.slice(1)] || SCENARIOS["otp-passkey"]; }
+
+  // Start page (no hash) ↔ transfer form (#scenario). Back on the transfer form returns to the start page.
+  function route() {
+    var atStart = !SCENARIOS[location.hash.slice(1)];
+    if (atStart) { closeAll(); if (page.hasAttribute("data-open")) closePicker(); }
+    document.documentElement.toggleAttribute("data-at-start", atStart);
+    $('[data-screen="start"]').inert = !atStart;
+    transfer.inert = atStart;
+  }
+  window.addEventListener("hashchange", route);
+  $("#transfer-back").addEventListener("click", function () {
+    history.pushState(null, "", location.pathname + location.search);   // drop the #scenario
+    route();
+  });
   var steps = [], stepIndex = -1, timer = null;
   function screen(name) { return $('[data-screen="' + name + '"]'); }
 
@@ -244,4 +258,6 @@
     var btn = this; btn.setAttribute("data-state", "loading");
     setTimeout(function () { btn.removeAttribute("data-state"); closeSystemSheet(true); stepDone(); }, 1100);
   });
+
+  route();
 })();

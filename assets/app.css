@@ -205,3 +205,19 @@ html.bog-sheet-locked .screen__body { overflow: hidden; touch-action: none; }
   .verify .bog-keypad__key { height: 48px; }
   .verify .bog-keypad { row-gap: var(--spacing-gap-small); }
 }
+
+/* ---- Prototype start page (scenario picker for testers) -------------------
+   It is the root screen; the transfer form pushes in over it from the right. */
+.screen--start { z-index: 0; }
+html:not([data-at-start]) .screen--start { transform: translateX(-30%); visibility: hidden; transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 380ms; }
+html[data-at-start] [data-screen="transfer"] { transform: translateX(100%); visibility: hidden; transition: transform 380ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 380ms; }
+[data-screen="transfer"] { z-index: 1; box-shadow: -8px 0 24px #1b1c1d14; }
+.nav__title--center { text-align: center; }
+.start__lead {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+}
+.screen--start .bog-inline-message { align-self: flex-start; }

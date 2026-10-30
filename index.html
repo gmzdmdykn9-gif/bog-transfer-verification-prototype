@@ -6,18 +6,81 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>სხვასთან გადარიცხვა — BOG prototype</title>
-<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=20261030124724">
-<link rel="stylesheet" href="assets/app.css?v=20261030124724">
-<script src="assets/bog-ui/bog-ui.js?v=20261030124724" defer></script>
-<script src="assets/app.js?v=20261030124724" defer></script>
+<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=20261030132040">
+<link rel="stylesheet" href="assets/app.css?v=20261030132040">
+<script src="assets/bog-ui/bog-ui.js?v=20261030132040" defer></script>
+<script src="assets/app.js?v=20261030132040" defer></script>
 </head>
 <body>
 <div class="app" id="app">
 
+  <!-- ===================== Prototype start page: pick a verification scenario (testers only, not app UI) ===================== -->
+  <section class="screen screen--start" data-screen="start">
+    <header class="nav">
+      <h1 class="nav__title nav__title--center">ვერიფიკაციის სცენარები</h1>
+    </header>
+    <main class="screen__body">
+      <p class="start__lead">აირჩიე სცენარი. გაიხსნება „სხვასთან გადარიცხვა“ — შეიყვანე თანხა და დააჭირე „შემდეგი“.</p>
+      <div class="bog-list-group">
+        <div class="bog-list-group__header"><span>სანდო მოწყობილობა · 1 მეთოდი</span></div>
+        <div class="bog-list" data-divider>
+          <a class="bog-list-item" href="#trusted-otp">
+            <span class="bog-list-item__content">
+              <span class="bog-list-item__label">SMS კოდი</span>
+              <span class="bog-list-item__subtitle">კოდი მოდის ნომერზე</span>
+            </span>
+            <span class="bog-list-item__chevron"></span>
+          </a>
+          <a class="bog-list-item" href="#trusted-passcode">
+            <span class="bog-list-item__content">
+              <span class="bog-list-item__label">პასკოდი</span>
+              <span class="bog-list-item__subtitle">მომხმარებლის 4-ნიშნა კოდი</span>
+            </span>
+            <span class="bog-list-item__chevron"></span>
+          </a>
+          <a class="bog-list-item" href="#trusted-passkey">
+            <span class="bog-list-item__content">
+              <span class="bog-list-item__label">Passkey</span>
+              <span class="bog-list-item__subtitle">Face ID / Touch ID</span>
+            </span>
+            <span class="bog-list-item__chevron"></span>
+          </a>
+        </div>
+      </div>
+      <div class="bog-list-group">
+        <div class="bog-list-group__header"><span>არასანდო მოწყობილობა · 2 მეთოდი</span></div>
+        <div class="bog-list" data-divider>
+          <a class="bog-list-item" href="#otp-passcode">
+            <span class="bog-list-item__content">
+              <span class="bog-list-item__label">SMS კოდი → პასკოდი</span>
+              <span class="bog-list-item__subtitle">ჯერ SMS კოდი, შემდეგ პასკოდი</span>
+            </span>
+            <span class="bog-list-item__chevron"></span>
+          </a>
+          <a class="bog-list-item" href="#otp-passkey">
+            <span class="bog-list-item__content">
+              <span class="bog-list-item__label">SMS კოდი → Passkey</span>
+              <span class="bog-list-item__subtitle">ჯერ SMS კოდი, შემდეგ Passkey</span>
+            </span>
+            <span class="bog-list-item__chevron"></span>
+          </a>
+          <a class="bog-list-item" href="#passcode-passkey">
+            <span class="bog-list-item__content">
+              <span class="bog-list-item__label">პასკოდი → Passkey</span>
+              <span class="bog-list-item__subtitle">ჯერ პასკოდი, შემდეგ Passkey</span>
+            </span>
+            <span class="bog-list-item__chevron"></span>
+          </a>
+        </div>
+      </div>
+      <span class="bog-inline-message" data-status="info">სატესტო კოდი 0000 — არასწორი კოდის მდგომარეობა. ნებისმიერი სხვა 4 ციფრი — წარმატება.</span>
+    </main>
+  </section>
+
   <!-- ===================== Transfer form (Figma: Step 949) ===================== -->
   <section class="screen" data-screen="transfer">
     <header class="nav">
-      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="უკან">
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="უკან" id="transfer-back">
         <span class="bog-icon icon-chevron-left"></span>
       </button>
       <h1 class="nav__title">სხვასთან გადარიცხვა</h1>
