@@ -108,11 +108,11 @@
   /* ---- Verification ------------------------------------------------------
      Entry points (URL hash) — which methods the bank asks for:
        Trusted device (one method):   #trusted-otp · #trusted-passcode · #trusted-passkey
-       Not trusted (two methods):     #otp-passkey · #passcode-passkey
+       Not trusted (two methods):     #otp-passcode · #otp-passkey · #passcode-passkey
      No hash = #otp-passkey. Test code 0000 = wrong code.                                 */
   var SCENARIOS = {
     "trusted-otp": ["otp"], "trusted-passcode": ["passcode"], "trusted-passkey": ["passkey"],
-    "otp-passkey": ["otp", "passkey"], "passcode-passkey": ["passcode", "passkey"]
+    "otp-passcode": ["otp", "passcode"], "otp-passkey": ["otp", "passkey"], "passcode-passkey": ["passcode", "passkey"]
   };
   function scenario() { return SCENARIOS[location.hash.slice(1)] || SCENARIOS["otp-passkey"]; }
   var steps = [], stepIndex = -1, timer = null;
