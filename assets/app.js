@@ -97,9 +97,7 @@
   });
 
   $("#next-btn").addEventListener("click", function () {
-    var n = parseFloat(amountInput.value);
-    if (!n || n <= 0) { setAmountError("შეიყვანე თანხა"); amountInput.focus(); return; }
-    if (n > balance) { setAmountError("ანგარიშზე არ არის საკმარისი თანხა"); amountInput.focus(); return; }
+    // No amount validation in the prototype: Next always continues to verification
     var btn = this;
     btn.setAttribute("data-state", "loading");
     setTimeout(function () { btn.removeAttribute("data-state"); startVerification(); }, 700);
@@ -165,7 +163,7 @@
   function stepDone() {
     if (stepIndex < steps.length - 1) { leave(steps[stepIndex]); showStep(stepIndex + 1); return; }
     closeAll();
-    setTimeout(function () { BOG.toast({ status: "positive", title: "გადარიცხვა დადასტურებულია", text: amountInput.value + " ₾ · მიხეილ გოგიბერიძე" }); }, 400);
+    setTimeout(function () { BOG.toast({ status: "positive", title: "გადარიცხვა დადასტურებულია", text: (amountInput.value ? amountInput.value + " ₾ · " : "") + "მიხეილ გოგიბერიძე" }); }, 400);
   }
   document.addEventListener("click", function (e) {
     if (e.target.closest("[data-verify-close]")) closeAll();
