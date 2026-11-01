@@ -99,7 +99,9 @@
   $("#next-btn").addEventListener("click", function () {
     // No amount validation in the prototype: Next always continues to verification
     var btn = this;
-    if (scenario()[0] === "otp") primeKeyboard();
+    // OTP first: push the step right in the tap, so the keyboard rises together with the
+    // slide-in (as in the app) instead of popping up over the transfer form
+    if (scenario()[0] === "otp") { startVerification(); return; }
     btn.setAttribute("data-state", "loading");
     setTimeout(function () { btn.removeAttribute("data-state"); startVerification(); }, 700);
   });

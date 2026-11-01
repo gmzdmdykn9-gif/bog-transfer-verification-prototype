@@ -21,7 +21,7 @@
      <button class="bog-btn" data-sheet-open="my-sheet">Open</button>
 
    Opening/closing is handled by bog-ui.js: [data-sheet-open="id"], BOG.openSheet("id"), BOG.closeSheet().
-   The sheet stays above the phone keyboard with its top in place (--bog-vv-top / --bog-vv-height).
+   The sheet stays above the phone keyboard with its top in place, and its panel runs on behind the keyboard (--bog-vv-top / --bog-keyboard).
    Closes on overlay tap, Escape, any [data-sheet-close] inside, or dragging the handle down.
    An X close button (neutral Icon Button) is added to the right of the header by default;
    turn it off with data-close="false" on .bog-sheet, or supply your own [data-sheet-close] button.
@@ -46,11 +46,9 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  /* Keyboard open: pinned to the visible area above it, so the sheet's top stays put
-     (bog-ui.js sets --bog-vv-top / --bog-vv-height from the visual viewport) */
+  /* Keyboard open: the top follows the visible area so the sheet's top stays put
+     (bog-ui.js sets --bog-vv-top / --bog-keyboard from the visual viewport) */
   top: var(--bog-vv-top, 0px);
-  bottom: auto;
-  height: var(--bog-vv-height, 100%);
   font-family: var(--font-family-bog);
 }
 .bog-sheet[hidden] { display: none; }
@@ -84,6 +82,9 @@ html.bog-sheet-locked, html.bog-sheet-locked body { overflow: hidden; overscroll
   max-height: calc(100% - 48px);
   border-radius: var(--radius-default) var(--radius-default) 0 0;
   background: var(--layer-layer-05);
+  /* Keyboard open: the panel continues behind the keyboard in its own color (no grey gap),
+     while its content stays above it */
+  border-bottom: var(--bog-keyboard, 0px) solid var(--layer-layer-05);
   color: var(--text-primary);
   outline: none;
   transform: translateY(100%);

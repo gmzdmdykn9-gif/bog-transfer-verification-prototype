@@ -286,10 +286,12 @@
     // Keep the focused field in view inside its own scroll area once the keyboard is up
     document.addEventListener("focusin", function (e) {
       var el = e.target;
-      if (!el.matches || !el.matches("input, textarea, [contenteditable]")) return;
-      setTimeout(function () {
-        if (document.activeElement === el && document.documentElement.hasAttribute("data-bog-keyboard")) el.scrollIntoView({ block: "nearest" });
-      }, 350);
+      if (!el.matches || !el.matches("input, textarea, [contenteditable]") || el.getAttribute("aria-hidden") === "true") return;
+      var lift = function () {
+        if (document.activeElement === el && document.documentElement.hasAttribute("data-bog-keyboard")) el.scrollIntoView({ block: "center", behavior: "smooth" });
+      };
+      setTimeout(lift, 350);
+      setTimeout(lift, 700);   // again once the keyboard animation has settled
     });
     vv.addEventListener("resize", syncKeyboard);
     vv.addEventListener("scroll", syncKeyboard);

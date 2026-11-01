@@ -10,10 +10,10 @@ body { font-family: var(--font-family-bog); color: var(--text-primary); -webkit-
 .screen {
   position: fixed;
   inset: 0;
-  /* Keyboard open: stay pinned to the visible area so the nav bar doesn't scroll away (bog-ui.js) */
+  /* Keyboard open: the top follows the visible area so the nav bar doesn't scroll away; the screen
+     still runs to the bottom behind the keyboard (white, no grey gap), content stays above it (bog-ui.js) */
   top: var(--bog-vv-top, 0px);
-  bottom: auto;
-  height: var(--bog-vv-height, 100%);
+  padding-bottom: var(--bog-keyboard, 0px);
   max-width: 480px;
   margin: 0 auto;
   display: flex;
@@ -240,7 +240,9 @@ html[data-at-start] [data-screen="transfer"] { transform: translateX(100%); visi
 .verify--sheet { flex: 1 0 auto; }
 .verify--sheet .screen__body { flex: 1 0 auto; padding-top: var(--spacing-padding-default); }
 .verify--sheet .verify__spacer { display: block; }
-html[data-keyboard] .verify--sheet .bog-empty .bog-illustration { display: none; }
+/* Keyboard open (page or sheet): drop the illustration so the code sits higher, with room above the keyboard */
+html[data-keyboard] .verify .bog-empty .bog-illustration { display: none; }
+html[data-keyboard] .verify__body { padding-top: var(--spacing-padding-default); padding-bottom: var(--spacing-gap-large); }
 .verify--sheet .verify__hint:empty { display: none; }
 /* Passcode sheet: illustration + keypad don't fit under ~900px tall phones */
 @media (max-height: 900px) { .verify--sheet:has(.bog-keypad) .bog-empty .bog-illustration { display: none; } }
