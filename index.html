@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>სხვასთან გადარიცხვა — BOG prototype</title>
-<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=20261101230938">
-<link rel="stylesheet" href="assets/app.css?v=20261101230938">
-<script src="assets/bog-ui/bog-ui.js?v=20261101230938" defer></script>
-<script src="assets/app.js?v=20261101230938" defer></script>
+<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=1793568805">
+<link rel="stylesheet" href="assets/app.css?v=1793568805">
+<script src="assets/bog-ui/bog-ui.js?v=1793568805" defer></script>
+<script src="assets/app.js?v=1793568805" defer></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -28,6 +28,15 @@
             <span class="bog-toggle-row__desc">ნაბიჯები გაიხსნება ეკრანზე ზემოდან, არა ცალკე გვერდად</span>
           </span>
           <input type="checkbox" role="switch" class="bog-toggle" id="sheet-mode">
+        </span>
+      </label>
+      <label class="bog-toggle-row">
+        <span class="bog-toggle-row__main">
+          <span class="bog-toggle-row__text">
+            <span class="bog-toggle-row__label">Current Design System</span>
+            <span class="bog-toggle-row__desc">SMS კოდი — ახალი OTP Verification კომპონენტი, Onboarding-ის უჯრების ნაცვლად</span>
+          </span>
+          <input type="checkbox" role="switch" class="bog-toggle" id="ds-mode">
         </span>
       </label>
       <div class="bog-list-group">
@@ -286,13 +295,33 @@
       <div class="bog-empty" data-type="custom">
         <span class="bog-illustration" data-size="132"><img src="assets/img/digipass.svg" alt=""></span>
         <p class="bog-empty__title">შეიყვანე ვერიფიკაციის კოდი</p>
-        <p class="bog-empty__desc">კოდი გამოგზავნილია ნომერზე <strong>+995 512 345 678</strong></p>
+        <p class="bog-empty__desc ds-onboarding">კოდი გამოგზავნილია ნომერზე <strong>+995 512 345 678</strong></p>
       </div>
-      <div class="bog-code" data-size="medium" id="otp-code">
+      <!-- Current Design System: Mobile Components › OTP Verification -->
+      <div class="bog-otp ds-current" id="otp-ds" data-timer="30">
+        <div class="bog-otp__form">
+          <div class="bog-field" id="otp-ds-field">
+            <label class="bog-field__box"><span class="bog-field__text">
+              <span class="bog-field__label">შეიყვანე 4-ნიშნა კოდი</span>
+              <input class="bog-field__input" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder=" " aria-label="SMS კოდი">
+            </span></label>
+            <p class="bog-field__message" hidden>კოდი არასწორია, სცადე თავიდან</p>
+          </div>
+          <div class="bog-otp__info">
+            <p class="bog-otp__message">კოდი გამოგზავნილია ნომერზე ••• •• 56 78</p>
+            <p class="bog-otp__timer">კოდის ხელახლა გაგზავნა <b class="bog-otp__time">00:30</b></p>
+            <span class="bog-inline-message bog-otp__expired" data-status="negative">კოდს ვადა გაუვიდა</span>
+            <div class="bog-otp__actions">
+              <button type="button" class="bog-btn bog-otp__resend" data-type="ghost" data-size="small"><span class="bog-icon" data-icon="retry"></span>ხელახლა გაგზავნა</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bog-code ds-onboarding" data-size="medium" id="otp-code">
         <input class="bog-code__input" inputmode="numeric" autocomplete="one-time-code" maxlength="4" aria-label="SMS კოდი">
         <span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span>
       </div>
-      <p class="verify__hint" id="otp-hint"></p>
+      <p class="verify__hint ds-onboarding" id="otp-hint"></p>
     </main>
   </section>
 

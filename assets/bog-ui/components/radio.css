@@ -1,0 +1,147 @@
+/* ==========================================================================
+   BOG UI — Radio Button Group (+ Radio Button + Label)
+   Figma: Radio Button Group (38611:4258), Radio Button + Label (38611:4041), Radio button (38611:4013)
+
+   <div class="bog-radio-group" role="radiogroup" aria-labelledby="rg-label">
+     <span class="bog-radio-group__label" id="rg-label">Where should we send the verification code?</span>
+     <div class="bog-radio-group__options" data-horizontal>                 data-horizontal: 2 short options side by side
+       <label class="bog-radio">
+         <input type="radio" class="bog-radio__input" name="otp-channel" value="sms" checked>
+         <span class="bog-radio__control"></span>
+         <span class="bog-radio__label">SMS</span>
+       </label>
+       …
+     </div>
+   </div>
+
+   Selected = checked · Disabled = disabled on the input
+   On .bog-radio-group:  data-appearance="inverse"  (Inverse Static)
+                         data-state="skeleton"      (bars instead of the labels)
+   Radios with the same name are one group (native). Error / Read-only aren't built yet.
+   ========================================================================== */
+
+.bog-radio-group {
+  --_label: var(--text-helper);
+  --_text: var(--text-primary);
+  --_ring: var(--support-support-02);
+  --_dot: var(--border-selected);
+  --_disabled: var(--text-disabled);
+  --_skeleton: var(--support-skeleton);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+  width: 100%;
+  min-width: 0;
+  font-family: var(--font-family-bog);
+}
+.bog-radio-group[data-appearance="inverse"] {
+  --_label: var(--support-static-01);
+  --_text: var(--text-white-primary);
+  --_ring: var(--support-static-01);
+  --_dot: var(--background-inverse-accent-static);
+  --_disabled: var(--support-static-02);
+  --_skeleton: var(--support-skeleton-inverse-static);
+}
+
+.bog-radio-group__label {
+  overflow: hidden;
+  color: var(--_label);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bog-radio-group__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-form-gap, 16px);
+}
+.bog-radio-group__options[data-horizontal] { flex-direction: row; }
+
+/* ---- Radio Button + Label ------------------------------------------- */
+.bog-radio {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--spacing-gap-small);
+  color: var(--_text, var(--text-primary));
+  font-family: var(--font-family-bog);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-radio__input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.bog-radio__label { align-self: center; }
+
+/* Radio button: Figma ring + dot shapes, colored by tokens (24px, 32px tap area) */
+.bog-radio__control {
+  position: relative;
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+.bog-radio__control::before,
+.bog-radio__control::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+.bog-radio__control::before {
+  background-color: var(--_ring, var(--support-support-02));
+  -webkit-mask: url("../icons/radio-ring.svg") center / contain no-repeat;
+          mask: url("../icons/radio-ring.svg") center / contain no-repeat;
+}
+.bog-radio__control::after {
+  background-color: var(--_dot, var(--border-selected));
+  -webkit-mask: url("../icons/radio-dot.svg") center / contain no-repeat;
+          mask: url("../icons/radio-dot.svg") center / contain no-repeat;
+  transform: scale(0);
+  transition: transform 140ms ease;
+}
+.bog-radio:has(.bog-radio__input:checked) .bog-radio__control::before { background-color: var(--_dot, var(--border-selected)); }
+.bog-radio:has(.bog-radio__input:checked) .bog-radio__control::after { transform: scale(1); }
+.bog-radio:has(.bog-radio__input:focus-visible) .bog-radio__control {
+  border-radius: var(--radius-full);
+  outline: 2px solid var(--border-selected);
+  outline-offset: 2px;
+}
+
+/* Disabled: everything fades */
+.bog-radio:has(.bog-radio__input:disabled) {
+  --_ring: var(--_disabled);
+  --_dot: var(--_disabled);
+  color: var(--_disabled);
+  cursor: default;
+  pointer-events: none;
+}
+.bog-radio-group:has(.bog-radio__input:disabled):not(:has(.bog-radio__input:enabled)) { --_label: var(--_disabled); }
+
+/* Skeleton: bar instead of the group label, skeleton rings, 95px bars instead of option labels */
+:is(.bog-radio-group[data-state="skeleton"], [data-skeleton] > .bog-radio-group) { pointer-events: none; --_ring: var(--_skeleton); --_dot: var(--_skeleton); }
+:is(.bog-radio-group[data-state="skeleton"], [data-skeleton] > .bog-radio-group) .bog-radio:has(.bog-radio__input) .bog-radio__control::after { transform: scale(0); }
+:is(.bog-radio-group[data-state="skeleton"], [data-skeleton] > .bog-radio-group) .bog-radio-group__label {
+  width: 64px;
+  height: 6px;
+  margin-block: 3px;
+  background: var(--_skeleton);
+  color: transparent;
+}
+:is(.bog-radio-group[data-state="skeleton"], [data-skeleton] > .bog-radio-group) .bog-radio { flex: 1 1 0; align-items: center; }
+:is(.bog-radio-group[data-state="skeleton"], [data-skeleton] > .bog-radio-group) .bog-radio__label {
+  width: 95px;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-2x-small);
+  background: var(--_skeleton);
+  color: transparent;
+}

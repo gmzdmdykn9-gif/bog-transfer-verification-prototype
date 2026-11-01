@@ -26,3 +26,4 @@
 .bog-icon[data-icon="eye-hidden"] { -webkit-mask-image: url("../icons/eye-hidden.svg"); mask-image: url("../icons/eye-hidden.svg"); }
 .bog-icon[data-icon="chevron-down"]  { -webkit-mask-image: url("../icons/chevron-down.svg");  mask-image: url("../icons/chevron-down.svg"); }
 .bog-icon[data-icon="chevron-right"] { -webkit-mask-image: url("../icons/chevron-right.svg"); mask-image: url("../icons/chevron-right.svg"); }
+.bog-icon[data-icon="retry"]         { -webkit-mask-image: url("../icons/retry-16.svg");      mask-image: url("../icons/retry-16.svg"); }

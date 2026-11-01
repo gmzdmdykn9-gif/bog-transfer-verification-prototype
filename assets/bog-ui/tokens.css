@@ -79,6 +79,9 @@
   --body-small-size: 12px;
   --body-small-line-height: 18px;
   --body-small-weight: 500;
+  --body-medium-bold-size: 14px;
+  --body-medium-bold-line-height: 20px;
+  --body-medium-bold-weight: 700;
 
   /* ---- Spacing ------------------------------------------------------ */
   --space-0: 0px;
@@ -97,6 +100,9 @@
   --spacing-gap-small: 8px;
   --spacing-padding-medium: 12px;
   --spacing-padding-default: 16px;
+  --spacing-gap-large: 24px;
+  --spacing-form-gap: 16px;
+  --spacing-button-gap: 8px;
   --input-container-height: 56px; /* font/_Scale haks/input/container height */
 
   /* ---- Radius / border ---------------------------------------------- */

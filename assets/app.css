@@ -240,3 +240,10 @@ html[data-keyboard] .verify--sheet .bog-empty .bog-illustration { display: none;
 .verify--sheet .verify__hint:empty { display: none; }
 /* Passcode sheet: illustration + keypad don't fit under ~900px tall phones */
 @media (max-height: 900px) { .verify--sheet:has(.bog-keypad) .bog-empty .bog-illustration { display: none; } }
+
+/* ---- "Current Design System" toggle: OTP step uses Mobile Components › OTP Verification
+   instead of the Onboarding code cells. Swap back by turning the toggle off. */
+html:not([data-ds="current"]) .ds-current,
+html[data-ds="current"] .ds-onboarding { display: none; }
+.verify__body > .bog-otp { max-width: 343px; margin-top: calc(var(--spacing-gap-default) * 2); text-align: left; }
+@media (max-height: 700px) { .verify__body > .bog-otp { margin-top: var(--spacing-gap-default); } }

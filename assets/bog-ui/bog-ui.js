@@ -679,3 +679,73 @@
   window.BOG = window.BOG || {};
   window.BOG.setCode = setCode;
 })();
+
+/* ---- OTP Verification -----------------------------------------------------
+   .bog-otp[data-timer="35"] counts down in .bog-otp__time, then switches to
+   data-state="resend". Resend fires "otpresend" and restarts the timer.
+   Typing all digits fires "otpcomplete" (detail.value). */
+(function () {
+  function fmt(s) { return String(Math.floor(s / 60)).padStart(2, "0") + ":" + String(s % 60).padStart(2, "0"); }
+
+  function setOtpState(el, state) {
+    if (typeof el === "string") el = document.getElementById(el);
+    if (!el) return;
+    if (!state || state === "default") el.removeAttribute("data-state"); else el.setAttribute("data-state", state);
+    var off = state === "loading";
+    el.querySelectorAll(".bog-field__input, .bog-radio__input, .bog-otp__resend").forEach(function (c) { c.disabled = off; });
+  }
+
+  function startTimer(el) {
+    var total = parseInt(el.getAttribute("data-timer"), 10);
+    if (!total) return;
+    clearInterval(el._otpTimer);
+    var left = total, time = el.querySelector(".bog-otp__time"), timer = el.querySelector(".bog-otp__timer");
+    if (timer) timer.hidden = false;
+    if (time) time.textContent = fmt(left);
+    el._otpTimer = setInterval(function () {
+      left -= 1;
+      if (time) time.textContent = fmt(Math.max(left, 0));
+      if (left <= 0) {
+        clearInterval(el._otpTimer);
+        if (timer) timer.hidden = true;
+        if (!el.getAttribute("data-state")) setOtpState(el, "resend");
+      }
+    }, 1000);
+  }
+
+  function init() {
+    document.querySelectorAll(".bog-otp").forEach(function (el) {
+      if (el._otpReady) return;
+      el._otpReady = true;
+      setOtpState(el, el.getAttribute("data-state"));
+      startTimer(el);
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest(".bog-otp__resend");
+    if (!btn) return;
+    var el = btn.closest(".bog-otp");
+    var input = el.querySelector(".bog-field__input");
+    if (input) { input.value = ""; input.dispatchEvent(new Event("input", { bubbles: true })); }
+    setOtpState(el, "default");
+    startTimer(el);
+    el.dispatchEvent(new CustomEvent("otpresend", { bubbles: true }));
+  });
+
+  document.addEventListener("input", function (e) {
+    var input = e.target.closest(".bog-otp .bog-field__input");
+    if (!input) return;
+    var max = parseInt(input.getAttribute("maxlength"), 10) || 4;
+    var v = input.value.replace(/\D/g, "").slice(0, max);
+    if (v !== input.value) input.value = v;
+    if (v.length === max) input.closest(".bog-otp").dispatchEvent(new CustomEvent("otpcomplete", { bubbles: true, detail: { value: v } }));
+  });
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+
+  window.BOG = window.BOG || {};
+  window.BOG.setOtpState = setOtpState;
+  window.BOG.initOtp = init;
+  window.BOG.startOtpTimer = function (el) { if (typeof el === "string") el = document.getElementById(el); if (el) startTimer(el); };
+})();

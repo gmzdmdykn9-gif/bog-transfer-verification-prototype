@@ -1,0 +1,117 @@
+/* ==========================================================================
+   BOG UI — OTP Verification
+   Figma: Mobile Components › OTP Verification (65048:81195)
+   Built from library parts: Radio Button Group (optional), Text Input, Inline Message, Button (Ghost, Small).
+
+   <div class="bog-otp" data-timer="35">
+     <div class="bog-radio-group" role="radiogroup">…SMS / Email…</div>            optional "Selector"
+     <div class="bog-otp__form">
+       <div class="bog-field">
+         <label class="bog-field__box"><span class="bog-field__text">
+           <span class="bog-field__label">Enter 4-digit code</span>
+           <input class="bog-field__input" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder=" ">
+         </span></label>
+       </div>
+       <div class="bog-otp__info">
+         <p class="bog-otp__message">We've sent a verification code to ••• •• 56 78</p>
+         <p class="bog-otp__timer">Resend code in <b class="bog-otp__time">00:35</b></p>          optional "Timer-Resend"
+         <span class="bog-inline-message bog-otp__expired" data-status="negative">This verification code has expired</span>
+         <div class="bog-otp__actions">
+           <button type="button" class="bog-btn bog-otp__resend" data-type="ghost" data-size="small"><span class="bog-icon" data-icon="retry"></span>Resend code</button>
+         </div>
+       </div>
+     </div>
+   </div>
+
+   On .bog-otp
+     data-state       default (no attribute) · resend · loading · expired
+                        default  timer, no button          resend   timer (if any) + button
+                        loading  everything disabled       expired  red message + button, no timer
+     data-method      hard — Digipass / hardware token: message only (no timer, no button), 16px gap
+     data-appearance  inverse (Inverse Static) — also set it on the field, radio group, message and button
+     data-skeleton    placeholder while loading the screen
+     data-timer="35"  bog-ui.js counts down, then switches to resend; Resend restarts it
+   Events  "otpcomplete" (detail.value) when all digits are typed · "otpresend" on Resend
+   JS      BOG.setOtpState(el, "loading")  also disables / enables the inputs and the button
+           BOG.startOtpTimer(el)  restarts the countdown (e.g. when the step opens again)
+   ========================================================================== */
+
+.bog-otp {
+  --_text: var(--text-secondary);
+  --_disabled: var(--text-disabled);
+  --_skeleton: var(--support-skeleton);
+  --_skeleton-box: var(--support-skeleton-background);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-large);
+  box-sizing: border-box;
+  width: 100%;
+  font-family: var(--font-family-bog);
+}
+.bog-otp[data-appearance="inverse"] {
+  --_text: var(--text-white-secondary);
+  --_disabled: var(--support-static-02);
+  --_skeleton: var(--support-skeleton-inverse-static);
+  --_skeleton-box: var(--support-skeleton-inverse-background-static);
+}
+
+.bog-otp__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-large);
+}
+.bog-otp[data-method="hard"] .bog-otp__form { gap: var(--spacing-gap-default); }
+
+.bog-otp__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-gap-small);
+}
+.bog-otp__message,
+.bog-otp__timer {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding-left: var(--spacing-padding-small);
+  color: var(--_text);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+}
+.bog-otp__timer { display: flex; gap: var(--spacing-gap-small); white-space: nowrap; }
+.bog-otp__time {
+  font-size: var(--body-medium-bold-size);
+  line-height: var(--body-medium-bold-line-height);
+  font-weight: var(--body-medium-bold-weight);
+  font-variant-numeric: tabular-nums;
+}
+.bog-otp__expired { padding-left: var(--spacing-padding-small); }
+.bog-otp__actions { display: flex; flex-direction: column; gap: var(--spacing-button-gap, 8px); }
+
+/* ---- What each state shows ------------------------------------------ */
+.bog-otp:is(:not([data-state]), [data-state="default"]) .bog-otp__actions,
+.bog-otp:not([data-state="expired"]) .bog-otp__expired,
+.bog-otp[data-state="expired"] .bog-otp__timer,
+.bog-otp[data-method="hard"] :is(.bog-otp__timer, .bog-otp__actions, .bog-otp__expired),
+.bog-otp [hidden] { display: none; }
+
+/* Loading: the timer fades too (inputs, radios and button get disabled by BOG.setOtpState) */
+.bog-otp[data-state="loading"] { pointer-events: none; }
+.bog-otp[data-state="loading"] .bog-otp__timer { color: var(--_disabled); }
+
+/* ---- Skeleton ------------------------------------------------------- */
+.bog-otp[data-skeleton] { pointer-events: none; }
+.bog-otp[data-skeleton] .bog-field__box { background: var(--_skeleton-box); box-shadow: none; }
+.bog-otp[data-skeleton] .bog-field__box > * { visibility: hidden; }
+.bog-otp[data-skeleton] :is(.bog-otp__message, .bog-otp__timer) {
+  width: 128px;
+  height: 8px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--radius-2x-small);
+  background: var(--_skeleton);
+  color: transparent;
+}
+.bog-otp[data-skeleton] .bog-otp__timer { width: 96px; }
+.bog-otp[data-skeleton] :is(.bog-otp__actions, .bog-otp__expired) { display: none; }

@@ -108,6 +108,7 @@
        Trusted device (one method):   #trusted-otp · #trusted-passcode · #trusted-passkey
        Not trusted (two methods):     #otp-passcode · #otp-passkey · #passcode-passkey
      Add "/sheet" (e.g. #otp-passkey/sheet) to run the steps in a Bottom Sheet over the form.
+     Add "/ds" (e.g. #otp-passkey/ds or #otp-passkey/sheet/ds) for the Current Design System OTP component.
      No hash = start page. Test code 0000 = wrong code.                                   */
   var SCENARIOS = {
     "trusted-otp": ["otp"], "trusted-passcode": ["passcode"], "trusted-passkey": ["passkey"],
@@ -121,21 +122,34 @@
   var modeToggle = $("#sheet-mode");
   function syncLinks() {
     document.querySelectorAll('[data-screen="start"] a.bog-list-item').forEach(function (a) {
-      a.setAttribute("href", "#" + a.getAttribute("href").slice(1).split("/")[0] + (modeToggle.checked ? "/sheet" : ""));
+      a.setAttribute("href", "#" + a.getAttribute("href").slice(1).split("/")[0] + (modeToggle.checked ? "/sheet" : "") + (dsToggle.checked ? "/ds" : ""));
     });
   }
-  modeToggle.checked = /\/sheet$/.test(location.hash) || localStorage.getItem("verify-sheet-mode") === "1";
+  function hashFlag(f) { return location.hash.slice(1).split("/").indexOf(f) > 0; }
+  modeToggle.checked = hashFlag("sheet") || localStorage.getItem("verify-sheet-mode") === "1";
   modeToggle.addEventListener("change", function () {
     localStorage.setItem("verify-sheet-mode", modeToggle.checked ? "1" : "0");
     syncLinks();
   });
+
+  // Start-page toggle: "Current Design System" — the OTP step uses the new OTP Verification
+  // component (bog-otp) instead of the Onboarding code cells. Added to the links as "/ds".
+  var dsToggle = $("#ds-mode");
+  function applyDs(on) { if (on) document.documentElement.setAttribute("data-ds", "current"); else document.documentElement.removeAttribute("data-ds"); }
+  dsToggle.checked = hashFlag("ds") || localStorage.getItem("verify-ds-current") === "1";
+  dsToggle.addEventListener("change", function () {
+    localStorage.setItem("verify-ds-current", dsToggle.checked ? "1" : "0");
+    applyDs(dsToggle.checked);
+    syncLinks();
+  });
+  applyDs(dsToggle.checked);
   syncLinks();
 
   // Start page (no hash) ↔ transfer form (#scenario). Back on the transfer form returns to the start page.
   function route() {
     var atStart = !SCENARIOS[hashName()];
     if (atStart) { closeAll(); if (page.hasAttribute("data-open")) closePicker(); }
-    else if (stepIndex < 0) sheetMode = /\/sheet$/.test(location.hash);
+    else if (stepIndex < 0) { sheetMode = hashFlag("sheet"); applyDs(hashFlag("ds")); }
     document.documentElement.toggleAttribute("data-at-start", atStart);
     $('[data-screen="start"]').inert = !atStart;
     transfer.inert = atStart;
@@ -304,6 +318,7 @@
     }, 1000);
   }
   function enterOtp() {
+    if (document.documentElement.getAttribute("data-ds") === "current") return enterOtpDs();
     resetCode("otp"); startCountdown();
     setTimeout(function () { $("#otp-code .bog-code__input").focus({ preventScroll: true }); }, 420);
   }
@@ -311,6 +326,33 @@
     if (!e.target.closest("#otp-resend")) return;
     BOG.toast({ status: "positive", title: "კოდი ხელახლა გამოიგზავნა", text: "+995 512 345 678" });
     resetCode("otp"); startCountdown();
+  });
+
+  // OTP, Current Design System (bog-otp): bog-ui runs the 30 s timer and Resend; 0000 = wrong code
+  var otpDs = $("#otp-ds"), otpDsField = $("#otp-ds-field"), otpDsInput = otpDs.querySelector(".bog-field__input");
+  function otpDsError(on) {
+    if (on) otpDsField.setAttribute("data-validation", "error"); else otpDsField.removeAttribute("data-validation");
+    otpDsField.querySelector(".bog-field__message").hidden = !on;
+  }
+  function enterOtpDs() {
+    otpDsInput.value = ""; otpDsError(false);
+    BOG.setOtpState(otpDs, "default"); BOG.startOtpTimer(otpDs);
+    setTimeout(function () { otpDsInput.focus({ preventScroll: true }); }, 420);
+  }
+  otpDsInput.addEventListener("input", function () { if (otpDsInput.value.length < 4) otpDsError(false); });
+  otpDs.addEventListener("otpcomplete", function (e) {
+    otpDsInput.blur();
+    BOG.setOtpState(otpDs, "loading");
+    setTimeout(function () {
+      // back to Default while the timer runs, Resend once it has finished
+      BOG.setOtpState(otpDs, otpDs.querySelector(".bog-otp__timer").hidden ? "resend" : "default");
+      if (e.detail.value === "0000") { otpDsInput.value = ""; otpDsError(true); otpDsInput.focus(); }
+      else stepDone();
+    }, 900);
+  });
+  otpDs.addEventListener("otpresend", function () {
+    otpDsError(false);
+    BOG.toast({ status: "positive", title: "კოდი ხელახლა გამოიგზავნა", text: "+995 512 345 678" });
   });
 
   // Passkey: the phone shows its own passkey sheet; Continue = Face ID → done
