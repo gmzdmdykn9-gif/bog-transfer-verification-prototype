@@ -253,7 +253,7 @@ html[data-at-start] [data-screen="transfer"] { transform: translateX(100%); visi
 .verify--sheet .verify__spacer { display: block; }
 /* Keyboard open (page or sheet): drop the illustration so the code sits higher, with room above the keyboard */
 html[data-keyboard] .verify .bog-empty .bog-illustration { display: none; }
-html[data-keyboard] .verify__body { padding-top: var(--spacing-padding-default); padding-bottom: var(--spacing-gap-large); }
+html[data-keyboard] .verify:not(.verify--sheet) .verify__body { padding-top: var(--spacing-padding-default); padding-bottom: var(--spacing-gap-large); }
 .verify--sheet .verify__hint:empty { display: none; }
 /* Passcode sheet: illustration + keypad don't fit under ~900px tall phones */
 /* Passcode sheet: when it doesn't fit, it opens scrolled to the bottom (keypad in place, illustration above) */
@@ -292,3 +292,7 @@ html[data-ds="current"] .verify__body > .bog-otp { margin-top: calc(var(--spacin
 .verify__body > .verify__submit { max-width: 343px; margin-top: var(--spacing-gap-large); }
 /* Sheet mode: no illustration in the OTP and passcode sheets (title is in the sheet header) */
 .verify--sheet .bog-empty .bog-illustration { display: none; }
+/* Sheet mode, OTP Verification: sits right under the sheet header and doesn't move with the keyboard */
+html[data-ds="current"] .verify--sheet .verify__body > .bog-otp { margin-top: var(--spacing-gap-small); }
+/* Small phones: the sheet's own content scrolls (the page freeze must not apply inside the sheet) */
+html.bog-sheet-locked .bog-sheet .screen__body { touch-action: auto; }

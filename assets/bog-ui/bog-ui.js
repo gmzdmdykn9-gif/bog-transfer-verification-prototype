@@ -287,11 +287,10 @@
     document.addEventListener("focusin", function (e) {
       var el = e.target;
       if (!el.matches || !el.matches("input, textarea, [contenteditable]") || el.getAttribute("aria-hidden") === "true") return;
-      var lift = function () {
+      if (el.closest(".bog-sheet")) return;   // sheets already sit above the keyboard; scrolling there only makes content jump
+      setTimeout(function () {                 // once, after the keyboard animation has settled
         if (document.activeElement === el && document.documentElement.hasAttribute("data-bog-keyboard")) el.scrollIntoView({ block: "center" });
-      };
-      setTimeout(lift, 350);
-      setTimeout(lift, 700);   // again once the keyboard animation has settled
+      }, 500);
     });
     vv.addEventListener("resize", syncKeyboard);
     vv.addEventListener("scroll", syncKeyboard);
