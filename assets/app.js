@@ -255,6 +255,9 @@
     // Passkey: only the phone's own passkey sheet, no Bottom Sheet behind it
     if (steps[i] === "passkey") { sysTimer = setTimeout(openSystemSheet, i === 0 ? 300 : 0); return; }
     renderWizard(screen(steps[i]), i);
+    // The step's title ("შეიყვანე ვერიფიკაციის კოდი" / "შეიყვანე პასკოდი") becomes the sheet title
+    var t = screen(steps[i]).querySelector(".bog-empty__title");
+    $("#verify-sheet-title").textContent = t ? t.textContent : "ვერიფიკაცია";
     mountStep(steps[i]);
     vContent.scrollTop = 0;
     BOG.openSheet(vSheet);

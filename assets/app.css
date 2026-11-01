@@ -286,3 +286,5 @@ html[data-ds="current"] .ds-onboarding { display: none; }
 /* Current Design System has no pill: OTP Verification keeps its 32px gap under the title */
 html[data-ds="current"] .verify__body > .bog-otp { margin-top: calc(var(--spacing-gap-default) * 2); }
 @media (max-height: 700px) { html[data-ds="current"] .verify__body > .bog-otp { margin-top: var(--spacing-gap-default); } }
+/* Sheet mode: the step title moves into the Bottom Sheet title, so it isn't repeated in the content */
+.verify--sheet .bog-empty__title { display: none; }
