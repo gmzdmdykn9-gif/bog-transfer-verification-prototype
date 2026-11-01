@@ -417,7 +417,7 @@
   }
   function enterOtpDs() {
     otpDs.querySelector('.bog-radio__input[value="sms"]').checked = true;
-    otpDsInput.value = ""; otpDsError(false);
+    otpDsInput.value = ""; otpDsError(false); syncOtpDsSubmit();
     BOG.setOtpState(otpDs, "default"); BOG.startOtpTimer(otpDs);
     setTimeout(function () { focusOtpField(otpDsInput); }, 420);
   }
@@ -427,22 +427,29 @@
     var m = METHODS[e.target.value];
     setMethodText(e.target.value);
     BOG.toast({ status: "positive", title: m.toast, text: m.to });
-    otpDsInput.value = ""; otpDsError(false);
+    otpDsInput.value = ""; otpDsError(false); syncOtpDsSubmit();
     BOG.setOtpState(otpDs, "default"); BOG.startOtpTimer(otpDs);
   });
   otpDsInput.addEventListener("input", function () { if (otpDsInput.value.length < 4) otpDsError(false); });
-  otpDs.addEventListener("otpcomplete", function (e) {
+  // Confirm button under OTP Verification: enabled once all 4 digits are in; tapping it checks the code
+  var otpDsSubmit = $("#otp-ds-submit");
+  function syncOtpDsSubmit() { otpDsSubmit.disabled = otpDsInput.value.length < 4; }
+  otpDsInput.addEventListener("input", syncOtpDsSubmit);
+  otpDsSubmit.addEventListener("click", function () {
+    var value = otpDsInput.value;
     otpDsInput.blur();
     BOG.setOtpState(otpDs, "loading");
+    otpDsSubmit.setAttribute("data-state", "loading");
     setTimeout(function () {
+      otpDsSubmit.removeAttribute("data-state");
       // back to Default while the timer runs, Resend once it has finished
       BOG.setOtpState(otpDs, otpDs.querySelector(".bog-otp__timer").hidden ? "resend" : "default");
-      if (e.detail.value === "0000") { otpDsInput.value = ""; otpDsError(true); otpDsInput.focus(); }
+      if (value === "0000") { otpDsInput.value = ""; otpDsError(true); syncOtpDsSubmit(); otpDsInput.focus(); }
       else stepDone();
     }, 900);
   });
   otpDs.addEventListener("otpresend", function () {
-    otpDsError(false);
+    otpDsError(false); syncOtpDsSubmit();
     BOG.toast({ status: "positive", title: "კოდი ხელახლა გამოიგზავნა", text: "+995 512 345 678" });
   });
 

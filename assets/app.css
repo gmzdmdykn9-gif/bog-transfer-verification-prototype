@@ -288,3 +288,5 @@ html[data-ds="current"] .verify__body > .bog-otp { margin-top: calc(var(--spacin
 @media (max-height: 700px) { html[data-ds="current"] .verify__body > .bog-otp { margin-top: var(--spacing-gap-default); } }
 /* Sheet mode: the step title moves into the Bottom Sheet title, so it isn't repeated in the content */
 .verify--sheet .bog-empty__title { display: none; }
+/* Current Design System: primary button 24px under OTP Verification */
+.verify__body > .verify__submit { max-width: 343px; margin-top: var(--spacing-gap-large); }
