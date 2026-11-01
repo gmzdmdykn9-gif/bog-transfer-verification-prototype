@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>სხვასთან გადარიცხვა — BOG prototype</title>
 <link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=1793569446">
-<link rel="stylesheet" href="assets/app.css?v=1793569446">
+<link rel="stylesheet" href="assets/app.css?v=1793569786">
 <script src="assets/bog-ui/bog-ui.js?v=1793569446" defer></script>
-<script src="assets/app.js?v=1793569446" defer></script>
+<script src="assets/app.js?v=1793569786" defer></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -298,7 +298,7 @@
         <p class="bog-empty__desc ds-onboarding" id="otp-desc">კოდი გამოგზავნილია ნომერზე <strong>+995 512 345 678</strong></p>
       </div>
       <!-- Delivery method: pill + iOS pull-down (Figma Onboarding › otp 17748:73134) -->
-      <div class="bog-menu verify__method" id="otp-method">
+      <div class="bog-menu verify__method ds-onboarding" id="otp-method">
         <button type="button" class="bog-menu__trigger" aria-haspopup="menu" aria-expanded="false"><span class="bog-menu__value">SMS კოდი</span></button>
         <div class="bog-menu__panel" role="menu">
           <button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="true" data-value="sms">SMS კოდი</button>
@@ -308,6 +308,13 @@
       </div>
       <!-- Current Design System: Mobile Components › OTP Verification -->
       <div class="bog-otp ds-current" id="otp-ds" data-timer="30">
+        <div class="bog-radio-group" role="radiogroup" aria-labelledby="otp-ds-to">
+          <span class="bog-radio-group__label" id="otp-ds-to">სად გამოგიგზავნოთ ვერიფიკაციის კოდი?</span>
+          <div class="bog-radio-group__options" data-horizontal>
+            <label class="bog-radio"><input type="radio" class="bog-radio__input" name="otp-ds-to" value="sms" checked><span class="bog-radio__control"></span><span class="bog-radio__label">SMS</span></label>
+            <label class="bog-radio"><input type="radio" class="bog-radio__input" name="otp-ds-to" value="email"><span class="bog-radio__control"></span><span class="bog-radio__label">ელფოსტა</span></label>
+          </div>
+        </div>
         <div class="bog-otp__form">
           <div class="bog-field" id="otp-ds-field">
             <label class="bog-field__box"><span class="bog-field__text">

@@ -374,10 +374,20 @@
     otpDsField.querySelector(".bog-field__message").hidden = !on;
   }
   function enterOtpDs() {
+    otpDs.querySelector('.bog-radio__input[value="sms"]').checked = true;
     otpDsInput.value = ""; otpDsError(false);
     BOG.setOtpState(otpDs, "default"); BOG.startOtpTimer(otpDs);
     setTimeout(function () { otpDsInput.focus({ preventScroll: true }); }, 420);
   }
+  // Current Design System: SMS / Email radios (the official component's Selector) instead of the pill
+  otpDs.addEventListener("change", function (e) {
+    if (!e.target.matches(".bog-radio__input")) return;
+    var m = METHODS[e.target.value];
+    setMethodText(e.target.value);
+    BOG.toast({ status: "positive", title: m.toast, text: m.to });
+    otpDsInput.value = ""; otpDsError(false);
+    BOG.setOtpState(otpDs, "default"); BOG.startOtpTimer(otpDs);
+  });
   otpDsInput.addEventListener("input", function () { if (otpDsInput.value.length < 4) otpDsError(false); });
   otpDs.addEventListener("otpcomplete", function (e) {
     otpDsInput.blur();
