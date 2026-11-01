@@ -238,7 +238,7 @@
   var mounted = null, closingByCode = false;
   function mountStep(name) {
     var scr = screen(name);
-    var parts = ["[data-wizard]", ".verify__body", ".verify__keypad"].map(function (sel) { return scr.querySelector(sel); }).filter(Boolean);
+    var parts = ["[data-wizard]", ".verify__body"].map(function (sel) { return scr.querySelector(sel); }).filter(Boolean);
     mounted = parts.map(function (el) { return { el: el, parent: el.parentNode, next: el.nextSibling }; });
     var wrap = document.createElement("div");
     wrap.className = "verify verify--sheet";
@@ -291,9 +291,24 @@
 
   function enter(name) {
     if (name === "otp") enterOtp();
-    if (name === "passcode") resetCode("passcode");
+    if (name === "passcode") { resetCode("passcode"); anchorPasscode(); }
     if (name === "passkey") enterPasskey();
   }
+
+  // Passcode: if everything fits, nothing scrolls. If not, the content is anchored to the bottom
+  // (keypad + code in place) and the top (illustration) tucks under the nav bar / sheet top;
+  // scroll up to see it.
+  function passcodeScroller() {
+    return sheetMode ? vContent : screen("passcode").querySelector(".screen__body");
+  }
+  function anchorPasscode() {
+    var el = passcodeScroller();
+    var pin = function () { el.scrollTop = el.scrollHeight; };
+    pin(); requestAnimationFrame(pin); setTimeout(pin, 60);
+  }
+  window.addEventListener("resize", function () {
+    if (steps && steps[stepIndex] === "passcode") anchorPasscode();
+  });
 
   // Code steps (OTP + passcode): 4 digits → check → 0000 is wrong
   function resetCode(name) {

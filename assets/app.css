@@ -149,7 +149,16 @@ html.bog-sheet-locked .screen__body { overflow: hidden; touch-action: none; }
 }
 .verify__hint strong { color: var(--text-primary); font-weight: 700; font-variant-numeric: tabular-nums; }
 .verify__hint[data-status="error"] { color: var(--text-error); }
-.verify__keypad { flex: none; padding-top: var(--spacing-gap-default); padding-bottom: env(safe-area-inset-bottom); }
+/* Keypad lives inside the scrolling body (part of the layout): the spacer keeps it at the bottom
+   when everything fits, and the whole page scrolls together when it doesn't */
+.verify__keypad {
+  flex: none;
+  align-self: stretch;
+  margin: 0 calc(var(--spacing-padding-default) * -1);
+  padding-top: var(--spacing-gap-default);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.verify__body:has(> .verify__keypad) { padding-bottom: 0; }
 
 /* ---- iOS system passkey sheet: a mock of the phone's own dialog, so it uses
    Apple's system look (not BOG tokens) on purpose. ------------------------- */
@@ -203,7 +212,9 @@ html.bog-sheet-locked .screen__body { overflow: hidden; touch-action: none; }
 .bog-empty__actions[hidden] { display: none; }
 /* Short phones (e.g. iPhone SE): keep the code cells visible above the keypad / keyboard */
 @media (max-height: 700px) {
-  .verify .bog-empty .bog-illustration { display: none; }
+  /* OTP: no illustration on short phones. Passcode keeps it: the page starts scrolled to the
+     bottom, so the keypad + code sit in place and the illustration tucks under the nav bar */
+  .verify:not(:has(.bog-keypad)) .bog-empty .bog-illustration { display: none; }
   .verify__body { padding-top: var(--spacing-padding-default); }
   .verify__body > .bog-code { margin-top: var(--spacing-gap-default); }
   .verify .bog-keypad__key { height: 48px; }
@@ -245,7 +256,7 @@ html[data-keyboard] .verify .bog-empty .bog-illustration { display: none; }
 html[data-keyboard] .verify__body { padding-top: var(--spacing-padding-default); padding-bottom: var(--spacing-gap-large); }
 .verify--sheet .verify__hint:empty { display: none; }
 /* Passcode sheet: illustration + keypad don't fit under ~900px tall phones */
-@media (max-height: 900px) { .verify--sheet:has(.bog-keypad) .bog-empty .bog-illustration { display: none; } }
+/* Passcode sheet: when it doesn't fit, it opens scrolled to the bottom (keypad in place, illustration above) */
 
 /* ---- "Current Design System" toggle: OTP step uses Mobile Components › OTP Verification
    instead of the Onboarding code cells. Swap back by turning the toggle off. */

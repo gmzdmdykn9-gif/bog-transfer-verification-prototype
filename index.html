@@ -7,9 +7,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>სხვასთან გადარიცხვა — BOG prototype</title>
 <link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=1793570368">
-<link rel="stylesheet" href="assets/app.css?v=1793570391">
+<link rel="stylesheet" href="assets/app.css?v=1793570777">
 <script src="assets/bog-ui/bog-ui.js?v=1793570368" defer></script>
-<script src="assets/app.js?v=1793570391" defer></script>
+<script src="assets/app.js?v=1793570777" defer></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -362,15 +362,16 @@
       <div class="verify__spacer"></div>
       <div class="bog-code" data-size="large" data-mask data-active id="passcode-code"><span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span><span class="bog-code__cell"></span></div>
       <p class="verify__hint" id="passcode-hint"></p>
-    </main>
-    <footer class="verify__keypad">
-      <div class="bog-keypad" data-for="passcode-code">
-        <button type="button" class="bog-keypad__key" data-key="1">1</button><button type="button" class="bog-keypad__key" data-key="2">2</button><button type="button" class="bog-keypad__key" data-key="3">3</button><button type="button" class="bog-keypad__key" data-key="4">4</button><button type="button" class="bog-keypad__key" data-key="5">5</button><button type="button" class="bog-keypad__key" data-key="6">6</button><button type="button" class="bog-keypad__key" data-key="7">7</button><button type="button" class="bog-keypad__key" data-key="8">8</button><button type="button" class="bog-keypad__key" data-key="9">9</button>
-        <span class="bog-keypad__key" aria-hidden="true"></span>
-        <button type="button" class="bog-keypad__key" data-key="0">0</button>
-        <button type="button" class="bog-keypad__key" data-key="back" aria-label="წაშლა"><span class="bog-keypad__back"></span></button>
+      <!-- Keypad is part of the page: it scrolls with the content -->
+      <div class="verify__keypad">
+        <div class="bog-keypad" data-for="passcode-code">
+          <button type="button" class="bog-keypad__key" data-key="1">1</button><button type="button" class="bog-keypad__key" data-key="2">2</button><button type="button" class="bog-keypad__key" data-key="3">3</button><button type="button" class="bog-keypad__key" data-key="4">4</button><button type="button" class="bog-keypad__key" data-key="5">5</button><button type="button" class="bog-keypad__key" data-key="6">6</button><button type="button" class="bog-keypad__key" data-key="7">7</button><button type="button" class="bog-keypad__key" data-key="8">8</button><button type="button" class="bog-keypad__key" data-key="9">9</button>
+          <span class="bog-keypad__key" aria-hidden="true"></span>
+          <button type="button" class="bog-keypad__key" data-key="0">0</button>
+          <button type="button" class="bog-keypad__key" data-key="back" aria-label="წაშლა"><span class="bog-keypad__back"></span></button>
+        </div>
       </div>
-    </footer>
+    </main>
   </section>
 
   <!-- Passkey -->
