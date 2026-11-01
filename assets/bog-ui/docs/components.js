@@ -242,6 +242,14 @@ window.BOG_COMPONENTS = [
     desc: "Number pad that types into a Code Input. Desktop keys work too.",
     preview: '<div class="bog-keypad" style="width:220px;transform:scale(.8)"><button type="button" class="bog-keypad__key" tabindex="-1">1</button><button type="button" class="bog-keypad__key" tabindex="-1">2</button><button type="button" class="bog-keypad__key" tabindex="-1">3</button></div>'
   },
+  {
+    id: "toggle",
+    name: "Toggle Switch",
+    page: "toggle.html",
+    figma: "https://www.figma.com/design/EI6tYmEC7DhjpnzeuF5C45/?node-id=38611-4393",
+    desc: "On / off switch and the Toggle Switch + Label setting row. Disabled, read-only, indeterminate, skeleton, error.",
+    preview: '<input type="checkbox" role="switch" class="bog-toggle" checked tabindex="-1" aria-label="Toggle"> <input type="checkbox" role="switch" class="bog-toggle" tabindex="-1" aria-label="Toggle">'
+  },
 ];
 
 /* Sidebar for component pages: <nav id="bog-nav" data-current="button"></nav> */

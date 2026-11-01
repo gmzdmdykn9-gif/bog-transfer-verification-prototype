@@ -49,6 +49,7 @@ Fonts: `fonts/` holds BOG woff2 files. They are licensed, so they stay out of gi
 | Wizard Progress | `Mobile Components` (instance `17658:72592`) | ✅ done / current / upcoming steps |
 | Code Input | `17658:72586` (Onboarding) | ✅ medium (SMS) / large (passcode), masked, active, error, loading; keyboard + SMS autofill · not in Mobile Components yet |
 | Keypad | `17658:72652` (Onboarding) | ✅ 0–9 + delete, types into a Code Input, desktop keys · not in Mobile Components yet |
+| Toggle Switch | `38611:4393` · `38611:4418` | ✅ Switch + Label row · off / on / indeterminate / disabled / read-only / skeleton / error (Themed only) |
 | UI Elements | `54990:3178`  | ✅ Flags, Media Circle/Square/Rectangle, Illustration, Card Placeholder, Icon Placeholder, Counter |
 
 The "iOS Liquid Glass" source variants are intentionally **not** implemented.
@@ -503,6 +504,18 @@ Selected = `checked` · Disabled = `disabled` on the input · on `.bog-radio-car
 <div class="bog-keypad" data-for="passcode">…keys…</div>
 ```
 Code Input: `data-validation="error"`, `data-state="loading"`, events `codechange` / `codecomplete` (detail.value), `BOG.setCode(el, value)`. See the docs pages for the full keypad markup.
+
+### Toggle Switch
+
+```html
+<label class="bog-toggle-row">
+  <span class="bog-toggle-row__main">
+    <span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Notifications</span><span class="bog-toggle-row__desc">Description</span></span>
+    <input type="checkbox" role="switch" class="bog-toggle">
+  </span>
+</label>
+```
+On the input: `checked`, `disabled`, `aria-readonly="true"`, `data-indeterminate`, `data-state="skeleton"`. `data-validation="error"` on the row shows its `.bog-inline-message`.
 
 ### Icons
 

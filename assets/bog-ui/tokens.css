@@ -320,6 +320,9 @@
   --hero-gradient-green: #234f31;
   --hero-gradient-brown: #6c3925;
   --hero-dark-background: #1b1c1d;
+
+  /* ---- Toggle Switch (Figma Toggle Switch track, Themed) --------------- */
+  --toggle-track-off: #8a8e93;
 }
 
 

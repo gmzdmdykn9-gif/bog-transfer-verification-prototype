@@ -221,3 +221,17 @@ html[data-at-start] [data-screen="transfer"] { transform: translateX(100%); visi
   font-weight: var(--body-medium-weight);
 }
 .screen--start .bog-inline-message { align-self: flex-start; }
+
+/* ---- Sheet mode: verification steps inside a Bottom Sheet ---------------- */
+.verify--sheet { display: flex; flex-direction: column; }
+.verify--sheet .bog-wizard { padding-top: 0; }
+.verify--sheet .screen__body { flex: none; overflow: visible; padding: var(--spacing-padding-small) var(--spacing-padding-default) var(--spacing-padding-default); }
+.verify--sheet .verify__spacer { display: none; }
+.verify--sheet .verify__keypad { padding-bottom: 0; }
+#verify-sheet .bog-sheet__content { padding: 0; }
+.screen--start .bog-toggle-row { padding: var(--spacing-padding-small) 0; }
+/* Compact sheets: no illustration, tighter gaps (title, description and the control stay) */
+.verify--sheet .bog-empty .bog-illustration { display: none; }
+.verify--sheet .verify__body > .bog-code { margin-top: calc(var(--spacing-gap-default) * 1.5); }
+.verify--sheet .verify__hint { margin-top: var(--spacing-gap-default); }
+.verify--sheet .verify__hint:empty { display: none; }

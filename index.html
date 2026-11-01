@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>სხვასთან გადარიცხვა — BOG prototype</title>
-<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=20261030132411">
-<link rel="stylesheet" href="assets/app.css?v=20261030132411">
-<script src="assets/bog-ui/bog-ui.js?v=20261030132411" defer></script>
-<script src="assets/app.js?v=20261030132411" defer></script>
+<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=20261101230159">
+<link rel="stylesheet" href="assets/app.css?v=20261101230159">
+<script src="assets/bog-ui/bog-ui.js?v=20261101230159" defer></script>
+<script src="assets/app.js?v=20261101230159" defer></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -21,6 +21,15 @@
     </header>
     <main class="screen__body">
       <p class="start__lead">აირჩიე სცენარი. გაიხსნება „სხვასთან გადარიცხვა“ — შეიყვანე თანხა და დააჭირე „შემდეგი“.</p>
+      <label class="bog-toggle-row">
+        <span class="bog-toggle-row__main">
+          <span class="bog-toggle-row__text">
+            <span class="bog-toggle-row__label">ვერიფიკაცია Bottom Sheet-ში</span>
+            <span class="bog-toggle-row__desc">ნაბიჯები გაიხსნება ეკრანზე ზემოდან, არა ცალკე გვერდად</span>
+          </span>
+          <input type="checkbox" role="switch" class="bog-toggle" id="sheet-mode">
+        </span>
+      </label>
       <div class="bog-list-group">
         <div class="bog-list-group__header"><span>სანდო მოწყობილობა · 1 მეთოდი</span></div>
         <div class="bog-list" data-divider>
@@ -340,6 +349,14 @@
       </div>
     </main>
   </section>
+
+  <!-- Verification in a Bottom Sheet (sheet mode): each step's content is moved in here -->
+  <div class="bog-sheet" id="verify-sheet" hidden>
+    <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="ვერიფიკაცია">
+      <header class="bog-sheet__nav"></header>
+      <div class="bog-sheet__content"></div>
+    </div>
+  </div>
 
   <!-- iOS system passkey sheet (mock of the OS dialog, not a BOG component) -->
   <div class="ios-sheet" id="ios-passkey" hidden>

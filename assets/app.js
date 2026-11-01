@@ -107,17 +107,35 @@
      Entry points (URL hash) — which methods the bank asks for:
        Trusted device (one method):   #trusted-otp · #trusted-passcode · #trusted-passkey
        Not trusted (two methods):     #otp-passcode · #otp-passkey · #passcode-passkey
-     No hash = #otp-passkey. Test code 0000 = wrong code.                                 */
+     Add "/sheet" (e.g. #otp-passkey/sheet) to run the steps in a Bottom Sheet over the form.
+     No hash = start page. Test code 0000 = wrong code.                                   */
   var SCENARIOS = {
     "trusted-otp": ["otp"], "trusted-passcode": ["passcode"], "trusted-passkey": ["passkey"],
     "otp-passcode": ["otp", "passcode"], "otp-passkey": ["otp", "passkey"], "passcode-passkey": ["passcode", "passkey"]
   };
-  function scenario() { return SCENARIOS[location.hash.slice(1)] || SCENARIOS["otp-passkey"]; }
+  function hashName() { return location.hash.slice(1).split("/")[0]; }
+  function scenario() { return SCENARIOS[hashName()] || SCENARIOS["otp-passkey"]; }
+  var sheetMode = false;
+
+  // Start-page toggle: run verification in a Bottom Sheet. Remembered, and added to the links as "/sheet".
+  var modeToggle = $("#sheet-mode");
+  function syncLinks() {
+    document.querySelectorAll('[data-screen="start"] a.bog-list-item').forEach(function (a) {
+      a.setAttribute("href", "#" + a.getAttribute("href").slice(1).split("/")[0] + (modeToggle.checked ? "/sheet" : ""));
+    });
+  }
+  modeToggle.checked = /\/sheet$/.test(location.hash) || localStorage.getItem("verify-sheet-mode") === "1";
+  modeToggle.addEventListener("change", function () {
+    localStorage.setItem("verify-sheet-mode", modeToggle.checked ? "1" : "0");
+    syncLinks();
+  });
+  syncLinks();
 
   // Start page (no hash) ↔ transfer form (#scenario). Back on the transfer form returns to the start page.
   function route() {
-    var atStart = !SCENARIOS[location.hash.slice(1)];
+    var atStart = !SCENARIOS[hashName()];
     if (atStart) { closeAll(); if (page.hasAttribute("data-open")) closePicker(); }
+    else if (stepIndex < 0) sheetMode = /\/sheet$/.test(location.hash);
     document.documentElement.toggleAttribute("data-at-start", atStart);
     $('[data-screen="start"]').inert = !atStart;
     transfer.inert = atStart;
@@ -130,15 +148,20 @@
   var steps = [], stepIndex = -1, timer = null;
   function screen(name) { return $('[data-screen="' + name + '"]'); }
 
-  function showStep(i) {
-    var prev = stepIndex >= 0 ? screen(steps[stepIndex]) : transfer;
-    stepIndex = i;
-    var next = screen(steps[i]);
-    // wizard: hidden for a single method; earlier steps done, this one current
-    var wiz = next.querySelector("[data-wizard]");
+  // Wizard: hidden for a single method; earlier steps done, this one current
+  function renderWizard(scr, i) {
+    var wiz = scr.querySelector("[data-wizard]");
     wiz.hidden = steps.length < 2;
     wiz.innerHTML = steps.map(function (_, k) { return '<span class="bog-wizard__step"' + (k < i ? ' data-state="done"' : k === i ? ' data-state="current"' : "") + "></span>"; }).join("");
     wiz.setAttribute("role", "progressbar"); wiz.setAttribute("aria-valuemin", "1"); wiz.setAttribute("aria-valuemax", steps.length); wiz.setAttribute("aria-valuenow", i + 1);
+  }
+
+  function showStep(i) {
+    if (sheetMode) { sheetShow(i); return; }
+    var prev = stepIndex >= 0 ? screen(steps[stepIndex]) : transfer;
+    stepIndex = i;
+    var next = screen(steps[i]);
+    renderWizard(next, i);
     // back on a 1st step closes the whole verification
     prev.inert = true; prev.setAttribute("data-covered", "");
     next.removeAttribute("aria-hidden"); next.inert = false; next.removeAttribute("data-covered");
@@ -159,12 +182,67 @@
     under.inert = false; under.removeAttribute("data-covered");
     if (stepIndex >= 0) enter(steps[stepIndex]);
   }
-  function closeAll() { while (stepIndex >= 0) back(); }
-  function stepDone() {
-    if (stepIndex < steps.length - 1) { leave(steps[stepIndex]); showStep(stepIndex + 1); return; }
-    closeAll();
+  function closeAll() {
+    if (sheetMode) { sheetCancel(true); return; }
+    while (stepIndex >= 0) back();
+  }
+  function successToast() {
     setTimeout(function () { BOG.toast({ status: "positive", title: "გადარიცხვა დადასტურებულია", text: (amountInput.value ? amountInput.value + " ₾ · " : "") + "მიხეილ გოგიბერიძე" }); }, 400);
   }
+  function stepDone() {
+    if (sheetMode) { sheetStepDone(); return; }
+    if (stepIndex < steps.length - 1) { leave(steps[stepIndex]); showStep(stepIndex + 1); return; }
+    closeAll();
+    successToast();
+  }
+
+  /* ---- Sheet mode: the step's content moves into one Bottom Sheet over the form.
+     A finished step closes the sheet, then it opens again with the next step.
+     Closing the sheet (X, swipe down, tap outside) cancels verification. */
+  var vSheet = $("#verify-sheet"), vContent = vSheet.querySelector(".bog-sheet__content");
+  var mounted = null, closingByCode = false;
+  function mountStep(name) {
+    var scr = screen(name);
+    var parts = ["[data-wizard]", ".verify__body", ".verify__keypad"].map(function (sel) { return scr.querySelector(sel); }).filter(Boolean);
+    mounted = parts.map(function (el) { return { el: el, parent: el.parentNode, next: el.nextSibling }; });
+    var wrap = document.createElement("div");
+    wrap.className = "verify verify--sheet";
+    parts.forEach(function (el) { wrap.appendChild(el); });
+    vContent.innerHTML = ""; vContent.appendChild(wrap);
+  }
+  function unmountStep() {
+    if (!mounted) return;
+    mounted.slice().reverse().forEach(function (m) { m.parent.insertBefore(m.el, m.next); });
+    vContent.innerHTML = ""; mounted = null;
+  }
+  function sheetShow(i) {
+    stepIndex = i;
+    renderWizard(screen(steps[i]), i);
+    mountStep(steps[i]);
+    vContent.scrollTop = 0;
+    BOG.openSheet(vSheet);
+    enter(steps[i]);
+  }
+  function closeSheetByCode(then) {
+    closingByCode = true;
+    BOG.closeSheet(vSheet);
+    setTimeout(function () { closingByCode = false; unmountStep(); if (then) then(); }, 420);
+  }
+  function sheetStepDone() {
+    leave(steps[stepIndex]);
+    var next = stepIndex + 1;
+    closeSheetByCode(function () {
+      if (next < steps.length) sheetShow(next);
+      else { stepIndex = -1; successToast(); }
+    });
+  }
+  function sheetCancel(fromCode) {
+    if (stepIndex < 0) return;
+    leave(steps[stepIndex]);
+    stepIndex = -1;
+    if (fromCode) closeSheetByCode(); else setTimeout(unmountStep, 420);   // after the slide-down
+  }
+  vSheet.addEventListener("sheetclose", function () { if (!closingByCode) sheetCancel(false); });
   document.addEventListener("click", function (e) {
     if (e.target.closest("[data-verify-close]")) closeAll();
     else if (e.target.closest("[data-verify-back]")) back();

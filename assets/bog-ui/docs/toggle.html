@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toggle Switch — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="toggle"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Toggle Switch</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">On / off control that applies right away. Use the Toggle Switch + Label row so the whole row is one tap target. Themed only (Inverse Static not built).</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;label class=&quot;bog-toggle-row&quot;&gt;
+  &lt;span class=&quot;bog-toggle-row__caption&quot;&gt;Label (optional)&lt;/span&gt;
+  &lt;span class=&quot;bog-toggle-row__main&quot;&gt;
+    &lt;span class=&quot;bog-toggle-row__text&quot;&gt;
+      &lt;span class=&quot;bog-toggle-row__label&quot;&gt;Toggle text&lt;/span&gt;
+      &lt;span class=&quot;bog-toggle-row__desc&quot;&gt;Description&lt;/span&gt;
+      &lt;span class=&quot;bog-inline-message&quot; data-status=&quot;negative&quot;&gt;Message text&lt;/span&gt;   &lt;!-- data-validation=&quot;error&quot; --&gt;
+    &lt;/span&gt;
+    &lt;input type=&quot;checkbox&quot; role=&quot;switch&quot; class=&quot;bog-toggle&quot;&gt;
+  &lt;/span&gt;
+&lt;/label&gt;
+&lt;!-- on the input: checked · disabled · aria-readonly=&quot;true&quot; · data-indeterminate · data-state=&quot;skeleton&quot; --&gt;</code></pre>
+
+    <h2>Variants</h2>
+    <h3>Toggle Switch</h3><div class="panel" style="display:grid;grid-template-columns:repeat(4,max-content);gap:24px 40px"><div><div class="row-label"><code>Off</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Off" ></div><div><div class="row-label"><code>On</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="On" checked></div><div><div class="row-label"><code>Indeterminate</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Indeterminate" checked data-indeterminate></div><div><div class="row-label"><code>Disabled</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Disabled" disabled></div><div><div class="row-label"><code>Disabled · On</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Disabled · On" disabled checked></div><div><div class="row-label"><code>Read-only</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Read-only" aria-readonly="true"></div><div><div class="row-label"><code>Read-only · On</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Read-only · On" aria-readonly="true" checked></div><div><div class="row-label"><code>Skeleton</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Skeleton" data-state="skeleton"></div></div><h3>Toggle Switch + Label</h3><div class="panel" style="display:grid;grid-template-columns:repeat(2,240px);gap:24px 40px"><div><div class="row-label"><code>Enabled</code></div><label class="bog-toggle-row"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" ></span></label></div><div><div class="row-label"><code>Enabled · On</code></div><label class="bog-toggle-row"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" checked></span></label></div><div><div class="row-label"><code>Error · On</code></div><label class="bog-toggle-row" data-validation="error"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" checked></span></label></div><div><div class="row-label"><code>Disabled</code></div><label class="bog-toggle-row"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" disabled></span></label></div><div><div class="row-label"><code>Read-only · On</code></div><label class="bog-toggle-row"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" aria-readonly="true" checked></span></label></div></div>
+
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

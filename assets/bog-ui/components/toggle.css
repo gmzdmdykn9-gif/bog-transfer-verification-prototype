@@ -1,0 +1,119 @@
+/* ==========================================================================
+   BOG UI — Toggle Switch (+ Toggle Switch + Label)
+   Figma: Toggle Switch (38611:4393), Toggle Switch + Label (38611:4418). Themed only.
+
+   Switch on its own (always give it a label somewhere — use the row below)
+     <input type="checkbox" role="switch" class="bog-toggle" aria-label="Notifications">
+
+   Setting row: tapping anywhere on the row switches it
+     <label class="bog-toggle-row">
+       <span class="bog-toggle-row__caption">Label (optional)</span>
+       <span class="bog-toggle-row__main">
+         <span class="bog-toggle-row__text">
+           <span class="bog-toggle-row__label">Toggle text</span>
+           <span class="bog-toggle-row__desc">Description</span>                 optional
+           <span class="bog-inline-message" data-status="negative">Message</span> Error only
+         </span>
+         <input type="checkbox" role="switch" class="bog-toggle">
+       </span>
+     </label>
+
+   States on the input:  checked (Selected) · disabled · aria-readonly="true" (Read-only)
+                         data-indeterminate (Indeterminate) · data-state="skeleton"
+   On .bog-toggle-row:   data-validation="error" shows the inline message
+   ========================================================================== */
+
+.bog-toggle {
+  position: relative;
+  flex: none;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--toggle-track-off);
+  cursor: pointer;
+  -webkit-appearance: none;
+          appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 160ms ease;
+}
+/* 52×32 tap area */
+.bog-toggle::after { content: ""; position: absolute; inset: -4px; }
+/* Handle: 20px circle, 2px from the edge */
+.bog-toggle::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: var(--icon-on-primary);
+  transition: transform 180ms cubic-bezier(0.32, 0.72, 0, 1), background-color 160ms ease;
+}
+.bog-toggle:checked { background: var(--button-primary-default); }
+.bog-toggle:checked::before { transform: translateX(20px); }
+.bog-toggle:focus-visible { outline: 2px solid var(--border-selected); outline-offset: 2px; }
+
+/* Indeterminate: orange track with a 16×2 bar, no handle */
+.bog-toggle[data-indeterminate] { background: var(--button-primary-default); }
+.bog-toggle[data-indeterminate]::before { top: 11px; left: 14px; width: 16px; height: 2px; transform: none; }
+
+/* Disabled */
+.bog-toggle:disabled { background: var(--button-disabled); cursor: default; }
+.bog-toggle:disabled::before { background: var(--icon-disabled); }
+
+/* Read-only: outlined track, smaller dark handle */
+.bog-toggle[aria-readonly="true"] {
+  background: var(--icon-on-primary);
+  box-shadow: inset 0 0 0 var(--border-width-default) var(--border-disabled);
+  pointer-events: none;
+}
+.bog-toggle[aria-readonly="true"]::before { top: 3px; left: 3px; width: 18px; height: 18px; background: var(--text-secondary); }
+.bog-toggle[aria-readonly="true"]:checked::before { transform: translateX(20px); }
+
+/* Skeleton */
+.bog-toggle[data-state="skeleton"] { background: var(--support-skeleton); pointer-events: none; }
+.bog-toggle[data-state="skeleton"]::before { display: none; }
+
+@media (prefers-reduced-motion: reduce) { .bog-toggle, .bog-toggle::before { transition: none; } }
+
+/* ---- Toggle Switch + Label --------------------------------------------- */
+.bog-toggle-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+  width: 100%;
+  font-family: var(--font-family-bog);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-toggle-row__caption {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--text-helper);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-toggle-row__main { display: flex; align-items: flex-start; gap: var(--spacing-gap-medium); }
+.bog-toggle-row__text { display: flex; flex: 1 1 auto; flex-direction: column; justify-content: center; gap: var(--spacing-gap-2x-small); min-width: 0; align-self: stretch; }
+.bog-toggle-row__label {
+  color: var(--text-primary);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+}
+.bog-toggle-row__desc {
+  color: var(--text-secondary);
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-line-height);
+  font-weight: var(--body-small-weight);
+}
+.bog-toggle-row .bog-inline-message { display: none; padding-top: var(--spacing-padding-x-small); }
+.bog-toggle-row[data-validation="error"] .bog-inline-message { display: flex; }
+.bog-toggle-row:has(.bog-toggle:disabled) { cursor: default; }
+.bog-toggle-row:has(.bog-toggle:disabled) :is(.bog-toggle-row__label, .bog-toggle-row__desc, .bog-toggle-row__caption) { color: var(--text-disabled); }
+.bog-toggle-row:has(.bog-toggle[aria-readonly="true"]) { cursor: default; pointer-events: none; }
