@@ -442,19 +442,24 @@
       if (document.activeElement === otpDsInput && document.documentElement.hasAttribute("data-bog-keyboard")) otpDsSubmit.scrollIntoView({ block: "nearest" });
     }, 600);
   });
-  otpDsSubmit.addEventListener("click", function () {
+  // Tapping Confirm keeps the field focused: the keyboard stays up, so the layout (no illustration) doesn't change.
+  // iPhone moves focus on the tap itself, so the touch is handled directly; desktop: mousedown.
+  function submitOtpDs() {
+    if (otpDsSubmit.disabled || otpDsSubmit.hasAttribute("data-state")) return;
     var value = otpDsInput.value;
-    otpDsInput.blur();
-    BOG.setOtpState(otpDs, "loading");
+    // Only the button shows it's checking; OTP Verification keeps its current look (no Loading state)
+    otpDsInput.readOnly = true;
     otpDsSubmit.setAttribute("data-state", "loading");
     setTimeout(function () {
       otpDsSubmit.removeAttribute("data-state");
-      // back to Default while the timer runs, Resend once it has finished
-      BOG.setOtpState(otpDs, otpDs.querySelector(".bog-otp__timer").hidden ? "resend" : "default");
-      if (value === "0000") { otpDsInput.value = ""; otpDsError(true); syncOtpDsSubmit(); otpDsInput.focus(); }
-      else stepDone();
+      otpDsInput.readOnly = false;
+      if (value === "0000") { otpDsInput.value = ""; otpDsError(true); syncOtpDsSubmit(); otpDsInput.focus({ preventScroll: true }); }
+      else { otpDsInput.blur(); stepDone(); }
     }, 900);
-  });
+  }
+  otpDsSubmit.addEventListener("mousedown", function (e) { e.preventDefault(); });
+  otpDsSubmit.addEventListener("touchend", function (e) { e.preventDefault(); submitOtpDs(); });
+  otpDsSubmit.addEventListener("click", submitOtpDs);
   otpDs.addEventListener("otpresend", function () {
     otpDsError(false); syncOtpDsSubmit();
     BOG.toast({ status: "positive", title: "კოდი ხელახლა გამოიგზავნა", text: "+995 512 345 678" });
