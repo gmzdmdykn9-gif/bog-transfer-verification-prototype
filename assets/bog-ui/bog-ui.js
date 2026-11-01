@@ -256,6 +256,18 @@
   window.BOG = window.BOG || {};
   window.BOG.openSheet = openSheet;
   window.BOG.closeSheet = closeSheet;
+
+  // Keyboard: on phones the on-screen keyboard shrinks the visual viewport but not
+  // fixed elements. Expose its height so open sheets can sit above it.
+  if (window.visualViewport) {
+    var vv = window.visualViewport;
+    var syncKeyboard = function () {
+      var kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+      document.documentElement.style.setProperty("--bog-keyboard", (kb > 80 ? kb : 0) + "px");
+    };
+    vv.addEventListener("resize", syncKeyboard);
+    vv.addEventListener("scroll", syncKeyboard);
+  }
 })();
 
 /* ---- Action Item: remove button ------------------------------------------ */

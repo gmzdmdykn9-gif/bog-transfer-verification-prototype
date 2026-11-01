@@ -226,12 +226,17 @@ html[data-at-start] [data-screen="transfer"] { transform: translateX(100%); visi
 .verify--sheet { display: flex; flex-direction: column; }
 .verify--sheet .bog-wizard { padding-top: 0; }
 .verify--sheet .screen__body { flex: none; overflow: visible; padding: var(--spacing-padding-small) var(--spacing-padding-default) var(--spacing-padding-default); }
-.verify--sheet .verify__spacer { display: none; }
 .verify--sheet .verify__keypad { padding-bottom: 0; }
 #verify-sheet .bog-sheet__content { padding: 0; }
 .screen--start .bog-toggle-row { padding: var(--spacing-padding-small) 0; }
-/* Compact sheets: no illustration, tighter gaps (title, description and the control stay) */
-.verify--sheet .bog-empty .bog-illustration { display: none; }
-.verify--sheet .verify__body > .bog-code { margin-top: calc(var(--spacing-gap-default) * 1.5); }
-.verify--sheet .verify__hint { margin-top: var(--spacing-gap-default); }
+/* Full-height sheets: cover the page, leaving 48px at the top. Content starts at the
+   top; the passcode keypad sits at the bottom. The sheet shrinks above the keyboard. */
+#verify-sheet .bog-sheet__panel { height: calc(100% - 48px); }
+#verify-sheet .bog-sheet__content { display: flex; flex-direction: column; }
+.verify--sheet { flex: 1 0 auto; }
+.verify--sheet .screen__body { flex: 1 0 auto; padding-top: var(--spacing-padding-default); }
+.verify--sheet .verify__spacer { display: block; }
+html[data-keyboard] .verify--sheet .bog-empty .bog-illustration { display: none; }
 .verify--sheet .verify__hint:empty { display: none; }
+/* Passcode sheet: illustration + keypad don't fit under ~900px tall phones */
+@media (max-height: 900px) { .verify--sheet:has(.bog-keypad) .bog-empty .bog-illustration { display: none; } }

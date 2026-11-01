@@ -217,6 +217,8 @@
   }
   function sheetShow(i) {
     stepIndex = i;
+    // Passkey: only the phone's own passkey sheet, no Bottom Sheet behind it
+    if (steps[i] === "passkey") { sysTimer = setTimeout(openSystemSheet, i === 0 ? 300 : 0); return; }
     renderWizard(screen(steps[i]), i);
     mountStep(steps[i]);
     vContent.scrollTop = 0;
@@ -229,17 +231,21 @@
     setTimeout(function () { closingByCode = false; unmountStep(); if (then) then(); }, 420);
   }
   function sheetStepDone() {
+    var wasPasskey = steps[stepIndex] === "passkey";
     leave(steps[stepIndex]);
     var next = stepIndex + 1;
-    closeSheetByCode(function () {
+    var after = function () {
       if (next < steps.length) sheetShow(next);
       else { stepIndex = -1; successToast(); }
-    });
+    };
+    if (wasPasskey) setTimeout(after, 380); else closeSheetByCode(after);
   }
   function sheetCancel(fromCode) {
     if (stepIndex < 0) return;
+    var wasPasskey = steps[stepIndex] === "passkey";
     leave(steps[stepIndex]);
     stepIndex = -1;
+    if (wasPasskey) return;
     if (fromCode) closeSheetByCode(); else setTimeout(unmountStep, 420);   // after the slide-down
   }
   vSheet.addEventListener("sheetclose", function () { if (!closingByCode) sheetCancel(false); });
@@ -321,7 +327,9 @@
     sys.removeAttribute("data-open");
     screen("passkey").inert = false;
     setTimeout(function () { sys.hidden = true; }, 360);
-    if (!silent) $("#passkey-retry").hidden = false;
+    if (silent) return;
+    if (sheetMode) sheetCancel(false);          // sheet mode: closing the passkey sheet cancels
+    else $("#passkey-retry").hidden = false;
   }
   function enterPasskey() {
     $("#passkey-retry").hidden = true;
@@ -334,6 +342,13 @@
     var btn = this; btn.setAttribute("data-state", "loading");
     setTimeout(function () { btn.removeAttribute("data-state"); closeSystemSheet(true); stepDone(); }, 1100);
   });
+
+  // Keyboard open (phones): lets the CSS drop the illustration so the code stays visible
+  if (window.visualViewport) {
+    var vvp = window.visualViewport;
+    var kbFlag = function () { document.documentElement.toggleAttribute("data-keyboard", window.innerHeight - vvp.height - vvp.offsetTop > 80); };
+    vvp.addEventListener("resize", kbFlag);
+  }
 
   route();
 })();

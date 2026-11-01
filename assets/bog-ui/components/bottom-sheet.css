@@ -21,6 +21,7 @@
      <button class="bog-btn" data-sheet-open="my-sheet">Open</button>
 
    Opening/closing is handled by bog-ui.js: [data-sheet-open="id"], BOG.openSheet("id"), BOG.closeSheet().
+   The sheet rises above the phone keyboard automatically (--bog-keyboard).
    Closes on overlay tap, Escape, any [data-sheet-close] inside, or dragging the handle down.
    An X close button (neutral Icon Button) is added to the right of the header by default;
    turn it off with data-close="false" on .bog-sheet, or supply your own [data-sheet-close] button.
@@ -45,6 +46,9 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  /* Lifted above the phone keyboard (bog-ui.js sets --bog-keyboard from the visual viewport) */
+  padding-bottom: var(--bog-keyboard, 0px);
+  transition: padding-bottom 200ms ease;
   font-family: var(--font-family-bog);
 }
 .bog-sheet[hidden] { display: none; }
