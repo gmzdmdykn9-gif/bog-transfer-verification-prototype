@@ -109,7 +109,12 @@
     if (panel) {
       if (!panel.hasAttribute("tabindex")) panel.setAttribute("tabindex", "-1");
       var target = panel.querySelector('[aria-selected="true"]') || panel;
-      setTimeout(function () { target.focus({ preventScroll: true }); }, 50);
+      setTimeout(function () {
+        // Don't take focus from a text field: on phones that would close the keyboard
+        var a = document.activeElement;
+        if (a && a.matches && a.matches("input:not([type=checkbox]):not([type=radio]), textarea, [contenteditable]")) return;
+        target.focus({ preventScroll: true });
+      }, 50);
     }
   }
 
@@ -261,10 +266,31 @@
   // fixed elements. Expose its height so open sheets can sit above it.
   if (window.visualViewport) {
     var vv = window.visualViewport;
+    // While the keyboard is open iOS scrolls the page up to make room, which drags fixed
+    // screens and sheets (and their top bars) up too. --bog-vv-top / --bog-vv-height pin
+    // them to the visible area instead; outside keyboard time they're removed (= full screen).
+    var root = document.documentElement.style;
     var syncKeyboard = function () {
       var kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
-      document.documentElement.style.setProperty("--bog-keyboard", (kb > 80 ? kb : 0) + "px");
+      var open = kb > 80;
+      root.setProperty("--bog-keyboard", (open ? kb : 0) + "px");
+      if (open) {
+        root.setProperty("--bog-vv-top", Math.round(vv.offsetTop) + "px");
+        root.setProperty("--bog-vv-height", Math.round(vv.height) + "px");
+      } else {
+        root.removeProperty("--bog-vv-top");
+        root.removeProperty("--bog-vv-height");
+      }
+      document.documentElement.toggleAttribute("data-bog-keyboard", open);
     };
+    // Keep the focused field in view inside its own scroll area once the keyboard is up
+    document.addEventListener("focusin", function (e) {
+      var el = e.target;
+      if (!el.matches || !el.matches("input, textarea, [contenteditable]")) return;
+      setTimeout(function () {
+        if (document.activeElement === el && document.documentElement.hasAttribute("data-bog-keyboard")) el.scrollIntoView({ block: "nearest" });
+      }, 350);
+    });
     vv.addEventListener("resize", syncKeyboard);
     vv.addEventListener("scroll", syncKeyboard);
   }

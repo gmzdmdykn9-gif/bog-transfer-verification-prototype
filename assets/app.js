@@ -99,6 +99,7 @@
   $("#next-btn").addEventListener("click", function () {
     // No amount validation in the prototype: Next always continues to verification
     var btn = this;
+    if (scenario()[0] === "otp") primeKeyboard();
     btn.setAttribute("data-state", "loading");
     setTimeout(function () { btn.removeAttribute("data-state"); startVerification(); }, 700);
   });
@@ -354,12 +355,33 @@
     enterOtp(true);
   });
 
+  // iOS opens the keyboard only for a focus made during the tap. The OTP field shows up later
+  // (loading + slide-in), so the tap focuses a hidden numeric field first; the keyboard opens,
+  // and focus moves to the OTP field once it's on screen (the keyboard stays up).
+  var kbProxy = null;
+  function primeKeyboard() {
+    if (!kbProxy) {
+      kbProxy = document.createElement("input");
+      kbProxy.setAttribute("inputmode", "numeric");
+      kbProxy.setAttribute("aria-hidden", "true");
+      kbProxy.tabIndex = -1;
+      kbProxy.style.cssText = "position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px;border:0;padding:0;pointer-events:none";
+      document.body.appendChild(kbProxy);
+    }
+    kbProxy.focus({ preventScroll: true });
+  }
+  function focusOtpField(input) {
+    input.focus({ preventScroll: true });
+    if (kbProxy) { kbProxy.remove(); kbProxy = null; }
+  }
+
   function enterOtp(keepMethod) {
+    primeKeyboard();   // a tap (back, method change) opens the keyboard right away
     if (keepMethod !== true) { BOG.selectMenu(otpMethod, "sms"); setMethodText("sms"); }
     BOG.closeMenu();
     if (document.documentElement.getAttribute("data-ds") === "current") return enterOtpDs();
     resetCode("otp"); startCountdown();
-    setTimeout(function () { $("#otp-code .bog-code__input").focus({ preventScroll: true }); }, 420);
+    setTimeout(function () { focusOtpField($("#otp-code .bog-code__input")); }, 420);
   }
   document.addEventListener("click", function (e) {
     if (!e.target.closest("#otp-resend")) return;
@@ -377,7 +399,7 @@
     otpDs.querySelector('.bog-radio__input[value="sms"]').checked = true;
     otpDsInput.value = ""; otpDsError(false);
     BOG.setOtpState(otpDs, "default"); BOG.startOtpTimer(otpDs);
-    setTimeout(function () { otpDsInput.focus({ preventScroll: true }); }, 420);
+    setTimeout(function () { focusOtpField(otpDsInput); }, 420);
   }
   // Current Design System: SMS / Email radios (the official component's Selector) instead of the pill
   otpDs.addEventListener("change", function (e) {
