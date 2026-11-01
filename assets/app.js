@@ -200,14 +200,32 @@
     if (sheetMode) { sheetCancel(true); return; }
     while (stepIndex >= 0) back();
   }
-  function successToast() {
-    setTimeout(function () { BOG.toast({ status: "positive", title: "გადარიცხვა დადასტურებულია", text: (amountInput.value ? amountInput.value + " ₾ · " : "") + "მიხეილ გოგიბერიძე" }); }, 400);
+  // Last step: the Result Page slides up over everything; the verification steps close behind it.
+  var resultScr = screen("result");
+  function showResult() {
+    var n = parseFloat(String(amountInput.value).replace(/[^\d.]/g, "")) || 0;
+    $("#result-amount").textContent = n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    resultScr.removeAttribute("aria-hidden"); resultScr.inert = false;
+    resultScr.setAttribute("data-open", "");
   }
+  function hideResult(then) {
+    resultScr.removeAttribute("data-open"); resultScr.setAttribute("aria-hidden", "true"); resultScr.inert = true;
+    if (then) then();
+  }
+  resultScr.inert = true;
+  document.addEventListener("click", function (e) {
+    if (e.target.closest("[data-result-done]")) {          // Done / ✕ → back to the scenario list
+      hideResult(function () { history.pushState(null, "", location.pathname + location.search); route(); });
+    } else if (e.target.closest("#result-new")) {         // New transfer → an empty form
+      amountInput.value = ""; amountInput.dispatchEvent(new Event("input", { bubbles: true }));
+      hideResult();
+    }
+  });
   function stepDone() {
     if (sheetMode) { sheetStepDone(); return; }
     if (stepIndex < steps.length - 1) { leave(steps[stepIndex]); showStep(stepIndex + 1); return; }
-    closeAll();
-    successToast();
+    showResult();
+    setTimeout(closeAll, 450);
   }
 
   /* ---- Sheet mode: the step's content moves into one Bottom Sheet over the form.
@@ -250,7 +268,7 @@
     var next = stepIndex + 1;
     var after = function () {
       if (next < steps.length) sheetShow(next);
-      else { stepIndex = -1; successToast(); }
+      else { stepIndex = -1; showResult(); }
     };
     if (wasPasskey) setTimeout(after, 380); else closeSheetByCode(after);
   }
@@ -317,7 +335,28 @@
       setHint("otp", '<button type="button" class="bog-btn" data-type="text-primary" id="otp-resend">კოდის ხელახლა გაგზავნა</button>');
     }, 1000);
   }
-  function enterOtp() {
+  // Delivery method (SMS / email / WhatsApp): the pill's iOS pull-down. Switching sends a new code.
+  var METHODS = {
+    sms:      { desc: "კოდი გამოგზავნილია ნომერზე <strong>+995 512 345 678</strong>", short: "კოდი გამოგზავნილია ნომერზე ••• •• 56 78", toast: "კოდი გამოიგზავნა SMS-ით", to: "+995 512 345 678" },
+    email:    { desc: "კოდი გამოგზავნილია ელფოსტაზე <strong>m•••@gmail.com</strong>", short: "კოდი გამოგზავნილია ელფოსტაზე m•••@gmail.com", toast: "კოდი გამოიგზავნა ელფოსტაზე", to: "m•••@gmail.com" },
+    whatsapp: { desc: "კოდი გამოგზავნილია WhatsApp-ში ნომერზე <strong>+995 512 345 678</strong>", short: "კოდი გამოგზავნილია WhatsApp-ში ••• •• 56 78", toast: "კოდი გამოიგზავნა WhatsApp-ში", to: "+995 512 345 678" }
+  };
+  var otpMethod = $("#otp-method");
+  function setMethodText(value) {
+    var m = METHODS[value] || METHODS.sms;
+    $("#otp-desc").innerHTML = m.desc;
+    $("#otp-ds-message").textContent = m.short;
+  }
+  otpMethod.addEventListener("menuchange", function (e) {
+    var m = METHODS[e.detail.value];
+    setMethodText(e.detail.value);
+    BOG.toast({ status: "positive", title: m.toast, text: m.to });
+    enterOtp(true);
+  });
+
+  function enterOtp(keepMethod) {
+    if (keepMethod !== true) { BOG.selectMenu(otpMethod, "sms"); setMethodText("sms"); }
+    BOG.closeMenu();
     if (document.documentElement.getAttribute("data-ds") === "current") return enterOtpDs();
     resetCode("otp"); startCountdown();
     setTimeout(function () { $("#otp-code .bog-code__input").focus({ preventScroll: true }); }, 420);

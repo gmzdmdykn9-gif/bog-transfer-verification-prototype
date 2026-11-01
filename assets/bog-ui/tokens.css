@@ -101,6 +101,7 @@
   --spacing-padding-medium: 12px;
   --spacing-padding-default: 16px;
   --spacing-gap-large: 24px;
+  --spacing-padding-2x-large: 40px;
   --spacing-form-gap: 16px;
   --spacing-button-gap: 8px;
   --input-container-height: 56px; /* font/_Scale haks/input/container height */
@@ -184,6 +185,7 @@
   --avatar-background: #e7d6ff;
   --avatar-leyer: #5c3696;
   --layer-layer-01: #ffffff;
+  --background-background-01: #ffffff;
   --badge-feature-purple-layer-01: #ede5ff;
   --badge-feature-purple-layer-03: #6929c4;
   --layer-inverse-01: #1b1c1d;

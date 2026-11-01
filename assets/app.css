@@ -247,3 +247,22 @@ html:not([data-ds="current"]) .ds-current,
 html[data-ds="current"] .ds-onboarding { display: none; }
 .verify__body > .bog-otp { max-width: 343px; margin-top: calc(var(--spacing-gap-default) * 2); text-align: left; }
 @media (max-height: 700px) { .verify__body > .bog-otp { margin-top: var(--spacing-gap-default); } }
+
+/* OTP delivery method pill (Figma: 24px above and below) */
+.verify__body > .verify__method { margin-top: var(--spacing-gap-large); }
+.verify__body > .verify__method ~ :is(.bog-code, .bog-otp) { margin-top: var(--spacing-gap-large); }
+@media (max-height: 700px) {
+  .verify__body > .verify__method,
+  .verify__body > .verify__method ~ :is(.bog-code, .bog-otp) { margin-top: var(--spacing-gap-default); }
+}
+
+/* ---- Result page: presented full screen from the bottom (iOS modal) when the transfer is done ---- */
+.screen--result {
+  z-index: 900;
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 420ms;
+}
+.screen--result[data-open] { transform: none; visibility: visible; transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s; }
+.screen--result > .bog-result-page { flex: 1 1 auto; min-height: 0; }
+@media (prefers-reduced-motion: reduce) { .screen--result, .screen--result[data-open] { transition: none; } }

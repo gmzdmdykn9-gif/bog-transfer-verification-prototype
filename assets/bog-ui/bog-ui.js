@@ -749,3 +749,45 @@
   window.BOG.initOtp = init;
   window.BOG.startOtpTimer = function (el) { if (typeof el === "string") el = document.getElementById(el); if (el) startTimer(el); };
 })();
+
+/* ---- Menu (pill trigger + iOS pull-down) -----------------------------------
+   Tap the trigger to open; picking a row moves the checkmark, updates the trigger
+   text and fires "menuchange" (detail.value, detail.label) on the .bog-menu. */
+(function () {
+  function close(menu) {
+    if (!menu || !menu.hasAttribute("data-open")) return;
+    menu.removeAttribute("data-open");
+    var t = menu.querySelector(".bog-menu__trigger"); if (t) t.setAttribute("aria-expanded", "false");
+  }
+  function closeAll(except) { document.querySelectorAll(".bog-menu[data-open]").forEach(function (m) { if (m !== except) close(m); }); }
+  function select(menu, value) {
+    var item = menu.querySelector('.bog-menu__item[data-value="' + value + '"]');
+    if (!item) return;
+    menu.querySelectorAll(".bog-menu__item").forEach(function (i) { i.setAttribute("aria-checked", i === item ? "true" : "false"); });
+    var v = menu.querySelector(".bog-menu__value"); if (v) v.textContent = item.getAttribute("data-label") || item.textContent.trim();
+  }
+  document.addEventListener("click", function (e) {
+    var trigger = e.target.closest(".bog-menu__trigger");
+    var item = e.target.closest(".bog-menu__item");
+    if (trigger) {
+      var menu = trigger.closest(".bog-menu"), open = !menu.hasAttribute("data-open");
+      closeAll(menu);
+      menu.toggleAttribute("data-open", open);
+      trigger.setAttribute("aria-expanded", String(open));
+      return;
+    }
+    if (item) {
+      var m = item.closest(".bog-menu"), value = item.getAttribute("data-value"), was = item.getAttribute("aria-checked") === "true";
+      select(m, value);
+      setTimeout(function () { close(m); }, 80);
+      if (!was) m.dispatchEvent(new CustomEvent("menuchange", { bubbles: true, detail: { value: value, label: item.getAttribute("data-label") || item.textContent.trim() } }));
+      return;
+    }
+    if (!e.target.closest(".bog-menu__panel")) closeAll();
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAll(); });
+
+  window.BOG = window.BOG || {};
+  window.BOG.selectMenu = function (menu, value) { if (typeof menu === "string") menu = document.getElementById(menu); if (menu) select(menu, value); };
+  window.BOG.closeMenu = closeAll;
+})();

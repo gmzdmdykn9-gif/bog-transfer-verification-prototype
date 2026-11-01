@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>სხვასთან გადარიცხვა — BOG prototype</title>
-<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=1793568805">
-<link rel="stylesheet" href="assets/app.css?v=1793568805">
-<script src="assets/bog-ui/bog-ui.js?v=1793568805" defer></script>
-<script src="assets/app.js?v=1793568805" defer></script>
+<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=1793569446">
+<link rel="stylesheet" href="assets/app.css?v=1793569446">
+<script src="assets/bog-ui/bog-ui.js?v=1793569446" defer></script>
+<script src="assets/app.js?v=1793569446" defer></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -295,7 +295,16 @@
       <div class="bog-empty" data-type="custom">
         <span class="bog-illustration" data-size="132"><img src="assets/img/digipass.svg" alt=""></span>
         <p class="bog-empty__title">შეიყვანე ვერიფიკაციის კოდი</p>
-        <p class="bog-empty__desc ds-onboarding">კოდი გამოგზავნილია ნომერზე <strong>+995 512 345 678</strong></p>
+        <p class="bog-empty__desc ds-onboarding" id="otp-desc">კოდი გამოგზავნილია ნომერზე <strong>+995 512 345 678</strong></p>
+      </div>
+      <!-- Delivery method: pill + iOS pull-down (Figma Onboarding › otp 17748:73134) -->
+      <div class="bog-menu verify__method" id="otp-method">
+        <button type="button" class="bog-menu__trigger" aria-haspopup="menu" aria-expanded="false"><span class="bog-menu__value">SMS კოდი</span></button>
+        <div class="bog-menu__panel" role="menu">
+          <button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="true" data-value="sms">SMS კოდი</button>
+          <button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="false" data-value="email">ელფოსტა</button>
+          <button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="false" data-value="whatsapp">WhatsApp</button>
+        </div>
       </div>
       <!-- Current Design System: Mobile Components › OTP Verification -->
       <div class="bog-otp ds-current" id="otp-ds" data-timer="30">
@@ -308,7 +317,7 @@
             <p class="bog-field__message" hidden>კოდი არასწორია, სცადე თავიდან</p>
           </div>
           <div class="bog-otp__info">
-            <p class="bog-otp__message">კოდი გამოგზავნილია ნომერზე ••• •• 56 78</p>
+            <p class="bog-otp__message" id="otp-ds-message">კოდი გამოგზავნილია ნომერზე ••• •• 56 78</p>
             <p class="bog-otp__timer">კოდის ხელახლა გაგზავნა <b class="bog-otp__time">00:30</b></p>
             <span class="bog-inline-message bog-otp__expired" data-status="negative">კოდს ვადა გაუვიდა</span>
             <div class="bog-otp__actions">
@@ -388,6 +397,33 @@
   </div>
 
   <!-- iOS system passkey sheet (mock of the OS dialog, not a BOG component) -->
+  <!-- Last step: Result Page (Figma: Mobile Components › Result Page 55279:42698) -->
+  <section class="screen screen--result" data-screen="result" aria-hidden="true">
+    <div class="bog-result-page">
+      <header class="bog-result-page__nav">
+        <button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="დახურვა" data-result-done><span class="bog-icon" data-icon="close"></span></button>
+      </header>
+      <main class="bog-result-page__body">
+        <div class="bog-result" data-status="success">
+          <span class="bog-result__icon"></span>
+          <div class="bog-result__text">
+            <h1 class="bog-result__title">გადარიცხვა შესრულდა</h1>
+            <p class="bog-result__desc">თანხა ჩაირიცხა მიმღების ანგარიშზე</p>
+          </div>
+          <div class="bog-result__amount">
+            <span class="bog-result__label">გადარიცხული თანხა</span>
+            <div class="bog-amount" data-size="large"><span class="bog-amount__main"><span class="bog-amount__value" id="result-amount">0.00</span><span class="bog-amount__currency">₾</span></span></div>
+            <span class="bog-result__label">მიმღები: მიხეილ გოგიბერიძე</span>
+          </div>
+        </div>
+      </main>
+      <footer class="bog-result-page__bar">
+        <button type="button" class="bog-btn" data-type="primary" data-width="fill" data-result-done>დასრულება</button>
+        <button type="button" class="bog-btn" data-type="neutral" data-width="fill" id="result-new">ახალი გადარიცხვა</button>
+      </footer>
+    </div>
+  </section>
+
   <div class="ios-sheet" id="ios-passkey" hidden>
     <div class="ios-sheet__panel" role="dialog" aria-modal="true" aria-labelledby="ios-passkey-title">
       <div class="ios-sheet__head">
