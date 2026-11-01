@@ -260,9 +260,23 @@
     $("#verify-sheet-title").textContent = t ? t.textContent : "ვერიფიკაცია";
     mountStep(steps[i]);
     vContent.scrollTop = 0;
+    freezeBehindSheet(true);
     BOG.openSheet(vSheet);
     enter(steps[i]);
   }
+  // Screens behind the verification sheet ignore the keyboard until it has fully gone (see app.css)
+  var unfreezeTimer;
+  function freezeBehindSheet(on) {
+    clearTimeout(unfreezeTimer);
+    if (on) { document.documentElement.classList.add("verify-sheet-freeze"); return; }
+    (function wait() {
+      unfreezeTimer = setTimeout(function () {
+        if (document.documentElement.hasAttribute("data-bog-keyboard")) wait();
+        else document.documentElement.classList.remove("verify-sheet-freeze");
+      }, 250);
+    })();
+  }
+  vSheet.addEventListener("sheetclose", function () { freezeBehindSheet(false); });
   function closeSheetByCode(then) {
     closingByCode = true;
     BOG.closeSheet(vSheet);

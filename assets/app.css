@@ -296,3 +296,6 @@ html[data-ds="current"] .verify__body > .bog-otp { margin-top: calc(var(--spacin
 html[data-ds="current"] .verify--sheet .verify__body > .bog-otp { margin-top: var(--spacing-gap-small); }
 /* Small phones: the sheet's own content scrolls (the page freeze must not apply inside the sheet) */
 html.bog-sheet-locked .bog-sheet .screen__body { touch-action: auto; }
+/* A sheet is open: the screens behind it ignore the keyboard (no shrinking, no moving bars),
+   so nothing shifts under the sheet and nothing jumps when it closes */
+html:is(.bog-sheet-locked, .verify-sheet-freeze) .screen { top: 0; padding-bottom: 0; }
