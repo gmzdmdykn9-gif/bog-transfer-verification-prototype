@@ -290,3 +290,5 @@ html[data-ds="current"] .verify__body > .bog-otp { margin-top: calc(var(--spacin
 .verify--sheet .bog-empty__title { display: none; }
 /* Current Design System: primary button 24px under OTP Verification */
 .verify__body > .verify__submit { max-width: 343px; margin-top: var(--spacing-gap-large); }
+/* Sheet mode: no illustration in the OTP and passcode sheets (title is in the sheet header) */
+.verify--sheet .bog-empty .bog-illustration { display: none; }
