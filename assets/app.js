@@ -435,6 +435,13 @@
   var otpDsSubmit = $("#otp-ds-submit");
   function syncOtpDsSubmit() { otpDsSubmit.disabled = otpDsInput.value.length < 4; }
   otpDsInput.addEventListener("input", syncOtpDsSubmit);
+  // Keyboard open: bring the field and the Confirm button into view together (after bog-ui centers the field)
+  otpDsInput.addEventListener("focus", function () {
+    var show = function () {
+      if (document.activeElement === otpDsInput && document.documentElement.hasAttribute("data-bog-keyboard")) otpDsSubmit.scrollIntoView({ block: "nearest" });
+    };
+    setTimeout(show, 450); setTimeout(show, 800);
+  });
   otpDsSubmit.addEventListener("click", function () {
     var value = otpDsInput.value;
     otpDsInput.blur();

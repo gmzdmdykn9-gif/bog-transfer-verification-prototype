@@ -244,9 +244,9 @@ html[data-at-start] [data-screen="transfer"] { transform: translateX(100%); visi
 .verify--sheet .verify__keypad { padding-bottom: 0; }
 #verify-sheet .bog-sheet__content { padding: 0; }
 .screen--start .bog-toggle-row { padding: var(--spacing-padding-small) 0; }
-/* Full-height sheets: cover the page, leaving 48px at the top. Content starts at the
+/* Full-height sheets: cover the page, leaving 24px at the top. Content starts at the
    top; the passcode keypad sits at the bottom. The sheet shrinks above the keyboard. */
-#verify-sheet .bog-sheet__panel { height: calc(100% - 48px); }
+#verify-sheet .bog-sheet__panel { height: calc(100% - 24px); max-height: calc(100% - 24px); }
 #verify-sheet .bog-sheet__content { display: flex; flex-direction: column; }
 .verify--sheet { flex: 1 0 auto; }
 .verify--sheet .screen__body { flex: 1 0 auto; padding-top: var(--spacing-padding-default); }

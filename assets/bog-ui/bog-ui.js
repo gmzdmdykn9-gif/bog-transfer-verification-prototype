@@ -288,7 +288,7 @@
       var el = e.target;
       if (!el.matches || !el.matches("input, textarea, [contenteditable]") || el.getAttribute("aria-hidden") === "true") return;
       var lift = function () {
-        if (document.activeElement === el && document.documentElement.hasAttribute("data-bog-keyboard")) el.scrollIntoView({ block: "center", behavior: "smooth" });
+        if (document.activeElement === el && document.documentElement.hasAttribute("data-bog-keyboard")) el.scrollIntoView({ block: "center" });
       };
       setTimeout(lift, 350);
       setTimeout(lift, 700);   // again once the keyboard animation has settled
