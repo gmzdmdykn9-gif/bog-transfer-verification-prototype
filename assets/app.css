@@ -293,9 +293,22 @@ html[data-ds="current"] .verify__body > .bog-otp { margin-top: calc(var(--spacin
 /* Sheet mode: no illustration in the OTP and passcode sheets (title is in the sheet header) */
 .verify--sheet .bog-empty .bog-illustration { display: none; }
 /* Sheet mode, OTP Verification: sits right under the sheet header and doesn't move with the keyboard */
-html[data-ds="current"] .verify--sheet .verify__body > .bog-otp { margin-top: var(--spacing-gap-small); }
+html[data-ds="current"] .verify--sheet .verify__body > .bog-otp { margin-top: 0; }
 /* Small phones: the sheet's own content scrolls (the page freeze must not apply inside the sheet) */
 html.bog-sheet-locked .bog-sheet .screen__body { touch-action: auto; }
 /* A sheet is open: the screens behind it ignore the keyboard (no shrinking, no moving bars),
    so nothing shifts under the sheet and nothing jumps when it closes */
 html:is(.bog-sheet-locked, .verify-sheet-freeze) .screen { top: 0; padding-bottom: 0; }
+
+/* ---- Current Design System passcode: PIN code Input + Keyboard Numeric (Mobile Components) ---- */
+.verify__body > .bog-pin { max-width: 343px; margin-top: var(--spacing-gap-large); }
+/* Keyboard Numeric sits 16px + its own 12px from the screen edges, as in Figma */
+.verify__keypad > .bog-numpad { padding-inline: calc(var(--spacing-padding-default) + var(--spacing-padding-medium)); }
+
+/* Current Design System sheets (Figma Onboarding › Sheet 17755:11959): sized to their content,
+   no progress bar; content starts 16px under the header; Confirm 16px under OTP Verification */
+html[data-ds="current"] #verify-sheet .bog-sheet__panel { height: auto; }
+html[data-ds="current"] #verify-sheet .bog-wizard { display: none; }
+html[data-ds="current"] .verify--sheet .verify__body > .bog-pin { margin-top: 0; }
+html[data-ds="current"] .verify--sheet .verify__body > .verify__submit { margin-top: var(--spacing-form-gap); }
+html[data-ds="current"] .verify--sheet .verify__spacer { min-height: 0; flex: none; }

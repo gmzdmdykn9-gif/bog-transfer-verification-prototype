@@ -1,0 +1,75 @@
+/* ==========================================================================
+   BOG UI — PIN code Input
+   Figma: Mobile Components › PIN code Input (64853:17381) · _Input PIN dots (64853:17552)
+
+   <div class="bog-pin" id="pin">
+     <div class="bog-pin__text">
+       <p class="bog-pin__title">Enter your PIN</p>
+       <p class="bog-pin__helper">Please enter your 4-digit code</p>          optional
+     </div>
+     <div class="bog-pin__dots"><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span></div>
+   </div>
+   Typed on a Keyboard Numeric: <div class="bog-numpad" data-for="pin">…</div>
+
+   State     Default (empty dots) · Filled (bog-ui.js fills dots: data-filled) ·
+             Error → data-validation="error" (red helper + dots; put the error text in the helper)
+   Events    "pinchange" / "pincomplete" (detail.value) on .bog-pin
+   JS        BOG.setPin(el, "12")  ·  typing clears data-validation
+   White / Black Static appearances aren't built yet.
+   ========================================================================== */
+
+.bog-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-gap-default);
+  width: 100%;
+  font-family: var(--font-family-bog);
+  text-align: center;
+}
+.bog-pin__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+  width: 100%;
+}
+.bog-pin__title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--title-medium-size);
+  line-height: var(--title-medium-line-height);
+  font-weight: var(--title-medium-weight);
+  letter-spacing: var(--title-medium-letter-spacing);
+}
+.bog-pin__helper {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-pin__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-form-gap);
+}
+.bog-pin__dot {
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  border: var(--border-width-bold) solid var(--border-border-02);
+  border-radius: var(--radius-full);
+  transition: background-color 100ms ease, border-color 100ms ease;
+}
+.bog-pin__dot[data-filled] { border-color: var(--icon-primary); background: var(--icon-primary); }
+
+/* Error */
+.bog-pin[data-validation="error"] .bog-pin__helper { color: var(--text-error); }
+.bog-pin[data-validation="error"] .bog-pin__dot { border-color: var(--border-error); background: transparent; }
+.bog-pin[data-validation="error"] .bog-pin__dots { animation: bog-pin-shake 360ms ease; }
+@keyframes bog-pin-shake {
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+@media (prefers-reduced-motion: reduce) { .bog-pin[data-validation="error"] .bog-pin__dots { animation: none; } }

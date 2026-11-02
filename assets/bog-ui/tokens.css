@@ -59,9 +59,10 @@
   --title-large-weight: 600;
   --title-large-letter-spacing: -0.1px;
   /* Title/Medium */
-  --title-medium-size: 17px;
+  --title-medium-size: 18px;
   --title-medium-line-height: 24px;
   --title-medium-weight: 600;
+  --title-medium-letter-spacing: -0.1px;
   /* Subtitle/Large */
   --subtitle-large-size: 17px;
   --subtitle-large-line-height: 20px;

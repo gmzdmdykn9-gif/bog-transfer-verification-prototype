@@ -257,7 +257,9 @@
     renderWizard(screen(steps[i]), i);
     // The step's title ("შეიყვანე ვერიფიკაციის კოდი" / "შეიყვანე პასკოდი") becomes the sheet title
     var t = screen(steps[i]).querySelector(".bog-empty__title");
-    $("#verify-sheet-title").textContent = t ? t.textContent : "ვერიფიკაცია";
+    $("#verify-sheet-title").textContent = isCurrentDs()
+      ? (steps[i] === "otp" ? "ავთენტიფიკაცია" : "")   // Figma: "Authentication" on OTP; PIN sheet has no title
+      : (t ? t.textContent : "ვერიფიკაცია");
     mountStep(steps[i]);
     vContent.scrollTop = 0;
     freezeBehindSheet(true);
@@ -332,8 +334,33 @@
     var code = $("#" + name + "-code");
     BOG.setCode(code, "");
     code.removeAttribute("data-validation"); code.removeAttribute("data-state");
-    if (name === "passcode") setHint("passcode", "");
+    if (name === "passcode") { setHint("passcode", ""); resetPin(); }
   }
+  function isCurrentDs() { return document.documentElement.getAttribute("data-ds") === "current"; }
+
+  // Current Design System passcode: PIN code Input + Keyboard Numeric. 0000 = wrong; Face ID pad = success.
+  var pin = $("#passcode-pin"), pinHelper = $("#passcode-pin-helper"), PIN_HELP = pinHelper.textContent;
+  function resetPin() {
+    BOG.setPin(pin, ""); pin.removeAttribute("data-validation"); pin.removeAttribute("data-state");
+    pinHelper.textContent = PIN_HELP;
+  }
+  pin.addEventListener("pinchange", function () { if (!pin.hasAttribute("data-validation")) pinHelper.textContent = PIN_HELP; });
+  pin.addEventListener("pincomplete", function (e) {
+    pin.setAttribute("data-state", "loading");
+    setTimeout(function () {
+      pin.removeAttribute("data-state");
+      if (e.detail.value === "0000") {
+        BOG.setPin(pin, "");
+        pin.setAttribute("data-validation", "error");
+        pinHelper.textContent = "პასკოდი არასწორია, სცადე თავიდან";
+      } else stepDone();
+    }, 600);
+  });
+  document.querySelector('.bog-numpad[data-for="passcode-pin"]').addEventListener("numpadbiometric", function () {
+    if (pin.hasAttribute("data-state")) return;
+    pin.setAttribute("data-state", "loading");
+    setTimeout(function () { pin.removeAttribute("data-state"); stepDone(); }, 500);
+  });
   function setHint(name, html, error) {
     var h = $("#" + name + "-hint"); h.innerHTML = html;
     if (error) h.setAttribute("data-status", "error"); else h.removeAttribute("data-status");

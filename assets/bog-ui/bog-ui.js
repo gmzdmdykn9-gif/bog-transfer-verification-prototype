@@ -818,3 +818,50 @@
   window.BOG.selectMenu = function (menu, value) { if (typeof menu === "string") menu = document.getElementById(menu); if (menu) select(menu, value); };
   window.BOG.closeMenu = closeAll;
 })();
+
+/* ---- PIN code Input + Keyboard Numeric ------------------------------------
+   .bog-numpad[data-for] types into a .bog-pin (dots) or a .bog-code (cells).
+   .bog-pin fires "pinchange" / "pincomplete" (detail.value); the biometric pad
+   fires "numpadbiometric" on the .bog-numpad. */
+(function () {
+  function dots(el) { return el.querySelectorAll(".bog-pin__dot"); }
+  function setPin(el, value) {
+    if (typeof el === "string") el = document.getElementById(el);
+    if (!el) return;
+    var d = dots(el), max = d.length;
+    value = String(value || "").replace(/\D/g, "").slice(0, max);
+    var prev = el._pin || "";
+    el._pin = value;
+    if (value.length > prev.length) el.removeAttribute("data-validation");
+    d.forEach(function (dot, i) { dot.toggleAttribute("data-filled", i < value.length); });
+    if (value !== prev) {
+      el.dispatchEvent(new CustomEvent("pinchange", { bubbles: true, detail: { value: value } }));
+      if (value.length === max) el.dispatchEvent(new CustomEvent("pincomplete", { bubbles: true, detail: { value: value } }));
+    }
+  }
+  function press(pad, key) {
+    if (key === "biometric") { pad.dispatchEvent(new CustomEvent("numpadbiometric", { bubbles: true })); return; }
+    var el = document.getElementById(pad.getAttribute("data-for"));
+    if (!el || el.getAttribute("data-state") === "loading") return;
+    var isPin = el.classList.contains("bog-pin");
+    var v = (isPin ? el._pin : el._code) || "";
+    var next = key === "back" ? v.slice(0, -1) : v + key;
+    if (isPin) setPin(el, next); else if (window.BOG && BOG.setCode) BOG.setCode(el, next);
+  }
+  document.addEventListener("click", function (e) {
+    var key = e.target.closest(".bog-numpad__key[data-key]");
+    if (key) press(key.closest(".bog-numpad"), key.getAttribute("data-key"));
+  });
+  // Desktop: number keys and Backspace type into the visible numpad
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey || e.target.matches("input, textarea")) return;
+    var key = /^[0-9]$/.test(e.key) ? e.key : e.key === "Backspace" ? "back" : null;
+    if (!key) return;
+    var pad = Array.prototype.find.call(document.querySelectorAll(".bog-numpad"), function (p) { return p.offsetParent !== null && !p.closest("[inert]"); });
+    if (pad) { e.preventDefault(); press(pad, key); }
+  });
+  document.querySelectorAll(".bog-pin").forEach(function (el) { el._pin = ""; });
+
+  window.BOG = window.BOG || {};
+  window.BOG.setPin = setPin;
+})();
