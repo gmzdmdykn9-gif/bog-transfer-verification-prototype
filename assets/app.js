@@ -109,16 +109,16 @@
   /* ---- Verification ------------------------------------------------------
      Entry points (URL hash) — which methods the bank asks for:
        Trusted device (one method):   #trusted-otp · #trusted-passcode · #trusted-passkey
-       Not trusted (two methods):     #otp-passkey · #passcode-passkey
-     Add "/sheet" (e.g. #otp-passkey/sheet) to run the steps in a Bottom Sheet over the form.
-     Add "/ds" (e.g. #otp-passkey/ds or #otp-passkey/sheet/ds) for the Current Design System OTP component.
+       Not trusted (two methods):     #otp-passcode · #passcode-passkey
+     Add "/sheet" (e.g. #otp-passcode/sheet) to run the steps in a Bottom Sheet over the form.
+     Add "/ds" (e.g. #otp-passcode/ds or #otp-passcode/sheet/ds) for the Current Design System OTP component.
      No hash = start page. Test code 0000 = wrong code.                                   */
   var SCENARIOS = {
     "trusted-otp": ["otp"], "trusted-passcode": ["passcode"], "trusted-passkey": ["passkey"],
-    "otp-passkey": ["otp", "passkey"], "passcode-passkey": ["passcode", "passkey"]
+    "otp-passcode": ["otp", "passcode"], "passcode-passkey": ["passcode", "passkey"]
   };
   function hashName() { return location.hash.slice(1).split("/")[0]; }
-  function scenario() { return SCENARIOS[hashName()] || SCENARIOS["otp-passkey"]; }
+  function scenario() { return SCENARIOS[hashName()] || SCENARIOS["otp-passcode"]; }
   var sheetMode = false;
 
   // Start-page toggle: run verification in a Bottom Sheet. Remembered, and added to the links as "/sheet".
