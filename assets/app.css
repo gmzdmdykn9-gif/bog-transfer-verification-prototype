@@ -312,3 +312,9 @@ html[data-ds="current"] #verify-sheet .bog-wizard { display: none; }
 html[data-ds="current"] .verify--sheet .verify__body > .bog-pin { margin-top: 0; }
 html[data-ds="current"] .verify--sheet .verify__body > .verify__submit { margin-top: var(--spacing-form-gap); }
 html[data-ds="current"] .verify--sheet .verify__spacer { min-height: 0; flex: none; }
+
+/* Current Design System passcode page (Figma Onboarding › passcode 17755:513): illustration and PIN code Input
+   sit right above Keyboard Numeric (16px illustration → PIN, ~20px dots → first key row), free space goes on top */
+html[data-ds="current"] .verify:not(.verify--sheet) .verify__body:has(> .bog-pin) > .verify__spacer { order: -1; }
+html[data-ds="current"] .verify:not(.verify--sheet) .verify__body > .bog-pin { margin-top: var(--spacing-gap-default); }
+html[data-ds="current"] .verify:not(.verify--sheet) .verify__body:has(> .bog-pin) > .verify__keypad { padding-top: var(--spacing-gap-small); }
