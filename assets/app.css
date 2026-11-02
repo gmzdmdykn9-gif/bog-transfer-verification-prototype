@@ -262,7 +262,7 @@ html[data-keyboard] .verify:not(.verify--sheet) .verify__body { padding-top: var
    instead of the Onboarding code cells. Swap back by turning the toggle off. */
 html:not([data-ds="current"]) .ds-current,
 html[data-ds="current"] .ds-onboarding { display: none; }
-.verify__body > .bog-otp { max-width: 343px; margin-top: calc(var(--spacing-gap-default) * 2); text-align: left; }
+.verify__body > .bog-otp { margin-top: calc(var(--spacing-gap-default) * 2); text-align: left; }
 @media (max-height: 700px) { .verify__body > .bog-otp { margin-top: var(--spacing-gap-default); } }
 
 /* OTP delivery method pill (Figma: 24px above and below) */
@@ -288,8 +288,8 @@ html[data-ds="current"] .verify__body > .bog-otp { margin-top: calc(var(--spacin
 @media (max-height: 700px) { html[data-ds="current"] .verify__body > .bog-otp { margin-top: var(--spacing-gap-default); } }
 /* Sheet mode: the step title moves into the Bottom Sheet title, so it isn't repeated in the content */
 .verify--sheet .bog-empty__title { display: none; }
-/* Current Design System: primary button 24px under OTP Verification */
-.verify__body > .verify__submit { max-width: 343px; margin-top: var(--spacing-gap-large); }
+/* Current Design System: primary button 24px under OTP Verification; OTP and button fill the width (16px side padding) */
+.verify__body > .verify__submit { margin-top: var(--spacing-gap-large); }
 /* Sheet mode: no illustration in the OTP and passcode sheets (title is in the sheet header) */
 .verify--sheet .bog-empty .bog-illustration { display: none; }
 /* Sheet mode, OTP Verification: sits right under the sheet header and doesn't move with the keyboard */
