@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tab Bar — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+<style>
+.phone{position:relative;width:375px;height:700px;border-radius:24px;box-shadow:0 0 0 8px #1b1c1d;overflow:hidden;background:var(--background-background-01)}
+.phone.dark{background:#1b1c1d}
+.phone__scroll{position:absolute;inset:0;overflow-y:auto;padding:56px 16px 120px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;scrollbar-width:none}
+.phone__title{margin:0 0 4px;font-size:24px;color:var(--text-primary)}
+.phone.dark .phone__title{color:var(--text-inverse-primary)}
+.demo-card{flex:none;height:120px;border-radius:16px;background:linear-gradient(135deg,hsl(var(--h) 80% 62%),hsl(calc(var(--h) + 60) 80% 45%))}
+.docs-bare .bog-tab-bar__items::before{display:none}
+.demo-log{margin:16px 0 0;font-size:12px;color:var(--support-static-02)}
+</style>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="tab-bar"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Tab Bar</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Bottom app navigation: the floating BOG tab bar (Light / Dark, 3–6 tabs, notification dots) with the real app icons, plus the flat Toolbar for iOS and Android with home indicator / system navigation. Pins to the bottom with data-position="fixed" or sits in the flow.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;!-- Floating tab bar (Tab Bar - iOS), pinned to the bottom of the page --&gt;
+&lt;nav class="bog-tab-bar" data-position="fixed" aria-label="Main"&gt;
+  &lt;div class="bog-tab-bar__items"&gt;
+    &lt;a class="bog-tab-bar__item" href="#" data-icon="home" aria-current="page"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;Home&lt;/a&gt;
+    &lt;a class="bog-tab-bar__item" href="#" data-icon="products"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;My Space&lt;/a&gt;
+    &lt;a class="bog-tab-bar__item" href="#" data-icon="payment"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;Payments&lt;/a&gt;
+    &lt;a class="bog-tab-bar__item" href="#" data-icon="offer"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;Offers
+      &lt;span class="bog-notification-badge" data-status="negative"&gt;&lt;/span&gt;&lt;/a&gt;
+    &lt;a class="bog-tab-bar__item" href="#" data-icon="dashboard"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;Hub&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+&lt;!-- data-mode="dark" · leave out data-position for an in-flow bar · data-icon="pfm" = Transactions --&gt;
+
+&lt;!-- Toolbar (flat bar), iOS or Android, with home indicator / system navigation --&gt;
+&lt;nav class="bog-tab-bar" data-type="toolbar" data-platform="android" data-indicator&gt;
+  &lt;div class="bog-tab-bar__items"&gt;
+    &lt;a class="bog-tab-bar__item" href="#" data-icon="home" aria-current="page"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;მთავარი
+      &lt;span class="bog-notification-badge" data-status="negative"&gt;4&lt;/span&gt;&lt;/a&gt;
+    …
+    &lt;a class="bog-tab-bar__item" href="#" data-icon="payment" data-center aria-label="Payments"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;&lt;/a&gt;
+    …
+  &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;script&gt;
+  bar.addEventListener("tabbarchange", e =&gt; console.log(e.detail.index, e.detail.value));
+  BOG.selectTabBar(barElementOrId, 2);
+&lt;/script&gt;</code></pre>
+
+
+    <h2>Try it</h2>
+    <p class="lead">Tap the tabs: the selection pill slides, the icon switches to its filled version and <code>tabbarchange</code> fires. The bars use <code>data-position="fixed"</code>; inside a <code>.bog-sheet-host</code> phone frame they pin to the frame, on a real page to the viewport. Scroll the content to see the glass.</p>
+    <div class="panel" style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+      <div class="phone bog-sheet-host" id="phone-light"></div>
+      <div class="phone bog-sheet-host dark" id="phone-dark"></div>
+      <div class="phone bog-sheet-host" id="phone-toolbar"></div>
+    </div>
+    <p class="demo-log" id="log">Event: —</p>
+
+    <h2>Tab Bar - iOS — Mode</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:16px">
+      <div class="panel"><table id="mode-light"></table></div>
+      <div class="panel dark"><table id="mode-dark"></table></div>
+    </div>
+
+    <h2>_Tab items — Page × Selected × Dark × Notification</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:16px">
+      <div class="panel"><table id="items-light"></table></div>
+      <div class="panel dark"><table id="items-dark"></table></div>
+    </div>
+
+    <h2>Toolbar — Platform × Indicator</h2>
+    <p class="lead">Figma "Toolbar {Non 🤖 SwiftUI &amp; Compose}": the flat bar for non-native mockups. Selected tab is orange, the center item sits in a grey circle (<code>data-center</code>; <code>data-center="plain"</code> = Background=No).</p>
+    <div class="panel"><table id="toolbar"></table></div>
+
+<script>
+
+  const PAGES = [["home", "Home"], ["products", "My Space"], ["payment", "Payments"], ["offer", "Offers"], ["dashboard", "Hub"], ["pfm", "Transactions"]];
+  const item = (icon, label, sel, notif) => `<a class="bog-tab-bar__item" href="#" data-icon="${icon}"${sel ? ' aria-current="page"' : ""}><span class="bog-icon"></span>${label}${notif ? '<span class="bog-notification-badge" data-status="negative"></span>' : ""}</a>`;
+  const bar = (n, attrs = "", sel = 0, notif = -1) => `<nav class="bog-tab-bar"${attrs} aria-label="Main"><div class="bog-tab-bar__items">` +
+    PAGES.slice(0, n).map(([i, l], k) => item(i, l, k === sel, k === notif)).join("") + "</div></nav>";
+
+  // Phones
+  const filler = Array.from({ length: 10 }, (_, i) => `<div class="demo-card" style="--h:${(i * 47) % 360}"></div>`).join("");
+  const phone = (id, barHtml, dark) => {
+    document.getElementById(id).innerHTML = `<div class="phone__scroll"><h3 class="phone__title" data-title>Home</h3>${filler}</div>${barHtml}`;
+  };
+  phone("phone-light", bar(5, ' data-position="fixed" id="bar-light"', 0, 3));
+  phone("phone-dark", bar(5, ' data-position="fixed" data-mode="dark" id="bar-dark"', 0, 3));
+  const KA = [["home", "მთავარი", 1, "4"], ["products", "ჩემი სივრცე", 0, ""], ["payment", "", 0, "4", "center"], ["offer", "შეთავაზებები", 0, ""], ["dashboard", "ჰაბი", 0, "4"]];
+  const tItem = ([icon, label, sel, badge, center], centerAttr = "") => `<a class="bog-tab-bar__item" href="#" data-icon="${icon}"${sel ? ' aria-current="page"' : ""}${center ? ` data-center${centerAttr} aria-label="Payments"` : ""}><span class="bog-icon"></span>${label}${badge ? `<span class="bog-notification-badge" data-status="negative">${badge}</span>` : ""}</a>`;
+  const toolbar = (attrs, centerAttr) => `<nav class="bog-tab-bar" data-type="toolbar"${attrs} aria-label="Main"><div class="bog-tab-bar__items">${KA.map(k => tItem(k, centerAttr)).join("")}</div></nav>`;
+  phone("phone-toolbar", toolbar(' data-platform="ios" data-indicator data-position="fixed"'));
+  document.querySelectorAll(".phone").forEach(p => p.addEventListener("tabbarchange", e => {
+    p.querySelector("[data-title]").textContent = e.detail.value;
+    document.getElementById("log").textContent = `Event: tabbarchange · index ${e.detail.index} · value "${e.detail.value}"`;
+  }));
+
+  // Mode × number of items
+  const modeTable = dark => "<tr><th></th><th>Tab Bar</th></tr>" +
+    [[5, "5 items (Figma)", 0, -1], [5, "Notification", 1, 3], [4, "4 items", 0, -1], [3, "3 items", 2, -1], [6, "6 items (+ Transactions)", 5, -1]]
+      .map(([n, name, sel, notif]) => `<tr><th>${name}</th><td style="min-width:375px;width:375px">${bar(n, dark ? ' data-mode="dark"' : "", sel, notif)}</td></tr>`).join("");
+  document.getElementById("mode-light").innerHTML = modeTable(false);
+  document.getElementById("mode-dark").innerHTML = modeTable(true);
+
+  // _Tab items matrix (bare: no glass)
+  const cell = (i, l, sel, notif, dark) => `<td style="min-width:80px"><nav class="bog-tab-bar docs-bare"${dark ? ' data-mode="dark"' : ""} style="padding:0;width:74px"><div class="bog-tab-bar__items" style="padding:0 2px">${item(i, l, sel, notif)}</div></nav></td>`;
+  const itemsTable = dark => "<tr><th></th><th>Selected=False</th><th>Selected=True</th><th>Notification</th><th>Selected + Notification</th></tr>" +
+    PAGES.map(([i, l]) => `<tr><th>${l}</th>${cell(i, l, 0, 0, dark)}${cell(i, l, 1, 0, dark)}${cell(i, l, 0, 1, dark)}${cell(i, l, 1, 1, dark)}</tr>`).join("");
+  document.getElementById("items-light").innerHTML = itemsTable(false);
+  document.getElementById("items-dark").innerHTML = itemsTable(true);
+
+  // Toolbar
+  document.getElementById("toolbar").innerHTML = "<tr><th></th><th>Indicator=No</th><th>Indicator=Yes</th></tr>" +
+    [["iOS", "ios", 375], ["Android", "android", 360]].map(([n, p, w]) =>
+      `<tr><th>${n}</th><td style="min-width:${w}px;width:${w}px">${toolbar(` data-platform="${p}"`)}</td><td style="min-width:${w}px;width:${w}px">${toolbar(` data-platform="${p}" data-indicator`)}</td></tr>`).join("") +
+    `<tr><th>Center Background=No</th><td style="min-width:375px;width:375px">${toolbar(' data-platform="ios"', '="plain"')}</td><td></td></tr>`;
+
+</script>
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

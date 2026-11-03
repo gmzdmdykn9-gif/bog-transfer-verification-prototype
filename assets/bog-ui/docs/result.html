@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Result Page — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="theme.js"></script>
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+<style>
+  /* The result page fills the phone below its status bar */
+  #rp-phone > .bog-result-page { position: absolute; inset: 44px 0 0; height: auto; }
+  .rp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px 24px; }
+  .rp-grid > div { display: flex; justify-content: center; }
+</style>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="result"></nav>
+  </aside>
+  <main class="docs-main docs-split"><div>
+    <header><h1>Result Page</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">The full screen shown after a payment, transfer or request: a close button, the result in the middle and the next steps in the sticky bar. Type System uses Result Status (Success, Warning, Negative, Info, plus Pending while it's being processed); Type Custom shows any visual — like a bank card — instead of the status icon. Title, description, amount, action, feedback and a slot are optional.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;section class="bog-result-page" data-animate&gt;   &lt;!-- data-animate: play the load-in --&gt;
+  &lt;header class="bog-result-page__nav"&gt;
+    &lt;button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Close"&gt;&lt;span class="bog-icon" data-icon="close"&gt;&lt;/span&gt;&lt;/button&gt;
+  &lt;/header&gt;
+  &lt;div class="bog-result-page__main"&gt;
+    &lt;div class="bog-result" data-status="success"&gt;      &lt;!-- success | warning | negative | info | pending | custom --&gt;
+      &lt;span class="bog-result__icon"&gt;&lt;/span&gt;
+      &lt;div class="bog-result__text"&gt;
+        &lt;h2 class="bog-result__title"&gt;Transfer sent&lt;/h2&gt;
+        &lt;p class="bog-result__desc"&gt;Nino B. will get the money in a few seconds&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="bog-result__amount"&gt;
+        &lt;p class="bog-result__amount-title"&gt;Amount&lt;/p&gt;
+        &lt;div class="bog-amount" data-size="large" data-align="center"&gt;&lt;div class="bog-amount__main"&gt;&lt;span class="bog-amount__value"&gt;1,000.00&lt;/span&gt;&lt;span class="bog-amount__currency"&gt;₾&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+        &lt;p class="bog-result__support"&gt;Fee 0.00 ₾&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div class="bog-result__action"&gt;&lt;button class="bog-btn" data-type="neutral" data-size="small"&gt;Save as template&lt;/button&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;footer class="bog-result-page__bar"&gt;
+    &lt;p class="bog-result-page__helper"&gt;Message text&lt;/p&gt;
+    &lt;button class="bog-btn" data-type="primary" data-width="fill"&gt;Done&lt;/button&gt;
+    &lt;button class="bog-btn" data-type="neutral" data-width="fill"&gt;Share receipt&lt;/button&gt;
+  &lt;/footer&gt;
+&lt;/section&gt;
+
+&lt;!-- Or play it yourself when the screen appears --&gt;
+&lt;script&gt;BOG.resultIn(document.querySelector(".bog-result-page"));&lt;/script&gt;</code></pre>
+
+    <h2 id="motion">Motion</h2>
+    <p class="lead">The status appears first, then the text blocks fade in and rise into place one after another — the same step between blocks however many there are. Try every result in the phone on the right.
+      Source: <a href="https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=417-443" target="_blank" rel="noopener">Result Pages ↗</a></p>
+    <div class="panel">
+      <div class="motion-tabs" role="tablist">
+        <button role="tab" data-tab="design" aria-selected="true">Designers</button>
+        <button role="tab" data-tab="ios">iOS · SwiftUI</button>
+        <button role="tab" data-tab="android">Android · Compose</button>
+        <button role="tab" data-tab="web">Web</button>
+      </div>
+      <section class="motion-pane" data-pane="design" id="motion-design"></section>
+      <section class="motion-pane" data-pane="ios" hidden>
+        <p>One modifier for every block: it fades and rises with its own delay. The recipe gives each block its delay by its order.</p>
+        <pre><code data-snippet="ios"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="ios">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="ios">Copy code</button></div>
+      </section>
+      <section class="motion-pane" data-pane="android" hidden>
+        <p>A modifier with two <code>Animatable</code>s per block (offset and alpha), started with the block's delay.</p>
+        <pre><code data-snippet="android"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="android">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="android">Copy code</button></div>
+      </section>
+      <section class="motion-pane" data-pane="web" hidden>
+        <p>Built into <code>bog-ui.js</code>: <code>BOG.resultIn(page)</code>, or <code>data-animate</code> on the page.</p>
+        <pre><code data-snippet="web"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="web">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="web">Copy code</button></div>
+      </section>
+    </div>
+
+    <h2>Result Status</h2>
+    <div class="panel"><div class="rp-grid" id="statuses"></div></div>
+
+    <h2>Result Custom</h2>
+    <div class="panel"><div class="rp-grid" id="customs"></div></div>
+  </div>
+
+  <aside class="docs-preview" aria-label="Mobile preview">
+    <div class="docs-preview__controls" id="rp-btns"></div>
+    <div class="docs-preview__controls"><button class="bog-btn" data-type="secondary" data-size="small" id="rp-replay">Replay</button><label><input type="checkbox" id="rp-slow"> Slow motion (×10)</label></div>
+    <div class="docs-phone" id="rp-phone">
+      <div class="docs-phone__status"><span>9:41</span><span>●●●</span></div>
+    </div>
+    <small>375 × 812 · pick a result above.</small>
+  </aside>
+<script>
+  // ---- Markup helpers ----
+  const AMOUNT = (v = "1,000.00") => `<div class="bog-result__amount"><p class="bog-result__amount-title">Title text</p><div class="bog-amount" data-size="large" data-align="center"><div class="bog-amount__main"><span class="bog-amount__value">${v}</span><span class="bog-amount__currency">₾</span></div></div><p class="bog-result__support">Support text</p></div>`;
+  const ACTION = (t = "Button") => `<div class="bog-result__action"><button class="bog-btn" data-type="neutral" data-size="small">${t}</button></div>`;
+  const result = (o) => `<div class="bog-result" data-status="${o.status}">` +
+    (o.status === "custom" ? '<div class="bog-result__visual"><span class="bog-card-art" data-size="128"></span></div>' : '<span class="bog-result__icon"></span>') +
+    `<div class="bog-result__text"><h2 class="bog-result__title">${o.title}</h2>${o.desc === false ? "" : `<p class="bog-result__desc">${o.desc}</p>`}</div>` +
+    (o.amount ? AMOUNT(o.amount) : "") + (o.action === false ? "" : ACTION(o.action)) + "</div>";
+  const page = (o) => '<section class="bog-result-page"><header class="bog-result-page__nav"><button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Close"><span class="bog-icon" data-icon="close"></span></button></header>' +
+    `<div class="bog-result-page__main">${result(o)}</div>` +
+    `<footer class="bog-result-page__bar">${o.helper ? `<p class="bog-result-page__helper">${o.helper}</p>` : ""}<button class="bog-btn" data-type="primary" data-width="fill">${o.primary || "Done"}</button>${o.secondary ? `<button class="bog-btn" data-type="neutral" data-width="fill">${o.secondary}</button>` : ""}</footer></section>`;
+
+  const D = "Result status to show messages, %s, and cleared states";
+  document.getElementById("statuses").innerHTML = [
+    ["success", "Success"], ["warning", "Warning"], ["negative", "Negative"], ["info", "Informative"], ["pending", "Pending"]
+  ].map(([s, t]) => `<div>${result({ status: s, title: t, desc: D.replace("%s", t.toLowerCase()), amount: s === "pending" ? "" : "1,000.00" })}</div>`).join("");
+  document.getElementById("customs").innerHTML =
+    `<div>${result({ status: "custom", title: "Title", desc: D.replace("%s", "success"), amount: "1,000.00" })}</div>` +
+    `<div>${result({ status: "custom", title: "Your card is on its way", desc: "We'll text you when the courier is close" })}</div>`;
+
+  // ---- Phone preview ----
+  const SCREENS = {
+    success:  { status: "success", title: "Transfer sent", desc: "Nino B. will get the money in a few seconds", amount: "1,000.00", action: "Save as template", helper: "The receipt is in your history", primary: "Done", secondary: "Share receipt" },
+    pending:  { status: "pending", title: "Processing your transfer", desc: "It usually takes less than a minute. You can close this screen.", action: false, primary: "Done" },
+    negative: { status: "negative", title: "Transfer failed", desc: "Your balance isn't enough for this transfer. Top up and try again.", action: false, primary: "Try again", secondary: "Close" },
+    warning:  { status: "warning", title: "Transfer is on hold", desc: "We need to check a few details. We'll let you know within a day.", action: "Contact us", primary: "Done" },
+    info:     { status: "info", title: "Limit changed", desc: "Your daily card limit is now 5,000.00 ₾", action: false, primary: "Done" },
+    custom:   { status: "custom", title: "Your card is ordered", desc: "We'll deliver it to your branch in 2 working days", action: "Track delivery", primary: "Done" }
+  };
+  const phone = document.getElementById("rp-phone"), slow = document.getElementById("rp-slow");
+  let current = "success";
+  function show(name) {
+    current = name;
+    phone.querySelector(".bog-result-page")?.remove();
+    phone.insertAdjacentHTML("beforeend", page(SCREENS[name]));
+    document.querySelectorAll("#rp-btns button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.screen === name)));
+    BOG.resultIn(phone.querySelector(".bog-result-page"), { slow: slow.checked ? 10 : 1 });
+  }
+  document.getElementById("rp-btns").innerHTML = Object.keys(SCREENS).map((s) => `<button class="bog-btn" data-type="neutral" data-size="small" data-screen="${s}">${s[0].toUpperCase() + s.slice(1)}</button>`).join("");
+  document.getElementById("rp-btns").addEventListener("click", (e) => { const b = e.target.closest("[data-screen]"); if (b) show(b.dataset.screen); });
+  document.getElementById("rp-replay").addEventListener("click", () => show(current));
+  window.addEventListener("DOMContentLoaded", () => show("success"));
+
+  // ---- Motion handoff ----
+  const FIG = "https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=";
+  const timeline = (rows, max) => {
+    const pct = (ms) => (ms / max * 100).toFixed(2) + "%";
+    return `<div class="motion-tl">${rows.map(([n, bars]) => `<span>${n}</span><div class="motion-tl__track">${bars.map(([st, l]) =>
+      `<span class="motion-tl__bar" style="left:${pct(st)};width:${pct(l)}">${l}</span>`).join("")}</div>`).join("")}` +
+      `<span></span><div class="motion-tl__axis">${Array.from({ length: 11 }, (_, i) => `<span>${Math.round(i * max / 10)}</span>`).join("")}</div></div>`;
+  };
+  const spec = (rows) => `<table class="motion-spec"><thead><tr><th>Layer</th><th>Property</th><th>Keyframes</th><th>Timing</th><th>Easing (cubic-bezier)</th></tr></thead><tbody>${rows.map((r) =>
+    `<tr>${r.map((c, i) => `<td>${i === 4 ? `<code>${c}</code>` : c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  const SUCCESS = [
+    ["Status icon (Lottie)", "Scale", "0 → 100% in the middle of the screen", "0–500 ms", "0.29, 0, 0.01, 1"],
+    ["Status icon (Lottie)", "Position Y", "middle of the screen → its spot (−176 px in Figma)", "1167–2000 ms", "0.33, 0, 0, 1"],
+    ["Title", "Position Y · Opacity", "+20 → 0 · 0 → 100%", "1400–1900 ms", "0.45, 0, 0.10, 1"],
+    ["Description", "Position Y · Opacity", "+20 → 0 · 0 → 100%", "1467–1967 ms", "0.45, 0, 0.10, 1"],
+    ["Amount title", "Position Y · Opacity", "+30 → 0 · 0 → 100%", "1533–2033 ms", "0.45, 0, 0.10, 1"],
+    ["Amount + ₾", "Position Y · Opacity", "+30 → 0 · 0 → 100%", "1600–2100 ms", "0.45, 0, 0.10, 1"],
+    ["Support text", "Position Y · Opacity", "+30 → 0 · 0 → 100%", "1667–2167 ms", "0.45, 0, 0.10, 1"],
+    ["Button", "Position Y · Opacity", "+30 → 0 · 0 → 100%", "1733–2233 ms", "0.45, 0, 0.10, 1"]
+  ];
+  const PENDING = [
+    ["Status icon (Lottie)", "Scale", "0 → 100%", "0–500 ms", "0.29, 0, 0.01, 1"],
+    ["Title", "Position Y · Opacity", "+20 → 0 · 0 → 100%", "100–600 ms", "0.29, 0, 0.01, 1"],
+    ["Description", "Position Y · Opacity", "+20 → 0 · 0 → 100%", "200–700 ms", "0.29, 0, 0.01, 1"]
+  ];
+  const ERROR = [
+    ["Status icon (Lottie)", "Position X", "0 → +10", "250–350 ms", "0.33, 0, 0, 1"],
+    ["Status icon (Lottie)", "Position X", "+10 → −10", "350–450 ms", "0.33, 0, 0, 1"],
+    ["Status icon (Lottie)", "Position X", "−10 → +5", "452–552 ms", "0.33, 0, 0, 1"],
+    ["Status icon (Lottie)", "Position X", "+5 → 0", "552–652 ms", "0.17, 0, 0.83, 1"]
+  ];
+  const CARD = [
+    ["Card", "Scale", "68% → 111% → 100% (Figma 12.58 → 20.58 → 18.58)", "0–500 · 500–1000 ms", "0.33, 0, 0.21, 1 · 0.17, 0, 0.21, 1"],
+    ["Card", "Position Y", "−85 → 0", "0–1000 ms", "0.33, 0, 0.14, 1"],
+    ["Card", "X Rotation", "−72° → 0°", "0–1000 ms", "0.33, 0, 0.27, 1"],
+    ["Card", "Z Rotation", "−90° → 0°", "0–750 ms", "0.33, 0, 0.21, 1"],
+    ["Title", "Position Y · Opacity", "+20 → 0 (500 ms) · 0 → 100% (333 ms)", "from 500 ms", "0.29, 0, 0.01, 1"],
+    ["Description", "Position Y · Opacity", "+20 → 0 · 0 → 100%", "from 567 ms", "0.29, 0, 0.01, 1"],
+    ["Button", "Position Y · Opacity", "+30 → 0 · 0 → 100%", "from 634 ms", "0.29, 0, 0.01, 1"]
+  ];
+  document.getElementById("motion-design").innerHTML =
+    "<p>Position Y is measured from each block's resting spot (positive = lower). Text blocks always rise and fade together. The Figma guides animate a Lottie file for the status; the status icon here takes its place with the same timings.</p>" +
+    `<h3>Success (Default)<a href="${FIG}479-3245" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    timeline([["Icon · Scale", [[0, 500]]], ["Icon · Position", [[1167, 833]]], ["Title", [[1400, 500]]], ["Description", [[1467, 500]]], ["Amount title", [[1533, 500]]], ["Amount", [[1600, 500]]], ["Support text", [[1667, 500]]], ["Button", [[1733, 500]]]], 2500) + spec(SUCCESS) +
+    `<h3>Pending<a href="${FIG}681-3292" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    timeline([["Icon · Scale", [[0, 500]]], ["Title", [[100, 500]]], ["Description", [[200, 500]]]], 1000) + spec(PENDING) +
+    `<h3>Negative (Error)<a href="${FIG}682-6941" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    "<p>Same as Pending, plus the status icon shakes sideways.</p>" +
+    timeline([["Icon · Scale", [[0, 500]]], ["Icon · Shake X", [[250, 100], [350, 100], [452, 100], [552, 100]]], ["Title", [[100, 500]]], ["Description", [[200, 500]]]], 1000) + spec(ERROR) +
+    `<h3>Custom (Card)<a href="${FIG}467-1365" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    timeline([["Card · Scale", [[0, 500], [500, 500]]], ["Card · Position · X rot", [[0, 1000]]], ["Card · Z rot", [[0, 750]]], ["Title", [[500, 500]]], ["Description", [[567, 500]]], ["Button", [[634, 500]]]], 1500) + spec(CARD) +
+    "<h3>Rules</h3><ul>" +
+      "<li>Blocks play in reading order with the same step: 66.7 ms (Success), 100 ms (Pending / Error), 67 ms (Custom). Add or remove blocks and the rest keep the step — e.g. Success without an amount: Button starts right after Description.</li>" +
+      "<li>Success blocks rise 20 px (title, description) or 30 px (everything below). Pending / Error rise 20 px; in Custom the button rises 30 px.</li>" +
+      "<li>Warning and Info have no guide of their own: they use Pending.</li>" +
+      "<li>The close button and the sticky bar don't animate — they're there from the start.</li>" +
+      "<li>Reduce Motion / Remove animations on: show everything at once.</li>" +
+      "<li>The guide also has \"Result Page 4\" / \"6\" variants with a confetti Lottie (Red, Blue, Green, Yellow layers) — not built here; their Title / Description / Button start at 1317 / 1400 / 1500 ms, rise 20 px over 400 ms with 0.33, 0, 0.04, 1.</li>" +
+    "</ul>" +
+    '<div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="design">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="spec">Copy spec as text</button></div>';
+  const rows = (t) => t.map((r) => "  " + r.join("  ·  "));
+  const SPEC_TEXT = ["Result Page motion", "Guide: " + FIG + "417-443", "Position Y from the resting spot, + = lower. Units: px = pt = dp.",
+    "SUCCESS", ...rows(SUCCESS), "PENDING (also Warning, Info)", ...rows(PENDING), "NEGATIVE = Pending + shake", ...rows(ERROR), "CUSTOM (card)", ...rows(CARD),
+    "Blocks keep the same step whatever their number. Reduce Motion: show at once."].join("\n");
+
+  const CODE = {
+    web: `<!-- Built in: plays when the page loads -->
+<section class="bog-result-page" data-animate>…</section>
+
+<script>
+  // …or when you show the screen (also for screens you insert later)
+  BOG.resultIn(document.querySelector(".bog-result-page"));
+<\/script>
+
+/* What it does — Success (bog-ui.js) */
+blocks.forEach((el, i) => {
+  const delay = 1400 + i * 66.7, rise = i < 2 ? 20 : 30;
+  el.animate([{ translate: \`0 \${rise}px\`, opacity: 0 }, { translate: "0 0", opacity: 1 }],
+    { duration: 500, delay, easing: "cubic-bezier(0.45, 0, 0.10, 1)", fill: "backwards" });
+});`,
+    ios: `import SwiftUI
+
+struct BOGResultRecipe {
+    let start: Double, step: Double, duration: Double, rise: [CGFloat]
+    let curve: (Double, Double, Double, Double)
+    static let success = BOGResultRecipe(start: 1.4,  step: 0.0667, duration: 0.5, rise: [20, 20, 30], curve: (0.45, 0, 0.10, 1))
+    static let pending = BOGResultRecipe(start: 0.1,  step: 0.1,    duration: 0.5, rise: [20, 20, 20], curve: (0.29, 0, 0.01, 1))
+    static let custom  = BOGResultRecipe(start: 0.5,  step: 0.067,  duration: 0.5, rise: [20, 20, 30], curve: (0.29, 0, 0.01, 1))
+}
+
+struct BOGResultBlock: ViewModifier {
+    let index: Int, recipe: BOGResultRecipe
+    @State private var shown = false
+    @Environment(\\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        let c = recipe.curve
+        content
+            .opacity(shown ? 1 : 0)
+            .offset(y: shown ? 0 : recipe.rise[min(index, recipe.rise.count - 1)])
+            .onAppear {
+                if reduceMotion { shown = true; return }
+                withAnimation(.timingCurve(c.0, c.1, c.2, c.3, duration: recipe.duration)
+                    .delay(recipe.start + Double(index) * recipe.step)) { shown = true }
+            }
+    }
+}
+extension View {
+    func resultBlock(_ index: Int, _ recipe: BOGResultRecipe = .success) -> some View { modifier(BOGResultBlock(index: index, recipe: recipe)) }
+}
+
+// Text("Transfer sent").resultBlock(0)   Text(description).resultBlock(1)   amount.resultBlock(2) …
+// Status icon: scale 0 → 1, .timingCurve(0.29, 0, 0.01, 1, duration: 0.5); Success then moves it from the
+// screen centre to its spot at 1.167 s, .timingCurve(0.33, 0, 0, 1, duration: 0.833).
+// Error shake (from 0.25 s): x +10, −10, +5, 0 — 0.1 s each, .timingCurve(0.33, 0, 0, 1); last (0.17, 0, 0.83, 1).`,
+    android: `private val SuccessEasing = CubicBezierEasing(0.45f, 0f, 0.10f, 1f)
+private val PendingEasing = CubicBezierEasing(0.29f, 0f, 0.01f, 1f)
+
+data class ResultRecipe(val start: Int, val step: Float, val duration: Int, val rise: List<Int>, val easing: Easing)
+val SuccessRecipe = ResultRecipe(1400, 66.7f, 500, listOf(20, 20, 30), SuccessEasing)
+val PendingRecipe = ResultRecipe(100, 100f, 500, listOf(20, 20, 20), PendingEasing)   // also Warning, Info, Error
+val CustomRecipe  = ResultRecipe(500, 67f, 500, listOf(20, 20, 30), PendingEasing)
+
+fun Modifier.resultBlock(index: Int, recipe: ResultRecipe = SuccessRecipe) = composed {
+    val rise = recipe.rise[minOf(index, recipe.rise.lastIndex)].toFloat()
+    val y = remember { Animatable(rise) }
+    val alpha = remember { Animatable(0f) }
+    val delay = (recipe.start + index * recipe.step).toInt()
+    LaunchedEffect(Unit) {
+        launch { y.animateTo(0f, tween(recipe.duration, delay, recipe.easing)) }
+        launch { alpha.animateTo(1f, tween(recipe.duration, delay, recipe.easing)) }
+    }
+    graphicsLayer { translationY = y.value * density; this.alpha = alpha.value }
+}
+
+// Text("Transfer sent", Modifier.resultBlock(0)); Text(description, Modifier.resultBlock(1)); …
+// Status icon: scale 0 → 1 with tween(500, easing = PendingEasing). Error shake from 250 ms:
+// keyframes { 0f at 0; 10f at 100; -10f at 200; -10f at 202; 5f at 302; 0f at 402 }.
+// Compose follows the system "Remove animations" setting (animator duration scale 0) automatically.`
+  };
+  document.querySelectorAll("[data-snippet]").forEach((c) => { c.textContent = CODE[c.dataset.snippet]; });
+
+  // Tabs (shareable via #motion-ios etc.) + copy buttons
+  const tabs = document.querySelectorAll(".motion-tabs [data-tab]");
+  function openTab(name) {
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+    document.querySelectorAll(".motion-pane").forEach((p) => { p.hidden = p.dataset.pane !== name; });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => { openTab(t.dataset.tab); history.replaceState(null, "", "#motion-" + t.dataset.tab); }));
+  const fromHash = location.hash.match(/^#motion-(design|ios|android|web)$/);
+  if (fromHash) { openTab(fromHash[1]); document.getElementById("motion").scrollIntoView(); }
+  function copy(btn, text) {
+    navigator.clipboard.writeText(text).then(() => { const was = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = was; }, 1200); });
+  }
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("[data-copy-link]"), code = e.target.closest("[data-copy]");
+    if (link) copy(link, location.href.split("#")[0] + "#motion-" + link.dataset.copyLink);
+    if (code) copy(code, code.dataset.copy === "spec" ? SPEC_TEXT : CODE[code.dataset.copy]);
+  });
+</script>
+  </main>
+</div>
+</body>
+</html>

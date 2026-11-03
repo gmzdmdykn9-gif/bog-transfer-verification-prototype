@@ -1,5 +1,6 @@
 /* ==========================================================================
-   BOG UI — Keypad (Digital Keyboard)
+   BOG UI — Keypad (Digital Keyboard) — DEPRECATED: use .bog-numpad (Keyboard Numeric, components/numpad.css)
+   Kept only for backward compatibility with existing prototypes; don't use it in new screens.
    Figma: Onboarding › Verification states › passcode (17658:72652). Not in Mobile Components yet.
 
    <div class="bog-keypad" data-for="passcode-id">

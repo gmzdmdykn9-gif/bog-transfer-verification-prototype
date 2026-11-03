@@ -48,8 +48,44 @@ Fonts: `fonts/` holds BOG woff2 files. They are licensed, so they stay out of gi
 | Radio Card | `22114:3977` | ✅ Left / Right × Enabled, Pressed, Selected, Error, Read-only, Disabled, Skeleton; built-in Radio button |
 | Wizard Progress | `Mobile Components` (instance `17658:72592`) | ✅ done / current / upcoming steps |
 | Code Input | `17658:72586` (Onboarding) | ✅ medium (SMS) / large (passcode), masked, active, error, loading; keyboard + SMS autofill · not in Mobile Components yet |
-| Keypad | `17658:72652` (Onboarding) | ✅ 0–9 + delete, types into a Code Input, desktop keys · not in Mobile Components yet |
-| Toggle Switch | `38611:4393` · `38611:4418` | ✅ Switch + Label row · off / on / indeterminate / disabled / read-only / skeleton / error (Themed only) |
+| Keypad | `17658:72652` (Onboarding) | ⚠️ Deprecated — use Keyboard Numeric (`.bog-numpad`). Kept so old prototypes keep working |
+| Radio Button Group | `38644:24312` | ✅ Radio, + Label row, Group (vertical / horizontal) · Enabled, Selected, Disabled, Error, Read-only, Skeleton · Left / Right alignment · Themed & Inverse · motion; tap again to unselect |
+| OTP Verification | `65048:81195` | ✅ Default, Resend, Loading, Expired, Hard, Skeleton × Themed / Inverse; Selector + Timer optional; countdown + resend in bog-ui.js |
+| Menu | `17748:73134` (Onboarding) | ✅ pill trigger + iOS pull-down panel (native look on purpose), checkmark, start / center / end; `menuchange` event · not in Mobile Components yet |
+| Result Page | `55279:42698` | ✅ Result Status (Success, Warning, Negative, Info, Pending) + Result Custom; description, amount, action, extra slot; sticky bar with helper + 1–2 buttons · load-in motion |
+| PIN code Input | `64853:17381` | ✅ Themed: Default, Filled, Error (+ shake); `pinchange` / `pincomplete` · White / Black Static not yet |
+| Keyboard Numeric | `64769:662` | ✅ Themed, White Static, Black Static, Invert · digits, Face ID / Fingerprint / Dot pad or none, backspace, Pressed; types into PIN code Input, Code Input or an amount field · replaces Keypad |
+| Toggle Switch | `38613:16004` | ✅ Switch, Switch + Label row, Group · off / on / indeterminate / disabled / read-only / skeleton / error · Themed & Inverse Static · motion |
+| Tooltip | `40699:20459` | ✅ Position Top / Bottom × Alignment Left / Center / Right, Left-Center, Right-Center; `_Tooltip trigger` (info icon / custom icon); tap to open, flips inside the phone frame; `tooltipopen` / `tooltipclose` events · `BOG.openTooltip()` |
+| Search Input | `16112:42515` | ✅ Page / Overlay × Small / Large × Default, Active, Typing, Filled, Skeleton; Cancel (`searchcancel`) · Loading / Disabled inherited from Text Input (not in Figma) |
+| Segmented Control | `32878:990` | ✅ Default 2–6 segments × Large / Small, Only icon, Skeleton, iOS Ultrathin; sliding thumb, `segmentchange` · disabled segment (not in Figma) |
+| Navigation Bar | `53831:5293` | ✅ BOG Design: iOS / Android × Themed / White Static / Black Static; Status Bar, Divider, Background; all header text configurations, left slot (Icon Button / Media), right slot (Icon Button(s) + dot, Button, Timer); sticky + scroll effect · Liquid Glass / Sticky Container not built |
+| `data-platform` | `ios` (default) `android` | Platform |
+| `data-appearance` | `themed` (default) `white` `black` — items use `data-type="neutral"` / `"white"` / `"black-secondary"` | Appearance (Themed / White Static / Black Static) |
+| `data-status-bar="false"` | hides the status bar mockup | Status Bar = False |
+| `data-divider` · `data-background` | 1px divider · layer_01 fill | Divider · Background |
+| `data-sticky` | sticks to the top of its scroll container | — |
+| `data-scroll-effect` | divider + background appear once the content scrolls (bog-ui.js) | — |
+| Sticky Bar | `46589:9729` · `51842:12963` | ✅ BOG Design: Page / Overlay × Themed / Static Black × Home indicator × Stacked / Row; Slot, Helper text, Secondary action; Sticky Bar Amount (Set value False / True) · Liquid Glass not built |
+| `data-placement` | `page` (default) `overlay` (inside a sheet / modal) | Placement |
+| `data-appearance` | `themed` (default) `black` — put `data-appearance="inverse"` on the buttons and Inline Message | Appearance = Static Black - BETA |
+| `data-home-indicator="false"` | 16px bottom padding instead of the 34px home-indicator area | Home indicator = False |
+| `data-position` | `sticky` (default) `fixed` | — |
+| Progress Bar | `42817:6944` | ✅ Single / Segmented (2–10) × Accent, Positive, Warning, Negative, Neutral-inverse × Thin / Thick; labels + helper text, skeleton, iOS Ultrathin; animated `--value` |
+| `style="--value: 40%"` | 0%–100%, the fill animates when it changes (keep `aria-valuenow` in sync) | — |
+| `data-progress` | `single` (default) · `segmented` — `.bog-progress__bar` holds 2–10 `.bog-progress__segment`; reached ones get `data-state="filled"` | Progress |
+| `data-type` | `accent` (default) `positive` `warning` `negative` `neutral-inverse` | Type |
+| `data-size` | `thin` (default, 4px) · `thick` (8px) | Size |
+| `data-state` | `skeleton` | Skeleton |
+| `data-material` | `ultrathin` — iOS Ultrathin material behind the rail | iOS Ultrathin |
+| Progress Tracker | `64634:6060` | ✅ Vertical: step item + last item × Current, Pending, Completed, Warning, Error, Skeleton; indicator Icon / Outline / Number; label, helper, description, Inline Message; animated status changes |
+| Attribute (on a step) | Values | Figma property |
+| `data-status` | `pending` (default) `current` `completed` `warning` `error` — changes animate | State / Status |
+| `data-indicator` | `icon` `outline` `number` (digit inside `__indicator`). Default: pending = outline, others = icon | Indicator Style |
+| `data-connector` | `false` — no green connector after a completed step | Connector Progress |
+| `data-state` | `skeleton` (also on `.bog-progress-tracker`) | Skeleton |
+| Tabs | `38862:23400` | ✅ Type Fixed / Wrapped (scrolling), 2–5+ tabs; _Tab item Default, Pressed, Selected, Disabled, Skeleton; sliding indicator, ← → Home End, tab panels, `tabchange` |
+| Tab Bar | `63155:50986` | ✅ Tab Bar - iOS Light / Dark (floating, glass approximated in CSS), _Tab items × 6 pages with real icons, selected, notification dot; Toolbar iOS / Android × Indicator; fixed or in-flow; `tabbarchange` |
 | UI Elements | `54990:3178`  | ✅ Flags, Media Circle/Square/Rectangle, Illustration, Card Placeholder, Icon Placeholder, Counter |
 
 The "iOS Liquid Glass" source variants are intentionally **not** implemented.
@@ -490,7 +526,39 @@ Open with `data-modal-open="confirm"` or `BOG.openModal("confirm")`. Minimal: `d
 ```
 Selected = `checked` · Disabled = `disabled` on the input · on `.bog-radio-card`: `data-align="left"`, `data-validation="error"`, `data-state="readonly | skeleton | pressed"`. Same `name` = one group.
 
-### Wizard Progress · Code Input · Keypad
+### Phone keyboard
+
+While the keyboard is open, bog-ui.js sets `--bog-vv-top` / `--bog-vv-height` (the visible area) and `html[data-bog-keyboard]`. Bottom Sheets use them automatically. For full-screen fixed pages add `top: var(--bog-vv-top, 0px); padding-bottom: var(--bog-keyboard, 0px);` so the top navigation stays put and the page's own background fills the area behind the keyboard. A focused field on a page scrolls to the middle of what's visible (once, after the keyboard settles). Inside a Bottom Sheet nothing scrolls automatically, so content doesn't jump; the sheet content scrolls by touch on small phones.
+
+### PIN code Input · Keyboard Numeric
+
+Official Mobile Components versions (use these instead of Code Input + Keypad for new screens). `.bog-pin` (title, helper, `.bog-pin__dot`s; `data-validation="error"`) typed on `.bog-numpad[data-for="id"]`; `data-for` can also point at a `.bog-code` or a field with an `<input>` (e.g. Currency Input). Keys: `data-key` 0–9, `biometric`, `dot`, `back`; an empty `<span class="bog-numpad__key">` leaves the bottom-left slot blank (Pad=False). `data-appearance="white | black | invert"` (White Static / Black Static / Invert), `data-biometric="fingerprint"`. Events `pinchange` / `pincomplete`, `numpadbiometric`; `BOG.setPin(el, value)`. See `docs/pin-input.html`, `docs/numpad.html`.
+### Result Page
+
+```html
+<section class="bog-result-page">
+  <header class="bog-result-page__nav"><button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Close"><span class="bog-icon" data-icon="close"></span></button></header>
+  <div class="bog-result-page__main">
+    <div class="bog-result" data-status="success">        <!-- success | warning | negative | info | pending | custom -->
+      <span class="bog-result__icon"></span>
+      <div class="bog-result__text"><h2 class="bog-result__title">Success</h2><p class="bog-result__desc">Description</p></div>
+      <div class="bog-result__amount"><p class="bog-result__amount-title">Title text</p><div class="bog-amount" data-size="large" data-align="center">…</div><p class="bog-result__support">Support text</p></div>
+    </div>
+  </div>
+  <footer class="bog-result-page__bar"><p class="bog-result-page__helper">Message text</p><button class="bog-btn" data-type="primary" data-width="fill">Done</button></footer>
+</section>
+```
+Result Custom: `data-status="custom"` with `<div class="bog-result__visual">` (any UI Element) instead of the icon. Optional `__action` (small neutral button) and `__extra` (e.g. Feedback). Load-in motion: `BOG.resultIn(page)` when you show it, or `data-animate` on the page. See `docs/result.html`.
+
+### Menu
+
+Grey pill (`.bog-menu__trigger`) that opens an iOS-style pull-down (`.bog-menu__panel`, rows `.bog-menu__item[aria-checked]`). The panel copies Apple's native menu on purpose. Fires `menuchange` (detail.value / label); `BOG.selectMenu(el, value)`. See `docs/menu.html`.
+
+### OTP Verification
+
+The official one-time-code block (Mobile Components). Built from Radio Button Group (`.bog-radio-group`, optional), Text Input, Inline Message and a Ghost Small Button inside `.bog-otp`. States: no attribute (Default), `data-state="resend | loading | expired"`; `data-method="hard"` for a hardware token; `data-skeleton`; `data-appearance="inverse"`. `data-timer="35"` counts down and switches to Resend. Events `otpcomplete` (detail.value) and `otpresend`; `BOG.setOtpState(el, state)`, `BOG.startOtpTimer(el)`. See `docs/otp-verification.html`. Use this for the SMS/email code field; Code Input (cells) is the Onboarding-file look.
+
+### Wizard Progress · Code Input
 
 ```html
 <div class="bog-wizard"><span class="bog-wizard__step" data-state="done"></span><span class="bog-wizard__step" data-state="current"></span></div>
@@ -501,21 +569,243 @@ Selected = `checked` · Disabled = `disabled` on the input · on `.bog-radio-car
 </div>
 
 <div class="bog-code" data-size="large" data-mask id="passcode">…4 cells…</div>   <!-- passcode -->
-<div class="bog-keypad" data-for="passcode">…keys…</div>
+<div class="bog-numpad" data-for="passcode">…keys…</div>   <!-- Keyboard Numeric -->
 ```
-Code Input: `data-validation="error"`, `data-state="loading"`, events `codechange` / `codecomplete` (detail.value), `BOG.setCode(el, value)`. See the docs pages for the full keypad markup.
+Code Input: `data-validation="error"`, `data-state="loading"`, events `codechange` / `codecomplete` (detail.value), `BOG.setCode(el, value)`. See docs/numpad.html for the full keyboard markup.
 
 ### Toggle Switch
 
 ```html
-<label class="bog-toggle-row">
-  <span class="bog-toggle-row__main">
-    <span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Notifications</span><span class="bog-toggle-row__desc">Description</span></span>
-    <input type="checkbox" role="switch" class="bog-toggle">
+<label class="bog-toggle">
+  <span class="bog-toggle__row">
+    <span class="bog-toggle__text"><span class="bog-toggle__title">Push notifications</span><span class="bog-toggle__desc">Description</span></span>
+    <input type="checkbox" role="switch" class="bog-toggle__input">
   </span>
 </label>
+
+<fieldset class="bog-toggle-group">                      <!-- Toggle Switch Group -->
+  <legend class="bog-toggle-group__label">Notifications</legend>
+  …toggle rows…
+  <p class="bog-toggle-group__message">Message text</p>
+</fieldset>
 ```
-On the input: `checked`, `disabled`, `aria-readonly="true"`, `data-indeterminate`, `data-state="skeleton"`. `data-validation="error"` on the row shows its `.bog-inline-message`.
+Switch only: `<input type="checkbox" role="switch" class="bog-toggle__input" aria-label="…">`. On `.bog-toggle`, `.bog-toggle-group` or the input: `checked`, `disabled`, `data-indeterminate` (or `input.indeterminate = true` then `BOG.toggleSync()`), `data-state="error | readonly | skeleton"`, `data-appearance="inverse"`. Motion is built in. See `docs/toggle.html`.
+
+### Radio Button
+
+```html
+<fieldset class="bog-radio-group">                       <!-- data-direction="horizontal" for 2 short options -->
+  <legend class="bog-radio-group__label">Delivery</legend>
+  <div class="bog-radio-group__options">
+    <label class="bog-radio">
+      <span class="bog-radio__row">
+        <input type="radio" class="bog-radio__input" name="delivery" checked>
+        <span class="bog-radio__text"><span class="bog-radio__title">Courier</span><span class="bog-radio__desc">1–2 working days</span></span>
+      </span>
+    </label>
+  </div>
+  <p class="bog-radio-group__message">Helper or error text</p>
+</fieldset>
+```
+States: `checked`, `disabled`, `data-state="error | readonly | skeleton"`, `data-appearance="inverse"`, `data-align="right"`. Tapping the selected option again clears it; turn that off with `data-deselectable="false"`. See `docs/radio.html`.
+
+### Tooltip
+
+Dark label with an arrow (`.bog-tooltip[role=tooltip]`, `data-position="bottom | top"`, `data-alignment="left | center | right | left-center | right-center"`). Any element with `data-tooltip="<tooltip id>"` opens it on tap: the `_Tooltip trigger` info icon (`.bog-tooltip-trigger`), a Button, or the Text Input info button (`.bog-field__info`). Shortcut: `data-tooltip-text="…"` (+ `data-tooltip-position` / `data-tooltip-alignment`) builds the tooltip for you. bog-ui.js moves it into the `.bog-sheet-host` (or body), flips/shifts it to stay on screen and keeps the arrow on the trigger; tap outside / Escape / the trigger again closes it; one open at a time. Events `tooltipopen` / `tooltipclose` (detail.trigger); `BOG.openTooltip(idOrEl, trigger)`, `BOG.closeTooltip()`. For static mockups wrap trigger + tooltip in `.bog-tooltip-anchor` and add `data-open`. See `docs/tooltip.html`.
+
+```html
+<button type="button" class="bog-tooltip-trigger" data-tooltip="tip-fee" aria-label="More info"></button>
+<div class="bog-tooltip" id="tip-fee" role="tooltip" data-position="bottom" data-alignment="center">Fee is 1% of the amount</div>
+```
+
+### Search Input
+
+Built on Text Input (`.bog-field`), so the clear button works the same way. The placeholder is the visible "Search" text.
+
+```html
+<div class="bog-field bog-search">
+  <label class="bog-field__box">
+    <span class="bog-field__text">
+      <span class="bog-search__icon"></span>
+      <input class="bog-field__input" type="search" placeholder="Search" enterkeyhint="search">
+    </span>
+    <button type="button" class="bog-field__clear" aria-label="Clear"></button>
+  </label>
+  <button type="button" class="bog-search__cancel">Cancel</button>   <!-- optional -->
+</div>
+```
+
+- `data-size="large"` (56px; default Small 40px) · `data-placement="overlay"` (white + shadow) · `data-state="skeleton"`
+- Cancel slides in while focused; clicking it (or Esc) empties the field, blurs it and fires `searchcancel`. Filter results on the input's `input` event.
+
+### Segmented Control
+
+Native radios: arrow keys move the selection and `change` bubbles as usual. bog-ui.js adds the white thumb that slides to the checked segment and fires `segmentchange` (`detail: { value, index }`). Call `BOG.segmented()` after inserting new markup if it must be positioned before the first tap.
+
+```html
+<div class="bog-segmented" role="radiogroup" aria-label="Period">
+  <label class="bog-segmented__item"><input type="radio" name="period" value="week" checked><span>Week</span></label>
+  <label class="bog-segmented__item"><input type="radio" name="period" value="month"><span>Month</span></label>
+  <label class="bog-segmented__item"><input type="radio" name="period" value="year"><span>Year</span></label>
+</div>
+
+<div class="bog-segmented" data-type="icon" role="radiogroup" aria-label="View">
+  <label class="bog-segmented__item"><input type="radio" name="view" value="list" checked aria-label="List">
+    <span class="bog-icon" style="--icon: url(../icons/list-view-16.svg)"></span></label>
+  <label class="bog-segmented__item"><input type="radio" name="view" value="grid" aria-label="Grid">
+    <span class="bog-icon" style="--icon: url(../icons/dashboard-16.svg)"></span></label>
+</div>
+```
+
+- `data-size="small"` · `data-type="icon"` · `data-material="ultrathin"` · `data-state="skeleton"` · `disabled` on an input
+
+### Navigation Bar
+
+```html
+<header class="bog-nav-bar" data-platform="ios" data-sticky data-scroll-effect>
+  <div class="bog-nav-bar__status"></div>                                   <!-- optional status bar mockup -->
+  <div class="bog-nav-bar__header">
+    <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Back"><span class="bog-icon" data-icon="chevron-left"></span></button>
+    <div class="bog-nav-bar__title">
+      <span class="bog-nav-bar__caption">Caption text</span>               <!-- optional -->
+      <h1 class="bog-nav-bar__heading">Title</h1>
+      <span class="bog-nav-bar__subtitle">Secondary text</span>            <!-- optional -->
+    </div>
+    <div class="bog-nav-bar__actions">                                       <!-- optional: 1–2 icon buttons, a small Button or .bog-nav-bar__timer -->
+      <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Chat"><span class="bog-icon" data-icon="chat"></span></button>
+    </div>
+  </div>
+</header>
+```
+
+| Attribute | Values | Figma property |
+|---|---|---|
+| `data-platform` | `ios` (default) `android` | Platform |
+| `data-appearance` | `themed` (default) `white` `black` — items use `data-type="neutral"` / `"white"` / `"black-secondary"` | Appearance (Themed / White Static / Black Static) |
+| `data-status-bar="false"` | hides the status bar mockup | Status Bar = False |
+| `data-divider` · `data-background` | 1px divider · layer_01 fill | Divider · Background |
+| `data-sticky` | sticks to the top of its scroll container | — |
+| `data-scroll-effect` | divider + background appear once the content scrolls (bog-ui.js) | — |
+
+### Sticky Bar
+
+```html
+<div class="bog-sticky-bar">                                                  <!-- last child of the scrolling page -->
+  <div class="bog-sticky-bar__slot">…Feedback, balances…</div>                 <!-- optional -->
+  <span class="bog-inline-message" data-size="small" data-icon="false">Message text</span>   <!-- optional -->
+  <div class="bog-sticky-bar__buttons">                                        <!-- data-layout="row": Icon Button + Button -->
+    <button class="bog-btn" data-type="primary" data-width="fill">Primary</button>
+    <button class="bog-btn" data-type="neutral" data-width="fill">Secondary</button>   <!-- optional -->
+  </div>
+</div>
+```
+
+| Attribute | Values | Figma property |
+|---|---|---|
+| `data-placement` | `page` (default) `overlay` (inside a sheet / modal) | Placement |
+| `data-appearance` | `themed` (default) `black` — put `data-appearance="inverse"` on the buttons and Inline Message | Appearance = Static Black - BETA |
+| `data-home-indicator="false"` | 16px bottom padding instead of the 34px home-indicator area | Home indicator = False |
+| `data-position` | `sticky` (default) `fixed` | — |
+
+Sticky Bar Amount: replace the buttons with `<div class="bog-sticky-bar__amounts">` holding small neutral Buttons (`10 ₾`, `50 ₾`, `100 ₾`, `Total`; the last one hugs its text).
+
+### Progress Bar
+
+Read-only progress toward a known end (savings goal, spending limit, loan repaid, steps of a short flow). Not the same as **Wizard Progress** (`.bog-wizard`, the step bar under the navigation bar).
+
+```html
+<div class="bog-progress" data-type="accent" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" style="--value: 40%">
+  <span class="bog-progress__bar"></span>
+  <div class="bog-progress__labels">
+    <div class="bog-progress__start"><span class="bog-progress__label">400.00 ₾</span><span class="bog-progress__helper">Saved</span></div>
+    <div class="bog-progress__end"><span class="bog-progress__label">1,000.00 ₾</span><span class="bog-progress__helper">Goal</span></div>
+  </div>
+</div>
+```
+
+| Attribute | Values | Figma property |
+|---|---|---|
+| `style="--value: 40%"` | 0%–100%, the fill animates when it changes (keep `aria-valuenow` in sync) | — |
+| `data-progress` | `single` (default) · `segmented` — `.bog-progress__bar` holds 2–10 `.bog-progress__segment`; reached ones get `data-state="filled"` | Progress |
+| `data-type` | `accent` (default) `positive` `warning` `negative` `neutral-inverse` | Type |
+| `data-size` | `thin` (default, 4px) · `thick` (8px) | Size |
+| `data-state` | `skeleton` | Skeleton |
+| `data-material` | `ultrathin` — iOS Ultrathin material behind the rail | iOS Ultrathin |
+
+Labels are optional: drop `.bog-progress__labels` (Text off), or a `__label` / `__helper` inside it.
+
+### Progress Tracker
+
+Vertical list of the steps of a process users wait on (loan application, card delivery).
+
+```html
+<div class="bog-progress-tracker">
+  <p class="bog-progress-tracker__label">Label</p>
+  <ol class="bog-progress-tracker__steps">
+    <li class="bog-progress-tracker__step" data-status="completed">
+      <span class="bog-progress-tracker__indicator"></span>
+      <div class="bog-progress-tracker__content"><p class="bog-progress-tracker__title">Application sent</p></div>
+    </li>
+    <li class="bog-progress-tracker__step" data-status="current">
+      <span class="bog-progress-tracker__indicator"></span>
+      <div class="bog-progress-tracker__content">
+        <p class="bog-progress-tracker__title">Under review</p>
+        <p class="bog-progress-tracker__helper">Helper text</p>
+        <p class="bog-progress-tracker__desc">Description</p>
+      </div>
+    </li>
+    <li class="bog-progress-tracker__step">
+      <span class="bog-progress-tracker__indicator"></span>
+      <div class="bog-progress-tracker__content"><p class="bog-progress-tracker__title">Money on the account</p></div>
+    </li>
+  </ol>
+</div>
+```
+
+| Attribute (on a step) | Values | Figma property |
+|---|---|---|
+| `data-status` | `pending` (default) `current` `completed` `warning` `error` — changes animate | State / Status |
+| `data-indicator` | `icon` `outline` `number` (digit inside `__indicator`). Default: pending = outline, others = icon | Indicator Style |
+| `data-connector` | `false` — no green connector after a completed step | Connector Progress |
+| `data-state` | `skeleton` (also on `.bog-progress-tracker`) | Skeleton |
+
+Warning / Error steps show an Inline Message (`<span class="bog-inline-message" data-status="warning|negative" data-size="small">`) instead of the description. The last `<li>` is the "last item": no connector, no bottom padding.
+
+### Tabs
+
+```html
+<div class="bog-tabs" role="tablist" aria-label="Accounts">           <!-- data-type="wrapped" = hug + scroll -->
+  <button type="button" class="bog-tab" role="tab" aria-selected="true"  aria-controls="p1" id="t1">Cards</button>
+  <button type="button" class="bog-tab" role="tab" aria-selected="false" aria-controls="p2" id="t2">Deposits</button>
+  <button type="button" class="bog-tab" role="tab" aria-selected="false" disabled>Loans</button>
+</div>
+<div class="bog-tab-panel" role="tabpanel" id="p1" aria-labelledby="t1">…</div>
+<div class="bog-tab-panel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>…</div>
+<div class="bog-tab" data-state="skeleton"><span class="bog-skeleton-wave">Tab 1</span></div>   <!-- skeleton tab -->
+```
+
+bog-ui.js slides the orange indicator to the selected tab, shows the panel in its `aria-controls`, supports ← → Home End, and fires `tabchange` (`detail.index`, `detail.tab`, `detail.value` = `data-value` or id) on the `.bog-tabs`. `BOG.selectTab(tabsOrId, index)` selects from code.
+
+### Tab Bar
+
+```html
+<nav class="bog-tab-bar" data-position="fixed" aria-label="Main">     <!-- data-mode="dark"; drop data-position for in-flow -->
+  <div class="bog-tab-bar__items">
+    <a class="bog-tab-bar__item" href="#" data-icon="home" aria-current="page"><span class="bog-icon"></span>Home</a>
+    <a class="bog-tab-bar__item" href="#" data-icon="products"><span class="bog-icon"></span>My Space</a>
+    <a class="bog-tab-bar__item" href="#" data-icon="payment"><span class="bog-icon"></span>Payments</a>
+    <a class="bog-tab-bar__item" href="#" data-icon="offer"><span class="bog-icon"></span>Offers<span class="bog-notification-badge" data-status="negative"></span></a>
+    <a class="bog-tab-bar__item" href="#" data-icon="dashboard"><span class="bog-icon"></span>Hub</a>
+  </div>
+</nav>
+
+<!-- Flat Toolbar: data-platform="ios" | "android", data-indicator = home indicator / system nav -->
+<nav class="bog-tab-bar" data-type="toolbar" data-platform="ios" data-indicator> … same items …
+  <a class="bog-tab-bar__item" href="#" data-icon="payment" data-center aria-label="Payments"><span class="bog-icon"></span></a>
+</nav>
+```
+
+`data-icon`: `home`, `products` (My Space), `payment`, `offer`, `dashboard` (Hub), `pfm` (Transactions) — outline, filled when selected; custom icons via `style="--icon:url(a.svg);--icon-selected:url(a-fill.svg)"`. `data-position="fixed"` pins it to the viewport bottom (or to a `.bog-sheet-host` phone frame). bog-ui.js moves `aria-current`, slides the selection pill and fires a cancelable `tabbarchange` (`detail.index`, `detail.item`, `detail.value`); `BOG.selectTabBar(barOrId, index)`.
 
 ### Icons
 

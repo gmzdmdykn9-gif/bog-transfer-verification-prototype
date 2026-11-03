@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Search Input — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="search-input"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Search Input</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Search field with leading search icon, clear button and Cancel. Page or Overlay placement, Small or Large.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-field bog-search"&gt;
+  &lt;label class="bog-field__box"&gt;
+    &lt;span class="bog-field__text"&gt;
+      &lt;span class="bog-search__icon"&gt;&lt;/span&gt;
+      &lt;input class="bog-field__input" type="search" placeholder="Search" enterkeyhint="search"&gt;
+    &lt;/span&gt;
+    &lt;button type="button" class="bog-field__clear" aria-label="Clear"&gt;&lt;/button&gt;
+  &lt;/label&gt;
+  &lt;button type="button" class="bog-search__cancel"&gt;Cancel&lt;/button&gt;
+&lt;/div&gt;
+&lt;!-- data-size="large" (56px) · data-placement="overlay" (white + shadow) · data-state="skeleton" --&gt;
+&lt;!-- Cancel fires "searchcancel" on .bog-search; listen to "input" on the field to filter results --&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <p class="lead">Tap the field: the border appears and Cancel slides in. Type to filter the list; the clear button shows as soon as there is text and stays after you leave the field. Cancel (or Esc) empties the field and leaves search.</p>
+    <div class="panel"><div style="width:375px;max-width:100%;display:flex;flex-direction:column;gap:16px">
+      <div id="demo"></div>
+      <ul id="demo-list" style="margin:0;padding:0 4px;list-style:none;display:flex;flex-direction:column;gap:8px;font-family:var(--font-family-bog);font-size:var(--body-medium-size);color:var(--text-primary)"></ul>
+      <p id="demo-log" style="margin:0;font-family:var(--font-family-bog);font-size:var(--label-small-size);color:var(--text-secondary)">Events appear here.</p>
+    </div></div>
+
+    <h2>Overlay placement</h2>
+    <p class="lead">Placement=Overlay: white fill with the Surface-1 shadow, for colored or photo backgrounds. The shadow is replaced by the border while focused.</p>
+    <div class="panel" style="background:var(--layer-alpha-02)"><div style="width:375px;max-width:100%" id="demo-overlay"></div></div>
+
+    <h2>States</h2>
+    <div class="panel"><table id="matrix"></table></div>
+
+<script>
+
+  const si = (o = {}) => `<div class="bog-field bog-search"${o.size ? ` data-size="${o.size}"` : ""}${o.place ? ` data-placement="${o.place}"` : ""}${o.state ? ` data-state="${o.state}"` : ""}><label class="bog-field__box"><span class="bog-field__text"><span class="bog-search__icon"></span><input class="bog-field__input" type="search" placeholder="Search" enterkeyhint="search"${o.value ? ` value="${o.value}"` : ""}${o.disabled ? " disabled" : ""}${o.static ? ' tabindex="-1"' : ""}></span><button type="button" class="bog-field__clear" aria-label="Clear"></button></label>${o.cancel === false ? "" : '<button type="button" class="bog-search__cancel">Cancel</button>'}</div>`;
+  const items = ["Bank of Georgia", "Utility bills", "Mobile top-up", "Internet", "Transport card", "Parking fines", "Taxes"];
+  document.getElementById("demo").innerHTML = si();
+  document.getElementById("demo-overlay").innerHTML = si({place: "overlay", size: "large"});
+  const list = document.getElementById("demo-list"), log = document.getElementById("demo-log");
+  const render = (q = "") => { const r = items.filter(t => t.toLowerCase().includes(q.toLowerCase())); list.innerHTML = r.length ? r.map(t => `<li>${t}</li>`).join("") : '<li style="color:var(--text-secondary)">No results</li>'; };
+  render();
+  const demo = document.getElementById("demo");
+  demo.addEventListener("input", e => render(e.target.value));
+  demo.addEventListener("searchcancel", () => { log.textContent = "searchcancel fired"; });
+  const ROWS = [["Default", {}], ["Active", {state: "active"}], ["Typing", {state: "typing", value: "Search"}], ["Filled", {state: "filled", value: "Search"}], ["Skeleton", {state: "skeleton"}], ["Loading *", {state: "loading", value: "Search"}], ["Disabled *", {disabled: 1}], ["Disabled · Filled *", {disabled: 1, value: "Search"}]];
+  const COLS = [["Page · Small", {}], ["Page · Large", {size: "large"}], ["Overlay · Small", {place: "overlay"}], ["Overlay · Large", {place: "overlay", size: "large"}]];
+  document.getElementById("matrix").innerHTML = "<tr><th></th>" + COLS.map(c => `<th>${c[0]}</th>`).join("") + "</tr>" + ROWS.map(([n, o]) => `<tr><th>${n}</th>` + COLS.map(([, c]) => `<td style="width:328px;min-width:328px">${si({...o, ...c, static: 1})}</td>`).join("") + "</tr>").join("") + `<tr><td colspan="5" style="font-size:12px;color:var(--text-secondary)">* Not drawn in Figma — Loading and Disabled come from Text Input.</td></tr>`;
+
+</script>
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+/* ==========================================================================
+   BOG UI — Navigation Bar
+   Figma: Navigation Bar page (53820:197)
+     Navigation bar (53831:5293)  Source=BOG Design × Platform iOS / Android × Appearance Themed / White Static / Black Static
+                                  booleans: Status Bar (on), Divider (off), Background (off)
+     _Navigation header - themed / white / black (53829:492 · 53831:5977 · 53857:10879)
+                                  Text Configuration = Title | Title + Secondary text | Caption + Title × Left Slot True / False
+     Items: Default / White / Black items — Icon Button (53820:1690), Icon Buttons (53820:8619), Button (53820:1689),
+            Timer (53820:1700), Media Circle (53820:1692), Title (53820:1699)
+     Status Bar - iOS (44px, time + signal/wifi/battery) · Status Bar - Android (24px, "Bog DS" + "02:20")
+   Not built: "iOS Liquid Glass" variants (incl. Sticky Container=True, which exists only for Liquid Glass),
+   _Navigation bar Android BETA / _Nav item (that's a bottom tab bar, see Tab Bar).
+
+   Markup
+     <header class="bog-nav-bar" data-platform="ios">
+       <div class="bog-nav-bar__status"></div>                                         optional (Status Bar)
+       <div class="bog-nav-bar__header">
+         <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Back">   optional Left Slot
+           <span class="bog-icon" data-icon="chevron-left"></span></button>
+             (or <span class="bog-media-circle" data-size="32"><img src="…" alt=""></span>)
+         <div class="bog-nav-bar__title">
+           <span class="bog-nav-bar__caption">Caption text</span>                       optional (Caption + Title)
+           <h1 class="bog-nav-bar__heading">Title</h1>
+           <span class="bog-nav-bar__subtitle">Secondary text</span>                    optional (Title + Secondary text)
+         </div>
+         <div class="bog-nav-bar__actions">                                              optional Right Slot, one of:
+           <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Chat"><span class="bog-icon" data-icon="chat"></span></button>  (1 or 2)
+           <button class="bog-btn" data-type="neutral" data-size="small">Button</button>
+           <span class="bog-nav-bar__timer">00 : 45</span>
+         </div>
+       </div>
+     </header>
+
+   Attributes (on .bog-nav-bar)
+     data-platform     ios (default, 44px status bar) | android (24px status bar)          Platform
+     data-appearance   themed (default) | white (White Static, on dark/photo bg) | black (Black Static, on light static bg)
+                       Item buttons must match: themed → data-type="neutral", white → data-type="white",
+                       black → data-type="black-secondary".
+     data-status-bar="false"   no status bar mockup                                       Status Bar = False
+     data-divider              1px divider under the bar                                   Divider = True
+     data-background           layer_01 fill behind the bar                                Background = True
+     data-sticky               position: sticky at the top of its scroll container
+     data-scroll-effect        background + divider appear once the content scrolls (bog-ui.js sets data-scrolled)
+   Notification dot on an icon button: <span class="bog-badge-dot"></span> inside the .bog-icon-btn.
+   ========================================================================== */
+
+.bog-nav-bar {
+  --_fg: var(--text-primary);
+  --_status: var(--icon-primary);
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  padding-top: env(safe-area-inset-top);
+  color: var(--_fg);
+  font-family: var(--font-family-bog);
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+.bog-nav-bar[data-appearance="white"],
+.bog-nav-bar[data-appearance="inverse"] { --_fg: var(--text-white-primary); --_status: var(--icon-white); }
+.bog-nav-bar[data-appearance="black"]   { --_fg: var(--text-black);         --_status: var(--icon-black); }
+
+.bog-nav-bar[data-background],
+.bog-nav-bar[data-scroll-effect][data-scrolled] { background: var(--layer-layer-01); }
+.bog-nav-bar[data-divider],
+.bog-nav-bar[data-scroll-effect][data-scrolled] { box-shadow: inset 0 -1px 0 var(--border-alpha-01); }
+.bog-nav-bar[data-sticky] { position: sticky; top: 0; }
+
+/* ---- Status bar (mockup) ------------------------------------------------ */
+/* iOS: 44px, padding 16 19 15, time 33×13 left, signal/wifi/battery 78×13 right */
+.bog-nav-bar__status {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  justify-content: space-between;
+  box-sizing: border-box;
+  height: 44px;
+  padding: 16px 19px 15px;
+}
+.bog-nav-bar__status::before,
+.bog-nav-bar__status::after {
+  content: "";
+  flex: none;
+  height: 13px;
+  background-color: var(--_status);
+}
+.bog-nav-bar__status::before {
+  width: 33px;
+  -webkit-mask: url("../icons/status-bar-time.svg") left center / contain no-repeat;
+          mask: url("../icons/status-bar-time.svg") left center / contain no-repeat;
+}
+.bog-nav-bar__status::after {
+  width: 78px;
+  -webkit-mask: url("../icons/status-bar-icons.svg") right center / contain no-repeat;
+          mask: url("../icons/status-bar-icons.svg") right center / contain no-repeat;
+}
+/* Android: 24px, padding 5 16 4, BOG Medium 12/15 "Bog DS" left, "02:20" right */
+.bog-nav-bar[data-platform="android"] .bog-nav-bar__status {
+  align-items: center;
+  height: 24px;
+  padding: 5px var(--spacing-padding-default) 4px;
+  color: var(--_fg);
+  font-size: var(--label-small-size);
+  line-height: 15px;
+  font-weight: var(--label-xsmall-weight);
+}
+.bog-nav-bar[data-platform="android"] .bog-nav-bar__status::before,
+.bog-nav-bar[data-platform="android"] .bog-nav-bar__status::after {
+  width: auto;
+  height: auto;
+  background: none;
+  -webkit-mask: none;
+          mask: none;
+}
+.bog-nav-bar[data-platform="android"] .bog-nav-bar__status::before { content: "Bog DS"; }
+.bog-nav-bar[data-platform="android"] .bog-nav-bar__status::after  { content: "02:20"; }
+/* Your own text instead: put two <span>s inside .bog-nav-bar__status */
+.bog-nav-bar[data-platform="android"] .bog-nav-bar__status:not(:empty)::before,
+.bog-nav-bar[data-platform="android"] .bog-nav-bar__status:not(:empty)::after { content: none; }
+.bog-nav-bar[data-status-bar="false"] .bog-nav-bar__status { display: none; }
+
+/* ---- Header row: 44px, 12px sides, 12px gap ----------------------------- */
+.bog-nav-bar__header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--spacing-gap-medium);
+  box-sizing: border-box;
+  height: 44px;
+  padding: 0 var(--spacing-padding-medium);
+}
+/* Items sit in a 40×44 touch target: 4px each side of the 32px control */
+.bog-nav-bar__header > :is(.bog-icon-btn, .bog-btn, .bog-avatar, .bog-media-circle),
+.bog-nav-bar__actions > :is(.bog-icon-btn, .bog-btn, .bog-avatar, .bog-media-circle) {
+  flex: none;
+  margin-inline: var(--spacing-padding-x-small);
+}
+/* No left slot: the title gets 4px extra left padding */
+.bog-nav-bar__header > .bog-nav-bar__title:first-child { padding-left: var(--spacing-padding-x-small); }
+
+.bog-nav-bar__title {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: var(--spacing-padding-x-small) 0;
+  text-align: left;
+}
+.bog-nav-bar .bog-nav-bar__heading { /* doubled class: wins over page-level h1 styles */
+  overflow: hidden;
+  margin: 0;
+  color: var(--_fg);
+  font-size: var(--subtitle-large-size);
+  line-height: var(--subtitle-large-line-height);
+  font-weight: var(--subtitle-large-weight);
+  letter-spacing: var(--subtitle-large-letter-spacing);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bog-nav-bar__subtitle,
+.bog-nav-bar__caption {
+  overflow: hidden;
+  color: var(--_fg);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bog-nav-bar__subtitle {
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-nav-bar__caption {
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: var(--label-xsmall-weight);
+}
+
+/* Right slot: 8px between 40px touch targets (16px between the circles) */
+.bog-nav-bar__actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-gap-small);
+  margin-left: auto;
+}
+.bog-nav-bar__timer {
+  padding: var(--spacing-padding-medium) var(--spacing-padding-x-small);
+  color: var(--_fg);
+  font-size: var(--label-medium-size);
+  line-height: var(--label-medium-line-height);
+  font-weight: var(--label-medium-weight);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bog-nav-bar { transition: none; }
+}

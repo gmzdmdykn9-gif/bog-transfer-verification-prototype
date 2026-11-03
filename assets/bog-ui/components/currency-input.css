@@ -38,16 +38,16 @@
 /* ---- Currency Input ------------------------------------------------------ */
 .bog-currency-input .bog-field__box { padding-right: 0; }
 .bog-currency-input:not(:has(.bog-currency-input__currency)) .bog-field__box { padding-right: var(--spacing-padding-default); }
-/* Collapsed (not display:none) while empty, so tapping the field can still focus
-   the input and open the phone keyboard. */
+/* Collapsed (not display:none) at rest, like Text Input's input: the input stays focusable, so tapping
+   the field activates it */
 .bog-currency-input__value {
   display: flex;
-  height: 0;
-  overflow: hidden;
-  opacity: 0;
   align-items: center;
   gap: var(--spacing-gap-2x-small);
   min-width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
 }
 .bog-currency-input__value > .bog-field__input { flex: none; width: auto; min-width: 1ch; max-width: 100%; field-sizing: content; }
 .bog-currency-input__symbol {
@@ -107,6 +107,8 @@ button.bog-currency-input__currency:active { background: var(--layer-alpha-press
 .bog-currency-input:has(.bog-field__input[readonly]) button.bog-currency-input__currency { pointer-events: none; }
 
 /* ---- Currency Small Input ---------------------------------------------- */
+/* Motion (bog-ui.js, shared with Text Input): the focus border fades in / out, and Error pulses the border,
+   shakes the box and drops the message in. No label / placeholder motion — the placeholder is always visible. */
 .bog-currency-small {
   --_border: transparent;
   --_border-w: var(--border-width-default);

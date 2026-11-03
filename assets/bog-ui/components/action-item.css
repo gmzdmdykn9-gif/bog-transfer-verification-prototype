@@ -231,3 +231,23 @@
 }
 .bog-action-items:has(> :nth-child(3)) { justify-content: space-between; gap: 0; }
 .bog-action-items:has(> :nth-child(3)) > .bog-action-item { flex: 1 1 0; max-width: 109px; }
+
+/* ---- Selection strip: chosen items (e.g. recipients) in a scrolling row ---
+   <div class="bog-selection" aria-label="Selected recipients">…removable Action Items…</div>
+   Add / remove with BOG.selectionAdd(strip, item) / BOG.selectionRemove(item) (bog-ui.js plays
+   the motion; tapping an item's remove button calls it). The strip hides itself when empty. */
+.bog-selection {
+  position: relative;
+  display: flex;
+  flex: none;
+  gap: var(--spacing-gap-small);
+  box-sizing: border-box;
+  padding: var(--spacing-padding-small) var(--spacing-padding-default) var(--spacing-padding-default);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+.bog-selection::-webkit-scrollbar { display: none; }
+.bog-selection[hidden] { display: none; }
+.bog-selection > .bog-action-item { flex: none; width: 88px; }
+.bog-selection .bog-action-item__label { -webkit-line-clamp: 2; font-size: var(--body-small-size); line-height: var(--body-small-line-height); }

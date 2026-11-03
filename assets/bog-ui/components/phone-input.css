@@ -11,7 +11,7 @@
          </button>
          <span class="bog-field__text">
            <span class="bog-field__label">Phone number</span>
-           <input class="bog-field__input" type="tel" inputmode="tel" placeholder="XXX XX XX XX">
+           <input class="bog-field__input" type="tel" inputmode="numeric" autocomplete="tel-national" placeholder="XXX XX XX XX">
          </span>
          <button type="button" class="bog-field__clear" aria-label="Clear"></button>
        </label>
@@ -20,6 +20,8 @@
    Tapping the country opens a built-in Bottom Sheet (flag, name, code) — bog-ui.js, list in BOG.countries.
    Own sheet instead: data-sheet-open="id" on the button; rows need data-dial and data-flag.
 
+   Tapping the number side opens the digits-only keyboard (inputmode="numeric", set by bog-ui.js too);
+   tapping the flag + code only opens the country sheet — it closes the keyboard and never focuses the input.
    Numbers are formatted as you type with the country's pattern (4th column of BOG.countries).
    National — leave the country button out; optional data-format="XXX XX XX XX" on .bog-phone-input (default Georgia).
    States, validation (error | warning | success), loading, read-only, disabled and skeleton work like Text Input.

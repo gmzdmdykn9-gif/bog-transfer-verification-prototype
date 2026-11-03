@@ -243,7 +243,7 @@ html[data-at-start] [data-screen="transfer"] { transform: translateX(100%); visi
 .verify--sheet .screen__body { flex: none; overflow: visible; padding: var(--spacing-padding-small) var(--spacing-padding-default) var(--spacing-padding-default); }
 .verify--sheet .verify__keypad { padding-bottom: 0; }
 #verify-sheet .bog-sheet__content { padding: 0; }
-.screen--start .bog-toggle-row { padding: var(--spacing-padding-small) 0; }
+.screen--start .bog-toggle { padding: var(--spacing-padding-small) 0; }
 /* Full-height sheets: cover the page, leaving 24px at the top. Content starts at the
    top; the passcode keypad sits at the bottom. The sheet shrinks above the keyboard. */
 #verify-sheet .bog-sheet__panel { height: calc(100% - 24px); max-height: calc(100% - 24px); }
@@ -273,14 +273,16 @@ html[data-ds="current"] .ds-onboarding { display: none; }
   .verify__body > .verify__method ~ :is(.bog-code, .bog-otp) { margin-top: var(--spacing-gap-default); }
 }
 
-/* ---- Result page: presented full screen from the bottom (iOS modal) when the transfer is done ---- */
+/* ---- Result page: shown over the flow when the transfer is done. The page itself just fades in quickly;
+   bog-ui's Result Page motion (BOG.resultIn) does the rest: the icon appears in the middle, then rises,
+   and the text blocks fade up one after another. Close button and sticky bar are there from the start. ---- */
 .screen--result {
   z-index: 900;
-  transform: translateY(100%);
+  opacity: 0;
   visibility: hidden;
-  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s linear 420ms;
+  transition: opacity 200ms ease, visibility 0s linear 200ms;
 }
-.screen--result[data-open] { transform: none; visibility: visible; transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1), visibility 0s; }
+.screen--result[data-open] { opacity: 1; visibility: visible; transition: opacity 150ms ease, visibility 0s; }
 .screen--result > .bog-result-page { flex: 1 1 auto; min-height: 0; }
 @media (prefers-reduced-motion: reduce) { .screen--result, .screen--result[data-open] { transition: none; } }
 /* Current Design System has no pill: OTP Verification keeps its 32px gap under the title */

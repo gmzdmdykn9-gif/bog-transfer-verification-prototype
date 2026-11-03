@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tooltip — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="tooltip"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Tooltip</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">A small dark label with an arrow that explains the element it points at. Tap the info icon (or any trigger) to open it; tap anywhere else, press Escape or tap the trigger again to close. 5 alignments × 2 positions.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;!-- trigger: the info icon (_Tooltip trigger), or any button / .bog-field__info --&gt;
+&lt;button type="button" class="bog-tooltip-trigger" data-tooltip="tip-fee" aria-label="More info"&gt;&lt;/button&gt;
+
+&lt;!-- the tooltip itself, anywhere in the page --&gt;
+&lt;div class="bog-tooltip" id="tip-fee" role="tooltip" data-position="bottom" data-alignment="center"&gt;
+  Fee is 1% of the amount
+&lt;/div&gt;
+
+&lt;!-- Text Input info button opens a tooltip the same way --&gt;
+&lt;button type="button" class="bog-field__info" aria-label="More info" data-tooltip="tip-fee"&gt;&lt;/button&gt;
+
+&lt;!-- shortcut, no tooltip element needed --&gt;
+&lt;button class="bog-btn" data-type="secondary" data-size="small" data-tooltip-text="Copied to clipboard"&gt;Copy&lt;/button&gt;
+
+&lt;!-- static (mockups, no JS): anchor + data-open --&gt;
+&lt;span class="bog-tooltip-anchor"&gt;
+  &lt;span class="bog-tooltip-trigger"&gt;&lt;/span&gt;
+  &lt;span class="bog-tooltip" role="tooltip" data-position="top" data-alignment="left" data-open&gt;Tooltip&lt;/span&gt;
+&lt;/span&gt;</code></pre>
+
+    <p>On <code>.bog-tooltip</code>: <code>data-position="bottom | top"</code> (Figma Position), <code>data-alignment="left | center | right | left-center | right-center"</code> (Figma Alignment). <code>left</code> / <code>right</code> put the arrow 16px from that edge; <code>left-center</code> places the tooltip to the <b>left</b> of the trigger, <code>right-center</code> to the <b>right</b> (Position is ignored for those two). The tooltip flips and shifts to stay inside the <code>.bog-sheet-host</code> phone frame or the viewport, and the arrow keeps pointing at the trigger. Events on the tooltip: <code>tooltipopen</code>, <code>tooltipclose</code> (<code>detail.trigger</code>). JS: <code>BOG.openTooltip(idOrEl, trigger)</code>, <code>BOG.closeTooltip()</code>.</p>
+
+    <h2>Try it</h2>
+    <p>Tap the info icons. The ones near the edges flip or shift so the tooltip stays inside the phone frame.</p>
+    <div class="panel" style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap">
+      <div class="bog-sheet-host" id="phone" style="position:relative;width:375px;height:600px;border-radius:24px;box-shadow:0 0 0 8px #1b1c1d;overflow:hidden;background:var(--background-background-01)">
+        <button type="button" class="bog-tooltip-trigger" data-tooltip="t-tl" aria-label="More info" style="position:absolute;top:24px;left:20px"></button>
+        <button type="button" class="bog-tooltip-trigger" data-tooltip="t-tr" aria-label="More info" style="position:absolute;top:24px;right:20px"></button>
+        <button type="button" class="bog-tooltip-trigger" data-tooltip="t-ml" aria-label="More info" style="position:absolute;top:150px;left:20px"></button>
+        <button type="button" class="bog-tooltip-trigger" data-tooltip="t-mr" aria-label="More info" style="position:absolute;top:150px;right:20px"></button>
+        <div style="position:absolute;top:220px;left:16px;right:16px">
+          <div class="bog-field">
+            <label class="bog-field__box">
+              <span class="bog-field__text">
+                <span class="bog-field__label">IBAN</span>
+                <input class="bog-field__input" placeholder="GE00BG0000000000000000">
+              </span>
+              <button type="button" class="bog-field__info" aria-label="More info" data-tooltip="t-iban"></button>
+            </label>
+          </div>
+        </div>
+        <div style="position:absolute;top:330px;left:0;right:0;display:flex;justify-content:center;gap:12px">
+          <button class="bog-btn" data-type="secondary" data-size="small" data-tooltip="t-btn">Button trigger</button>
+          <button class="bog-btn" data-type="neutral" data-size="small" data-tooltip-text="Created on the fly from data-tooltip-text" data-tooltip-position="top">Text shortcut</button>
+        </div>
+        <button type="button" class="bog-tooltip-trigger" data-tooltip="t-bl" aria-label="More info" style="position:absolute;bottom:24px;left:20px"></button>
+        <button type="button" class="bog-tooltip-trigger" data-tooltip="t-bc" aria-label="More info" style="position:absolute;bottom:24px;left:calc(50% - 8px)"></button>
+        <button type="button" class="bog-tooltip-trigger" data-tooltip="t-br" aria-label="More info" style="position:absolute;bottom:24px;right:20px"></button>
+
+        <div class="bog-tooltip" id="t-tl" role="tooltip" data-position="top" data-alignment="left">Prefers Top · Left — flips below</div>
+        <div class="bog-tooltip" id="t-tr" role="tooltip" data-position="top" data-alignment="center">Prefers Top · Center — flips and shifts</div>
+        <div class="bog-tooltip" id="t-ml" role="tooltip" data-position="top" data-alignment="left-center">Prefers Left-Center — no room, moves right</div>
+        <div class="bog-tooltip" id="t-mr" role="tooltip" data-position="top" data-alignment="right-center">Prefers Right-Center — no room, moves left</div>
+        <div class="bog-tooltip" id="t-iban" role="tooltip" data-position="bottom" data-alignment="right">International Bank Account Number: 22 characters, starts with GE</div>
+        <div class="bog-tooltip" id="t-btn" role="tooltip" data-position="bottom" data-alignment="center">Tooltips work on any element with data-tooltip</div>
+        <div class="bog-tooltip" id="t-bl" role="tooltip" data-position="bottom" data-alignment="left">Prefers Bottom · Left — flips above</div>
+        <div class="bog-tooltip" id="t-bc" role="tooltip" data-position="bottom" data-alignment="center">Prefers Bottom · Center — flips above</div>
+        <div class="bog-tooltip" id="t-br" role="tooltip" data-position="bottom" data-alignment="right">Prefers Bottom · Right — flips above</div>
+      </div>
+      <p class="row-label" id="log"><code>Events appear here</code></p>
+    </div>
+
+    <h2>Variants</h2>
+    <p>Every Figma variant, rendered open and static (<code>.bog-tooltip-anchor</code> + <code>data-open</code>).</p>
+    <div class="panel"><table>
+      <tr><th></th><th>Alignment=Left</th><th>Alignment=Center</th><th>Alignment=Right</th></tr>
+      <tr><th>Position=Bottom</th><td style="min-width:240px"><div style="display:flex;justify-content:flex-start;align-items:flex-start;height:90px;box-sizing:border-box;padding:8px 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="bottom" data-alignment="left" data-open>Tooltip</span></span></div></td><td style="min-width:240px"><div style="display:flex;justify-content:center;align-items:flex-start;height:90px;box-sizing:border-box;padding:8px 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="bottom" data-alignment="center" data-open>Tooltip</span></span></div></td><td style="min-width:240px"><div style="display:flex;justify-content:flex-end;align-items:flex-start;height:90px;box-sizing:border-box;padding:8px 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="bottom" data-alignment="right" data-open>Tooltip</span></span></div></td></tr>
+      <tr><th>Position=Top</th><td style="min-width:240px"><div style="display:flex;justify-content:flex-start;align-items:flex-end;height:90px;box-sizing:border-box;padding:8px 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="top" data-alignment="left" data-open>Tooltip</span></span></div></td><td style="min-width:240px"><div style="display:flex;justify-content:center;align-items:flex-end;height:90px;box-sizing:border-box;padding:8px 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="top" data-alignment="center" data-open>Tooltip</span></span></div></td><td style="min-width:240px"><div style="display:flex;justify-content:flex-end;align-items:flex-end;height:90px;box-sizing:border-box;padding:8px 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="top" data-alignment="right" data-open>Tooltip</span></span></div></td></tr>
+      <tr><th></th><th>Alignment=Left-Center</th><th>Alignment=Right-Center</th><th></th></tr>
+      <tr><th>Position=Top</th><td style="min-width:240px"><div style="display:flex;justify-content:flex-end;align-items:center;height:70px;box-sizing:border-box;padding:0 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="top" data-alignment="left-center" data-open>Tooltip</span></span></div></td><td style="min-width:240px"><div style="display:flex;justify-content:flex-start;align-items:center;height:70px;box-sizing:border-box;padding:0 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="top" data-alignment="right-center" data-open>Tooltip</span></span></div></td><td></td></tr>
+      <tr><th>Long text (wraps at 280px)</th><td style="min-width:330px"><div style="display:flex;justify-content:flex-start;align-items:flex-start;height:130px;box-sizing:border-box;padding:8px 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="bottom" data-alignment="left" data-open>Good for interactive elements. Longer copy wraps onto a second line at the max width.</span></span></div></td><td style="min-width:240px"><div style="display:flex;justify-content:center;align-items:flex-start;height:90px;box-sizing:border-box;padding:8px 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="bottom" data-alignment="center" data-open>Good for interactive elements</span></span></div></td><td style="min-width:240px"><div style="display:flex;justify-content:flex-end;align-items:flex-end;height:90px;box-sizing:border-box;padding:8px 24px"><span class="bog-tooltip-anchor"><span class="bog-tooltip-trigger"></span><span class="bog-tooltip" role="tooltip" data-position="top" data-alignment="right" data-open>Good for interactive elements</span></span></div></td></tr>
+
+    </table></div>
+
+    <h2>Trigger (_Tooltip trigger)</h2>
+    <div class="panel"><table>
+      <tr><th>trigger=Icon</th><th>trigger=Placeholder</th></tr>
+      <tr><td style="min-width:120px"><button type="button" class="bog-tooltip-trigger" aria-label="More info"></button></td>
+          <td style="min-width:120px"><button type="button" class="bog-tooltip-trigger" aria-label="More info"><span class="bog-icon"></span></button></td></tr>
+    </table>
+    <p class="row-label"><code>.bog-tooltip-trigger</code>: 16px icon in <code>--icon-primary</code>, 24px round tap area. Put a <code>.bog-icon</code> inside to swap the icon.</p></div>
+
+<script>
+
+  const log = document.getElementById("log");
+  const phone = document.getElementById("phone");
+  ["tooltipopen", "tooltipclose"].forEach(t => phone.addEventListener(t, e => {
+    log.innerHTML = `<code>${t}: ${e.target.id} (${e.target.dataset.position} / ${e.target.dataset.alignment})</code>`;
+  }));
+
+</script>
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

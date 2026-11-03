@@ -1,0 +1,159 @@
+/* ==========================================================================
+   BOG UI — Progress Bar (+ _Progress segment)
+   Figma: Progress Bar page (42817:6944) · set Progress Bar (42817:6948) · part Progress (42817:7544)
+   Read-only bar toward a known end. Not the same as Wizard Progress (.bog-wizard):
+   that one is the flow step bar under the navigation bar (current step half filled).
+
+   Single — set the value with --value (0%–100%); the fill animates when it changes
+     <div class="bog-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="40"
+          style="--value: 40%">
+       <span class="bog-progress__bar"></span>
+       <div class="bog-progress__labels">                                         optional (Text)
+         <div class="bog-progress__start">
+           <span class="bog-progress__label">400.00 ₾</span>                       optional (Label)
+           <span class="bog-progress__helper">Saved</span>                          optional (Helper text)
+         </div>
+         <div class="bog-progress__end">
+           <span class="bog-progress__label">1,000.00 ₾</span>
+           <span class="bog-progress__helper">Goal</span>
+         </div>
+       </div>
+     </div>
+     The fill never gets shorter than the bar is tall: both rounded ends always show (0 % looks like 1 %).
+
+   Segmented — 2 to 10 equal segments; reached ones get data-state="filled" (animates)
+     <div class="bog-progress" data-progress="segmented" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="2">
+       <span class="bog-progress__bar">
+         <span class="bog-progress__segment" data-state="filled"></span>
+         <span class="bog-progress__segment" data-state="filled"></span>
+         <span class="bog-progress__segment"></span>                                Rail
+         <span class="bog-progress__segment"></span>
+       </span>
+       …labels…
+     </div>
+
+   Attributes on .bog-progress
+     data-progress     single (default) | segmented                                   Progress
+     data-type         accent (default) | positive | warning | negative | neutral-inverse   Type
+     data-size         thin (default, 4px) | thick (8px)                              Size
+     data-state        skeleton                                                       Skeleton = True
+     data-material     ultrathin — iOS Ultrathin material behind the rail (blur)       iOS Ultrathin
+   ========================================================================== */
+
+.bog-progress {
+  --_h: 4px;
+  --_fill: var(--status-accent-02);
+  --_rail: var(--layer-alpha-03);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  font-family: var(--font-family-bog);
+}
+.bog-progress[data-size="thick"] { --_h: 8px; }
+
+.bog-progress[data-type="positive"]        { --_fill: var(--status-success-02); }
+.bog-progress[data-type="warning"]         { --_fill: var(--status-warning-02); }
+.bog-progress[data-type="negative"]        { --_fill: var(--status-error-02); }
+.bog-progress[data-type="neutral-inverse"] { --_fill: var(--layer-inverse-01); }
+
+/* ---- Bar (Rail + fill) -------------------------------------------------- */
+.bog-progress__bar {
+  position: relative;
+  display: flex;
+  gap: var(--spacing-padding-x-small);            /* 4px between segments */
+  height: var(--_h);
+  border-radius: var(--radius-full);
+  background: var(--_rail);
+}
+/* Single: the fill */
+.bog-progress:not([data-progress="segmented"]) > .bog-progress__bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(100%, max(var(--_h), var(--value, 0%)));
+  border-radius: inherit;
+  background: var(--_fill);
+  transition: width 400ms cubic-bezier(.4, 0, .2, 1), background-color 240ms ease;
+}
+
+/* Segmented: equal segments, the bar itself has no rail */
+.bog-progress[data-progress="segmented"] > .bog-progress__bar { background: none; }
+.bog-progress__segment {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--radius-full);
+  background: var(--_rail);
+}
+.bog-progress__segment::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--_fill);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 320ms cubic-bezier(.4, 0, .2, 1), background-color 240ms ease;
+}
+.bog-progress__segment[data-state="filled"]::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .bog-progress__bar::after, .bog-progress__segment::after { transition: none; }
+}
+
+/* iOS Ultrathin material behind the rail(s) */
+.bog-progress[data-material="ultrathin"]:not([data-progress="segmented"]) > .bog-progress__bar,
+.bog-progress[data-material="ultrathin"] .bog-progress__segment {
+  background:
+    linear-gradient(var(--_rail), var(--_rail)),
+    linear-gradient(var(--ios-materials-ultrathin-layer-02), var(--ios-materials-ultrathin-layer-02)),
+    var(--ios-materials-ultrathin-layer-01);
+  -webkit-backdrop-filter: blur(50px);
+          backdrop-filter: blur(50px);
+}
+
+/* ---- Labels (Container: 4px top, 8px between the two columns) ----------- */
+.bog-progress__labels {
+  display: flex;
+  gap: var(--spacing-gap-small);
+  padding-top: var(--spacing-padding-x-small);
+}
+.bog-progress__start,
+.bog-progress__end {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+}
+.bog-progress__end { align-items: flex-end; text-align: right; }
+.bog-progress__label {
+  color: var(--text-primary);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-progress__helper {
+  color: var(--text-secondary);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: var(--label-xsmall-weight);
+}
+
+/* ---- Skeleton: skeleton-colored rail, no fill, one 80×8 bar 8px below ---- */
+.bog-progress[data-state="skeleton"] { --_rail: var(--support-skeleton); }
+.bog-progress[data-state="skeleton"] > .bog-progress__bar::after,
+.bog-progress[data-state="skeleton"] .bog-progress__segment::after { display: none; }
+.bog-progress[data-state="skeleton"] > .bog-progress__bar,
+.bog-progress[data-state="skeleton"] .bog-progress__segment { -webkit-backdrop-filter: none; backdrop-filter: none; background: var(--support-skeleton); }
+.bog-progress[data-state="skeleton"] > .bog-progress__labels { display: none; }
+.bog-progress[data-state="skeleton"]::after {
+  content: "";
+  width: 80px;
+  height: 8px;
+  margin-top: var(--spacing-padding-small);
+  border-radius: var(--radius-2x-small);
+  background: var(--support-skeleton);
+}

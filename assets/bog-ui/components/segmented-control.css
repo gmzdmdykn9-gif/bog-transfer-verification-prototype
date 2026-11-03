@@ -1,0 +1,200 @@
+/* ==========================================================================
+   BOG UI — Segmented Control
+   Figma: Segmented Control page (23453:49724) — "Segmented Control" (32878:990),
+          "_Segment text item" (32878:1003), "_Segment icon item" (32878:1010)
+
+   Text segments (2–6, equal width, fills its container)
+     <div class="bog-segmented" role="radiogroup" aria-label="Period">
+       <label class="bog-segmented__item"><input type="radio" name="period" value="week" checked><span>Week</span></label>
+       <label class="bog-segmented__item"><input type="radio" name="period" value="month"><span>Month</span></label>
+       <label class="bog-segmented__item"><input type="radio" name="period" value="year"><span>Year</span></label>
+     </div>
+
+   Icon segments (Type=Only icon, hugs content, 32×32 items)
+     <div class="bog-segmented" data-type="icon" role="radiogroup" aria-label="View">
+       <label class="bog-segmented__item"><input type="radio" name="view" value="list" checked aria-label="List">
+         <span class="bog-icon" style="--icon: url(bog-ui/icons/list-view-16.svg)"></span></label>
+       …
+     </div>
+
+   bog-ui.js adds a white thumb (.bog-segmented__thumb) that slides to the checked segment.
+   Without JS the checked segment gets the same fill in place.
+   Native radios: arrow keys move the selection; "change" bubbles from the input and
+   "segmentchange" fires on .bog-segmented with detail { value, index }.
+
+   Attributes on .bog-segmented
+     data-size       large (default, Label/Medium) | small (Label/xSmall, selected Label/Small)
+     data-type       icon — Type=Only icon
+     data-material   ultrathin — "iOS Ultrathin" layer (blurred translucent white) for photos/colored areas
+     data-state      skeleton
+   On an input: disabled  (not drawn in Figma — Text/Icon disabled colors)
+   ========================================================================== */
+
+.bog-segmented {
+  --_bg: var(--layer-alpha-01);
+  --_thumb: var(--layer-layer-05);
+  --_thumb-line: var(--border-border-01);
+  --_fg: var(--text-secondary);
+  --_fg-selected: var(--text-primary);
+  --_icon: var(--icon-secondary);
+  --_icon-selected: var(--icon-primary);
+  --_ease: cubic-bezier(0.25, 1, 0.5, 1);
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-padding-x-small);
+  border-radius: var(--radius-medium);
+  background: var(--_bg);
+  font-family: var(--font-family-bog);
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-segmented[data-type="icon"] { display: inline-flex; width: auto; }
+
+.bog-segmented[data-material="ultrathin"] {
+  background:
+    linear-gradient(var(--_bg), var(--_bg)),
+    linear-gradient(var(--ios-materials-ultrathin-layer-02), var(--ios-materials-ultrathin-layer-02)),
+    var(--ios-materials-ultrathin-layer-01);
+  -webkit-backdrop-filter: blur(50px);
+          backdrop-filter: blur(50px);
+}
+
+/* ---- Segment (_Segment text item): 32px, Large 4/8 padding + 2px label padding ---- */
+.bog-segmented__item {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 32px;
+  padding: var(--spacing-padding-x-small) var(--spacing-padding-small);
+  border-radius: var(--radius-small);
+  color: var(--_fg);
+  font-size: var(--label-medium-size);
+  line-height: var(--label-medium-line-height);
+  font-weight: var(--label-medium-weight);
+  text-align: center;
+  cursor: pointer;
+  transition: color 200ms ease;
+}
+.bog-segmented__item > span:not(.bog-icon) {
+  overflow: hidden;
+  padding: var(--spacing-padding-2x-small) 0;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bog-segmented__item > input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.bog-segmented__item:has(> input:checked) { color: var(--_fg-selected); }
+.bog-segmented__item:has(> input:focus-visible) { outline: 2px solid var(--text-accent); outline-offset: 0; }
+
+/* Selected fill: on the item until bog-ui.js adds the sliding thumb */
+.bog-segmented:not([data-thumb]) .bog-segmented__item:has(> input:checked) {
+  background: var(--_thumb);
+  box-shadow: inset 0 0 0 var(--border-width-thin) var(--_thumb-line);
+}
+.bog-segmented__thumb {
+  position: absolute;
+  z-index: 0;
+  top: var(--spacing-padding-x-small);
+  left: 0;
+  box-sizing: border-box;
+  height: 32px;
+  border-radius: var(--radius-small);
+  background: var(--_thumb);
+  box-shadow: inset 0 0 0 var(--border-width-thin) var(--_thumb-line);
+  pointer-events: none;
+  transition: transform 300ms var(--_ease), width 300ms var(--_ease);
+}
+.bog-segmented:not(:has(input:checked)) .bog-segmented__thumb { opacity: 0; }
+.bog-segmented[data-thumb="instant"] .bog-segmented__thumb { transition: none; }
+
+/* ---- Small: 8/4 padding, Label/xSmall (selected Label/Small) ---- */
+.bog-segmented[data-size="small"] .bog-segmented__item {
+  padding: var(--spacing-padding-small) var(--spacing-padding-x-small);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: var(--label-xsmall-weight);
+}
+.bog-segmented[data-size="small"] .bog-segmented__item > span:not(.bog-icon) { padding: 0; }
+.bog-segmented[data-size="small"] .bog-segmented__item:has(> input:checked) {
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+
+/* ---- Only icon (_Segment icon item): 32×32, 8px padding, 16px icon ---- */
+.bog-segmented[data-type="icon"] .bog-segmented__item {
+  flex: none;
+  width: 32px;
+  padding: var(--spacing-padding-small);
+  color: var(--_icon);
+}
+.bog-segmented[data-type="icon"] .bog-segmented__item:has(> input:checked) { color: var(--_icon-selected); }
+
+/* ---- Disabled segment ---- */
+.bog-segmented__item:has(> input:disabled) {
+  --_fg: var(--text-disabled);
+  --_fg-selected: var(--text-disabled);
+  --_icon: var(--icon-disabled);
+  --_icon-selected: var(--icon-disabled);
+  cursor: default;
+}
+
+/* ---- Skeleton: no fill; 12px bars (Large/Small text) · one 48×16 bar (Only icon) ---- */
+.bog-segmented[data-state="skeleton"] {
+  gap: var(--spacing-gap-small);
+  padding: var(--spacing-padding-x-small) var(--spacing-padding-medium);
+  background: none;
+  -webkit-backdrop-filter: none;
+          backdrop-filter: none;
+  pointer-events: none;
+}
+.bog-segmented[data-state="skeleton"] .bog-segmented__thumb { display: none; }
+.bog-segmented[data-state="skeleton"] .bog-segmented__item {
+  background: none !important;
+  box-shadow: none !important;
+  color: transparent;
+}
+.bog-segmented[data-state="skeleton"] .bog-segmented__item > * { visibility: hidden; }
+.bog-segmented[data-state="skeleton"] .bog-segmented__item::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  right: 0;
+  left: 0;
+  height: 12px;
+  border-radius: var(--radius-2x-small);
+  background: var(--support-skeleton);
+}
+.bog-segmented[data-type="icon"][data-state="skeleton"] { gap: 0; padding: var(--spacing-padding-x-small); }
+.bog-segmented[data-type="icon"][data-state="skeleton"] .bog-segmented__item::before { display: none; }
+.bog-segmented[data-type="icon"][data-state="skeleton"]::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 48px;
+  height: 16px;
+  border-radius: var(--radius-x-small);
+  background: var(--support-skeleton);
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bog-segmented__thumb, .bog-segmented__item { transition: none; }
+}

@@ -6,6 +6,7 @@
 <title>Toggle Switch — BOG UI</title>
 <link rel="stylesheet" href="../bog-ui.css">
 <link rel="stylesheet" href="docs.css">
+<script src="theme.js"></script>
 <script src="../bog-ui.js" defer></script>
 <script src="components.js" defer></script>
 </head>
@@ -17,29 +18,335 @@
   </aside>
   <main class="docs-main">
     <header><h1>Toggle Switch</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
-    <p class="lead">On / off control that applies right away. Use the Toggle Switch + Label row so the whole row is one tap target. Themed only (Inverse Static not built).</p>
+    <p class="lead">An on / off switch for a setting that applies right away, on its own, as a setting row with a label and description, or in a group. On, off, indeterminate, error, read-only, disabled and skeleton; Themed and Inverse. For a choice that only applies after users tap Save, use a Checkbox.</p>
 
     <h2>Usage</h2>
-    <pre><code>&lt;label class=&quot;bog-toggle-row&quot;&gt;
-  &lt;span class=&quot;bog-toggle-row__caption&quot;&gt;Label (optional)&lt;/span&gt;
-  &lt;span class=&quot;bog-toggle-row__main&quot;&gt;
-    &lt;span class=&quot;bog-toggle-row__text&quot;&gt;
-      &lt;span class=&quot;bog-toggle-row__label&quot;&gt;Toggle text&lt;/span&gt;
-      &lt;span class=&quot;bog-toggle-row__desc&quot;&gt;Description&lt;/span&gt;
-      &lt;span class=&quot;bog-inline-message&quot; data-status=&quot;negative&quot;&gt;Message text&lt;/span&gt;   &lt;!-- data-validation=&quot;error&quot; --&gt;
+    <pre><code>&lt;label class="bog-toggle"&gt;
+  &lt;span class="bog-toggle__row"&gt;
+    &lt;span class="bog-toggle__text"&gt;
+      &lt;span class="bog-toggle__title"&gt;Push notifications&lt;/span&gt;
+      &lt;span class="bog-toggle__desc"&gt;Payments, transfers and offers&lt;/span&gt;
     &lt;/span&gt;
-    &lt;input type=&quot;checkbox&quot; role=&quot;switch&quot; class=&quot;bog-toggle&quot;&gt;
+    &lt;input type="checkbox" role="switch" class="bog-toggle__input" checked&gt;
   &lt;/span&gt;
 &lt;/label&gt;
-&lt;!-- on the input: checked · disabled · aria-readonly=&quot;true&quot; · data-indeterminate · data-state=&quot;skeleton&quot; --&gt;</code></pre>
 
-    <h2>Variants</h2>
-    <h3>Toggle Switch</h3><div class="panel" style="display:grid;grid-template-columns:repeat(4,max-content);gap:24px 40px"><div><div class="row-label"><code>Off</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Off" ></div><div><div class="row-label"><code>On</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="On" checked></div><div><div class="row-label"><code>Indeterminate</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Indeterminate" checked data-indeterminate></div><div><div class="row-label"><code>Disabled</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Disabled" disabled></div><div><div class="row-label"><code>Disabled · On</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Disabled · On" disabled checked></div><div><div class="row-label"><code>Read-only</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Read-only" aria-readonly="true"></div><div><div class="row-label"><code>Read-only · On</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Read-only · On" aria-readonly="true" checked></div><div><div class="row-label"><code>Skeleton</code></div><input type="checkbox" role="switch" class="bog-toggle" aria-label="Skeleton" data-state="skeleton"></div></div><h3>Toggle Switch + Label</h3><div class="panel" style="display:grid;grid-template-columns:repeat(2,240px);gap:24px 40px"><div><div class="row-label"><code>Enabled</code></div><label class="bog-toggle-row"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" ></span></label></div><div><div class="row-label"><code>Enabled · On</code></div><label class="bog-toggle-row"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" checked></span></label></div><div><div class="row-label"><code>Error · On</code></div><label class="bog-toggle-row" data-validation="error"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" checked></span></label></div><div><div class="row-label"><code>Disabled</code></div><label class="bog-toggle-row"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" disabled></span></label></div><div><div class="row-label"><code>Read-only · On</code></div><label class="bog-toggle-row"><span class="bog-toggle-row__caption">Label (optional)</span><span class="bog-toggle-row__main"><span class="bog-toggle-row__text"><span class="bog-toggle-row__label">Toggle text</span><span class="bog-toggle-row__desc">Description</span><span class="bog-inline-message" data-status="negative">Message text</span></span><input type="checkbox" role="switch" class="bog-toggle" aria-readonly="true" checked></span></label></div></div>
+&lt;fieldset class="bog-toggle-group"&gt;
+  &lt;legend class="bog-toggle-group__label"&gt;Notifications&lt;/legend&gt;
+  …toggle rows…
+  &lt;p class="bog-toggle-group__message"&gt;You can change these any time&lt;/p&gt;
+&lt;/fieldset&gt;
 
+&lt;!-- On its own (give it a name) --&gt;
+&lt;input type="checkbox" role="switch" class="bog-toggle__input" aria-label="Contactless payments"&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <p class="lead">Tap anywhere on a row. The parent switch turns indeterminate when only some of its settings are on.</p>
+    <div class="panel"><div id="demo" style="width:343px"></div>
+      <label style="display:inline-flex;gap:6px;align-items:center;margin-top:16px;font-size:12px"><input type="checkbox" id="toggle-slow"> Slow motion (×10)</label></div>
+
+    <h2 id="motion">Motion</h2>
+    <p class="lead">Switching on or off, the circle slides 20 px with a small overshoot past its spot and settles back. The track colour follows slightly later. Going in or out of Indeterminate, the circle squashes into the bar while it slides to the middle, overshoots by 1 px and settles.
+      Source: <a href="https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=2-668" target="_blank" rel="noopener">Off ↔ On ↗</a> · <a href="https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=1126-8962" target="_blank" rel="noopener">Indeterminate ↗</a></p>
+    <div class="panel">
+      <div class="motion-tabs" role="tablist">
+        <button role="tab" data-tab="design" aria-selected="true">Designers</button>
+        <button role="tab" data-tab="ios">iOS · SwiftUI</button>
+        <button role="tab" data-tab="android">Android · Compose</button>
+        <button role="tab" data-tab="web">Web</button>
+      </div>
+      <section class="motion-pane" data-pane="design" id="motion-design"></section>
+      <section class="motion-pane" data-pane="ios" hidden>
+        <p>A custom switch style. The circle and the track get their own animations, so each runs with its own curve and delay.</p>
+        <pre><code data-snippet="ios"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="ios">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="ios">Copy code</button></div>
+      </section>
+      <section class="motion-pane" data-pane="android" hidden>
+        <p>A composable switch with two <code>animate*AsState</code> values: the circle's offset and the track colour.</p>
+        <pre><code data-snippet="android"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="android">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="android">Copy code</button></div>
+      </section>
+      <section class="motion-pane" data-pane="web" hidden>
+        <p>Built into <code>toggle.css</code> as CSS transitions. Nothing to call.</p>
+        <pre><code data-snippet="web"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="web">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="web">Copy code</button></div>
+      </section>
+    </div>
+
+    <h2>Toggle Switch</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="panel"><table id="sw-light"></table></div>
+      <div class="panel dark"><table id="sw-dark"></table></div>
+    </div>
+
+    <h2>Toggle Switch + Label</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div class="panel"><div id="lbl-light" style="display:flex;flex-direction:column;gap:24px;max-width:320px"></div></div>
+      <div class="panel dark"><div id="lbl-dark" style="display:flex;flex-direction:column;gap:24px;max-width:320px"></div></div>
+    </div>
+
+    <h2>Toggle Switch Group</h2>
+    <div class="panel"><div class="row" style="gap:48px;align-items:flex-start" id="groups"></div></div>
+    <div class="panel dark" style="margin-top:16px"><div class="row" style="gap:48px;align-items:flex-start" id="groups-dark"></div></div>
+
+<script>
+  // Toggle Switch on its own
+  const SEL = [["Off", ""], ["On", " checked"], ["Indeterminate", " data-indeterminate"]];
+  const STATES = [["Enabled", ""], ["Read-only", "readonly"], ["Disabled", "disabled"], ["Skeleton", "skeleton"]];
+  const sw = (sel, st, inv, label) => `<input type="checkbox" role="switch" class="bog-toggle__input"${label ? "" : ' aria-label="Setting"'}${sel}${st === "disabled" ? " disabled" : st ? ` data-state="${st}"` : ""}${inv ? ' data-appearance="inverse"' : ""}>`;
+  const table = (inv) => "<tr><th></th>" + SEL.map(([n]) => `<th>${n}</th>`).join("") + "</tr>" +
+    STATES.map(([n, st]) => `<tr><th>${n}</th>${SEL.map(([, s]) => st === "skeleton" && s === " data-indeterminate" ? "<td></td>" : `<td>${sw(s, st, inv)}</td>`).join("")}</tr>`).join("");
+  document.getElementById("sw-light").innerHTML = table(false);
+  document.getElementById("sw-dark").innerHTML = table(true);
+
+  // Toggle Switch + Label
+  const row = (o = {}) => {
+    const st = o.st && o.st !== "disabled" ? ` data-state="${o.st}"` : "";
+    const sel = o.ind ? " data-indeterminate" : o.on ? " checked" : "";
+    return `<label class="bog-toggle"${st}${o.inv ? ' data-appearance="inverse"' : ""}>` +
+      (o.label === false ? "" : `<span class="bog-toggle__label">${o.label || "Label (optional)"}</span>`) +
+      `<span class="bog-toggle__row"><span class="bog-toggle__text"><span class="bog-toggle__title">${o.title || "Toggle text"}</span>` +
+      (o.desc === false ? "" : `<span class="bog-toggle__desc">${o.desc || "Description"}</span>`) +
+      (o.st === "error" ? '<span class="bog-toggle__message">Message text</span>' : "") +
+      `</span>${sw(sel, o.st === "disabled" ? "disabled" : "", false, true)}</span></label>`;
+  };
+  const ROWS = (inv) => [
+    row({ inv }), row({ inv, on: 1 }), row({ inv, on: 1, ind: 1 }), row({ inv, st: "error" }),
+    row({ inv, st: "disabled" }), row({ inv, on: 1, st: "disabled" }), row({ inv, on: 1, st: "readonly" }), row({ inv, st: "skeleton" })
+  ].join("");
+  document.getElementById("lbl-light").innerHTML = ROWS(false);
+  document.getElementById("lbl-dark").innerHTML = ROWS(true);
+
+  // Toggle Switch Group
+  const group = (st, inv) => {
+    const rows = [row({ on: 1, label: false, desc: false, st: st === "disabled" ? "disabled" : "" }), row({ label: false, desc: false, st: st === "disabled" ? "disabled" : "" })];
+    const msg = st === "error" ? "Couldn't update. Try again." : st === "" ? "Message text" : "";
+    return `<div><small style="display:block;margin-bottom:12px;color:${inv ? "#d7d9db" : "var(--docs-muted)"};font-size:11px">${st || "enabled"}${st === "" ? " · with helper" : ""}</small>` +
+      `<fieldset class="bog-toggle-group" style="width:320px"${st && st !== "disabled" ? ` data-state="${st}"` : ""}${inv ? ' data-appearance="inverse"' : ""}>` +
+      '<legend class="bog-toggle-group__label">Group Label (optional)</legend>' + rows.join("") +
+      (msg ? `<p class="bog-toggle-group__message">${msg}</p>` : "") + "</fieldset></div>";
+  };
+  document.getElementById("groups").innerHTML = ["", "error", "readonly", "disabled", "skeleton"].map((s) => group(s, false)).join("");
+  document.getElementById("groups-dark").innerHTML = ["", "error", "readonly"].map((s) => group(s, true)).join("");
+
+  // Try it: a parent switch that follows its children (indeterminate when only some are on)
+  document.getElementById("demo").innerHTML =
+    '<fieldset class="bog-toggle-group" id="demo-group"><legend class="bog-toggle-group__label">Notifications</legend>' +
+    row({ label: false, title: "All notifications", desc: "Turns every notification on or off", ind: 1 }) +
+    row({ label: false, title: "Payments and transfers", desc: false, on: 1 }) +
+    row({ label: false, title: "Offers", desc: false }) +
+    '<p class="bog-toggle-group__message">You can change these any time</p></fieldset>';
+  const [parent, ...kids] = document.querySelectorAll("#demo-group .bog-toggle__input");
+  function sync() {
+    const on = kids.filter((k) => k.checked).length;
+    parent.checked = on === kids.length;
+    parent.indeterminate = on > 0 && on < kids.length;
+    if (window.BOG && BOG.toggleSync) BOG.toggleSync();
+  }
+  parent.addEventListener("change", () => { kids.forEach((k) => { k.checked = parent.checked; }); sync(); });
+  kids.forEach((k) => k.addEventListener("change", sync));
+  window.addEventListener("DOMContentLoaded", sync);
+  document.getElementById("toggle-slow").addEventListener("change", (e) => {
+    document.getElementById("demo").style.setProperty("--bog-toggle-slow", e.target.checked ? "10" : "1");
+  });
+
+  // ---- Motion handoff ----
+  const FIG = "https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=";
+  const timeline = (rows, max) => {
+    const pct = (ms) => (ms / max * 100).toFixed(2) + "%";
+    return `<div class="motion-tl">${rows.map(([n, bars]) => `<span>${n}</span><div class="motion-tl__track">${bars.map(([st, l]) =>
+      `<span class="motion-tl__bar" style="left:${pct(st)};width:${pct(l)}">${l}</span>`).join("")}</div>`).join("")}` +
+      `<span></span><div class="motion-tl__axis">${Array.from({ length: 11 }, (_, i) => `<span>${i * max / 10}</span>`).join("")}</div></div>`;
+  };
+  const spec = (rows) => `<table class="motion-spec"><thead><tr><th>Layer</th><th>Property</th><th>Keyframes</th><th>Timing</th><th>Easing (cubic-bezier)</th></tr></thead><tbody>${rows.map((r) =>
+    `<tr>${r.map((c, i) => `<td>${i === 4 ? `<code>${c}</code>` : c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  const SPEC = [
+    ["Circle", "Position X", "0 → 20 (off → on), 20 → 0 (on → off)", "0–333 ms", "0.95, 0, 0.19, 1.37"],
+    ["Bg (track)", "Color", "Support/support_01 ↔ Button/primary-default", "83–333 ms (delay 83, 250 long)", "0.33, 0, 0.13, 1"]
+  ];
+  const SPEC_IND_IN = [
+    ["Bg (track)", "Color", "Support/support_01 → Button/primary-default", "0–100 ms", "0.33, 0, 0.67, 1"],
+    ["Circle", "Size", "20 × 20 → 16 × 2 (becomes the bar)", "0–200 ms", "0.33, 0, 0.05, 1"],
+    ["Circle", "Position X", "12 → 23 (+11)", "33–233 ms (delay 33)", "0.33, 0, 0.13, 1"],
+    ["Circle", "Position X", "23 → 22 (settles back 1)", "233–383 ms", "0.33, 0, 0, 1"]
+  ];
+  const SPEC_IND_ON = [
+    ["Circle", "Size", "16 × 2 → 20 × 20 (back to a circle)", "0–150 ms", "0.17, 0, 0.67, 1"],
+    ["Circle", "Position X", "22 → 33 (+11)", "0–200 ms", "0.33, 0, 0.22, 1"],
+    ["Circle", "Position X", "33 → 32 (settles back 1)", "200–300 ms", "0.33, 0, 0.16, 1"],
+    ["Bg (track)", "Color", "stays Button/primary-default", "—", "—"]
+  ];
+  document.getElementById("motion-design").innerHTML =
+    "<p>Values are px (web) = pt (iOS) = dp (Android). Off ↔ On: Position X is the circle's move from its off spot; the guide's 19.88 rounds to the 20 px between the two spots. Indeterminate: Position X is the circle's <em>centre</em> in the 44 × 24 track (off 12, bar 22, on 32), and the circle keeps its centre while it changes size.</p>" +
+    `<h3>Off ↔ On<a href="${FIG}2-668" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    timeline([["Circle · Position X", [[0, 333]]], ["Bg · Color", [[83, 250]]]], 500) + spec(SPEC) +
+    `<h3>Off → Indeterminate<a href="${FIG}1126-8962" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    timeline([["Bg · Color", [[0, 100]]], ["Circle · Size", [[0, 200]]], ["Circle · Position X", [[33, 200], [233, 150]]]], 500) + spec(SPEC_IND_IN) +
+    `<h3>Indeterminate → On<a href="${FIG}1126-8962" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    timeline([["Circle · Size", [[0, 150]]], ["Circle · Position X", [[0, 200], [200, 100]]]], 500) + spec(SPEC_IND_ON) +
+    "<h3>Rules</h3><ul>" +
+      "<li>The Off ↔ On curve's last value (1.37) overshoots: the circle passes its spot by about 7 px and comes back. Don't clamp it.</li>" +
+      "<li>Turning off plays the same timings in reverse direction: the circle slides left, the track turns grey after 83 ms.</li>" +
+      "<li>The guide has no On → Indeterminate or Indeterminate → Off. Play them mirrored: On → Indeterminate uses Off → Indeterminate's timings sliding left (32 → 21 → 22, no colour change); Indeterminate → Off uses Indeterminate → On's timings sliding left (22 → 11 → 12) with the 100 ms colour change.</li>" +
+      "<li>Indeterminate is set by the app (a parent switch whose settings are partly on). Tapping it turns it On.</li>" +
+      "<li>Off ↔ On: tapping again mid-way starts from where the circle is now; it doesn't jump to an end first.</li>" +
+      "<li>Inverse uses the same timings with its own colours; read-only and skeleton don't animate.</li>" +
+      "<li>Reduce Motion / Remove animations on: switch instantly.</li>" +
+    "</ul>" +
+    '<div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="design">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="spec">Copy spec as text</button></div>';
+  const SPEC_TEXT = ["Toggle Switch motion", "Off ↔ On: " + FIG + "2-668", "Indeterminate: " + FIG + "1126-8962", "Units: px = pt = dp.",
+    "OFF ↔ ON (same timings both ways)", ...SPEC.map((r) => "  " + r.join("  ·  ")),
+    "OFF → INDETERMINATE (X = circle centre in the 44×24 track)", ...SPEC_IND_IN.map((r) => "  " + r.join("  ·  ")),
+    "INDETERMINATE → ON", ...SPEC_IND_ON.map((r) => "  " + r.join("  ·  ")),
+    "On → Indeterminate / Indeterminate → Off: mirrored. Reduce Motion: instant."].join("\n");
+
+  const CODE = {
+    web: `<!-- Built in: toggle.css animates every .bog-toggle__input. -->
+<input type="checkbox" role="switch" class="bog-toggle__input" aria-label="Contactless payments">
+
+/* toggle.css */
+.bog-toggle__input {
+  transition: background-color 250ms cubic-bezier(0.33, 0, 0.13, 1) 83ms;   /* Bg */
+}
+.bog-toggle__input::before {
+  transition: translate 333ms cubic-bezier(0.95, 0, 0.19, 1.37);            /* Circle */
+}
+.bog-toggle__input:checked::before { translate: 20px 0; }
+@media (prefers-reduced-motion: reduce) {
+  .bog-toggle__input, .bog-toggle__input::before { transition: none; }
+}
+
+<!-- In and out of Indeterminate: bog-ui.js plays the two-step move after a tap.
+     If you set .indeterminate in code, call BOG.toggleSync() right after. -->
+<script>
+  parent.indeterminate = someOn && !allOn;
+  BOG.toggleSync();
+<\/script>`,
+    ios: `import SwiftUI
+
+struct BOGToggleStyle: ToggleStyle {
+    @Environment(\\.accessibilityReduceMotion) private var reduceMotion
+
+    func makeBody(configuration: Configuration) -> some View {
+        let on = configuration.isOn
+        Capsule()
+            .fill(on ? Color("Button/primary-default") : Color("Support/support_01"))
+            .animation(reduceMotion ? nil : .timingCurve(0.33, 0, 0.13, 1, duration: 0.25).delay(0.083), value: on)   // Bg
+            .frame(width: 44, height: 24)
+            .overlay(alignment: .leading) {
+                Circle().fill(.white).frame(width: 20, height: 20)
+                    .offset(x: on ? 22 : 2)
+                    .animation(reduceMotion ? nil : .timingCurve(0.95, 0, 0.19, 1.37, duration: 0.333), value: on)   // Circle
+            }
+            .contentShape(Rectangle())
+            .onTapGesture { configuration.isOn.toggle() }
+            .accessibilityAddTraits(.isToggle)
+    }
+}
+
+// Toggle("Push notifications", isOn: $on).toggleStyle(BOGToggleStyle())
+
+// ---- In and out of Indeterminate ----
+// Draw the knob as a capsule whose size and centre animate (centre X: off 12, bar 22, on 32).
+enum BOGToggleValue { case off, indeterminate, on }
+
+struct BOGToggleKnob: View {
+    let value: BOGToggleValue
+    @State private var size = CGSize(width: 20, height: 20)
+    @State private var x: CGFloat = 12
+
+    var body: some View {
+        Capsule().fill(.white).frame(width: size.width, height: size.height)
+            .position(x: x, y: 12)
+            .onChange(of: value) { _, to in
+                let toBar = to == .indeterminate
+                let target: CGFloat = to == .on ? 32 : to == .off ? 12 : 22
+                let push: CGFloat = target > x ? 1 : -1                     // overshoot side
+                withAnimation(toBar ? .timingCurve(0.33, 0, 0.05, 1, duration: 0.2)
+                                    : .timingCurve(0.17, 0, 0.67, 1, duration: 0.15)) {
+                    size = toBar ? CGSize(width: 16, height: 2) : CGSize(width: 20, height: 20)
+                }
+                let first = toBar ? Animation.timingCurve(0.33, 0, 0.13, 1, duration: 0.2).delay(0.033)
+                                  : .timingCurve(0.33, 0, 0.22, 1, duration: 0.2)
+                withAnimation(first) { x = target + push } completion: {
+                    withAnimation(toBar ? .timingCurve(0.33, 0, 0, 1, duration: 0.15)
+                                        : .timingCurve(0.33, 0, 0.16, 1, duration: 0.1)) { x = target }
+                }
+            }
+    }
+}
+// Track colour into / out of Indeterminate: .timingCurve(0.33, 0, 0.67, 1, duration: 0.1), no delay.`,
+    android: `import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
+
+private val CircleEasing = CubicBezierEasing(0.95f, 0f, 0.19f, 1.37f)
+private val BgEasing = CubicBezierEasing(0.33f, 0f, 0.13f, 1f)
+
+@Composable
+fun BOGToggle(checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    val x by animateDpAsState(if (checked) 22.dp else 2.dp, tween(333, easing = CircleEasing), label = "circle")
+    val bg by animateColorAsState(if (checked) BOG.buttonPrimaryDefault else BOG.supportSupport01,
+        tween(250, delayMillis = 83, easing = BgEasing), label = "bg")
+    Box(
+        Modifier.size(44.dp, 24.dp).clip(CircleShape).background(bg)
+            .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
+    ) {
+        Box(Modifier.offset(x = x, y = 2.dp).size(20.dp).background(Color.White, CircleShape))
+    }
+}
+
+// ---- In and out of Indeterminate ----
+// Knob centre X: off 12, bar 22, on 32. Two-step X (slide 11, settle back 1) via keyframes.
+enum class BOGToggleValue { Off, Indeterminate, On }
+
+@Composable
+fun BOGToggleKnob(value: BOGToggleValue) {
+    val toBar = value == BOGToggleValue.Indeterminate
+    val target = when (value) { BOGToggleValue.Off -> 12f; BOGToggleValue.Indeterminate -> 22f; else -> 32f }
+    val x = remember { Animatable(12f) }
+    LaunchedEffect(value) {
+        val start = x.value
+        val push = if (target > start) 1f else -1f
+        x.animateTo(target, keyframes {
+            durationMillis = if (toBar) 383 else 300
+            if (toBar) start at 33 using CubicBezierEasing(0.33f, 0f, 0.13f, 1f)
+            else start at 0 using CubicBezierEasing(0.33f, 0f, 0.22f, 1f)
+            (target + push) at (if (toBar) 233 else 200) using CubicBezierEasing(0.33f, 0f, if (toBar) 0f else 0.16f, 1f)
+        })
+    }
+    val sizeSpec = if (toBar) tween<Dp>(200, easing = CubicBezierEasing(0.33f, 0f, 0.05f, 1f))
+                   else tween(150, easing = CubicBezierEasing(0.17f, 0f, 0.67f, 1f))
+    val w by animateDpAsState(if (toBar) 16.dp else 20.dp, sizeSpec, label = "w")
+    val h by animateDpAsState(if (toBar) 2.dp else 20.dp, sizeSpec, label = "h")
+    Box(Modifier.offset(x = x.value.dp - w / 2, y = 12.dp - h / 2).size(w, h).background(Color.White, CircleShape))
+}
+// Track colour into / out of Indeterminate: tween(100, easing = CubicBezierEasing(0.33f, 0f, 0.67f, 1f)).
+
+// Compose follows the system "Remove animations" setting (animator duration scale 0) automatically.`
+  };
+  document.querySelectorAll("[data-snippet]").forEach((c) => { c.textContent = CODE[c.dataset.snippet]; });
+
+  // Tabs (shareable via #motion-ios etc.) + copy buttons
+  const tabs = document.querySelectorAll(".motion-tabs [data-tab]");
+  function openTab(name) {
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+    document.querySelectorAll(".motion-pane").forEach((p) => { p.hidden = p.dataset.pane !== name; });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => { openTab(t.dataset.tab); history.replaceState(null, "", "#motion-" + t.dataset.tab); }));
+  const fromHash = location.hash.match(/^#motion-(design|ios|android|web)$/);
+  if (fromHash) { openTab(fromHash[1]); document.getElementById("motion").scrollIntoView(); }
+  function copy(btn, text) {
+    navigator.clipboard.writeText(text).then(() => { const was = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = was; }, 1200); });
+  }
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("[data-copy-link]"), code = e.target.closest("[data-copy]");
+    if (link) copy(link, location.href.split("#")[0] + "#motion-" + link.dataset.copyLink);
+    if (code) copy(code, code.dataset.copy === "spec" ? SPEC_TEXT : CODE[code.dataset.copy]);
+  });
+</script>
   </main>
 </div>
-<script>
-
-</script>
 </body>
 </html>

@@ -85,7 +85,17 @@
 .bog-hero[data-gradient] {
   --_g: var(--product-default-layer-01);
   --_base: transparent;
-  /* Colour holds across the whole hero (content, feedback, buttons) and only fades out at the bottom edge */
+  position: relative;
+  isolation: isolate;
+}
+/* The background is its own layer, so the motion can fade it without fading the content.
+   Colour holds across the whole hero (content, feedback, buttons) and only fades out at the bottom edge */
+.bog-hero[data-gradient]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
   background:
     linear-gradient(180deg,
       var(--_g) 0%,
@@ -101,6 +111,21 @@
 .bog-hero[data-gradient="brown"] { --_g: var(--hero-gradient-brown); }
 .bog-hero:is([data-gradient="green"], [data-gradient="brown"]) .bog-hero__title { color: var(--text-white-primary); }
 .bog-hero:is([data-gradient="green"], [data-gradient="brown"]) :is(.bog-hero__label, .bog-hero__desc) { color: var(--text-white-secondary); }
+
+/* ---- Motion -------------------------------------------------------------
+   Figma: Component Motion Guidelines › Hero Area (83:449) — Load and Slider. bog-ui.js runs both.
+   BOG.heroIn(hero)        background fades in (600ms, linear); every slot rises 20px and fades in,
+                           each 66.7ms after the one above it — the same rhythm for any number of slots.
+                           Slots = media, label, title, description, badges, feedback, actions, in that order.
+                           Mark a child data-hero-static (e.g. the Navigation bar) to leave it out.
+   Slider — heroes stacked in one cell; BOG.heroSlide(slider, index) slides between them:
+     <div class="bog-hero-slider">
+       <section class="bog-hero" data-gradient="peach" data-active>…</section>
+       <section class="bog-hero" data-gradient="green">…</section>
+     </div>                                                                                        */
+.bog-hero-slider { display: grid; overflow: hidden; }
+.bog-hero-slider > .bog-hero { grid-area: 1 / 1; }
+.bog-hero-slider > .bog-hero:not([data-active]) { visibility: hidden; }
 
 /* ---- Skeleton ----------------------------------------------------------- */
 .bog-hero[data-state="skeleton"] { pointer-events: none; }

@@ -6,8 +6,30 @@
 <title>Number Input — BOG UI</title>
 <link rel="stylesheet" href="../bog-ui.css">
 <link rel="stylesheet" href="docs.css">
+<script src="theme.js"></script>
 <script src="../bog-ui.js" defer></script>
 <script src="components.js" defer></script>
+<script src="input-motion.js" defer></script>
+<style>
+  /* Motion handoff section (this page only) */
+  .motion-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .motion-bar label { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+  .motion-tabs { display: flex; margin: 0 0 16px; border-bottom: 1px solid var(--docs-line); }
+  .motion-tabs button { margin-bottom: -1px; padding: 10px 16px; border: 0; border-bottom: 2px solid transparent; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--docs-muted); cursor: pointer; }
+  .motion-tabs button[aria-selected="true"] { border-bottom-color: var(--docs-accent); color: var(--docs-fg); }
+  .motion-pane[hidden] { display: none; }
+  .motion-pane > p, .motion-pane li { max-width: 760px; font-size: 14px; line-height: 22px; }
+  .motion-pane h3 { margin: 24px 0 8px; font-size: 15px; }
+  .motion-actions { display: flex; gap: 8px; margin: 12px 0 0; }
+  .motion-spec { border-spacing: 0; width: 100%; font-size: 13px; }
+  .motion-spec th, .motion-spec td { padding: 10px 12px; border-bottom: 1px solid var(--docs-line); text-align: left; vertical-align: top; }
+  .motion-spec td code { white-space: nowrap; }
+  .motion-tl { display: grid; grid-template-columns: 170px 1fr; gap: 10px 16px; align-items: center; max-width: 760px; font-size: 13px; }
+  .motion-tl__track { position: relative; height: 22px; border-radius: 6px; background: repeating-linear-gradient(90deg, var(--docs-line) 0 1px, transparent 1px 12.5%); }
+  .motion-tl__bar { position: absolute; top: 3px; bottom: 3px; border-radius: 4px; background: var(--text-accent); color: #fff; font-size: 11px; line-height: 16px; text-align: center; }
+  .motion-tl__bar[data-kind="fade"] { background: var(--docs-muted); }
+  .motion-tl__axis { display: flex; justify-content: space-between; color: var(--docs-muted); font-size: 11px; }
+</style>
 </head>
 <body>
 <div class="docs">
@@ -38,6 +60,243 @@
     <p class="lead">Type a number or use − / +. Limits: 0–10.</p>
     <div class="panel"><div style="width:316px;min-width:316px" id="demo"></div></div>
 
+    <h2 id="motion">Motion</h2>
+    <p class="lead">When − or + is tapped, the button gives a small squeeze, and the old number slides away and fades out while the new one slides in from the other side.
+      Source: <a href="https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=362-9475" target="_blank" rel="noopener">Component Motion Guidelines › Numeric Stepper ↗</a></p>
+
+    <div class="panel">
+      <div class="motion-bar">
+        <div style="width:316px;min-width:316px" id="motion-demo"></div>
+        <label><input type="checkbox" id="motion-slow"> Slow motion (×10)</label>
+      </div>
+
+      <div class="motion-tabs" role="tablist">
+        <button role="tab" data-tab="design" aria-selected="true">Designers</button>
+        <button role="tab" data-tab="ios">iOS · SwiftUI</button>
+        <button role="tab" data-tab="android">Android · Compose</button>
+        <button role="tab" data-tab="web">Web</button>
+      </div>
+
+      <!-- Designers -->
+      <section class="motion-pane" id="motion-design" data-pane="design">
+        <p>Two things happen on every tap, starting together:</p>
+        <ul>
+          <li><b>Button squeeze (334 ms):</b> the tapped button shrinks to <b>90%</b>, then springs back to 100% with a slight overshoot.</li>
+          <li><b>Number roll (200 ms):</b> the digits travel only <b>3.75 px</b>, so it reads as a soft "tick", not a slide.
+            <b>+</b> moves them <b>down</b> (the new number drops in from above); <b>−</b> mirrors it and moves them <b>up</b>.</li>
+        </ul>
+        <h3>Timeline (tap +)</h3>
+        <div class="motion-tl" id="motion-tl"></div>
+        <h3>Spec</h3>
+        <table class="motion-spec">
+          <thead><tr><th>Layer</th><th>Property</th><th>From → To</th><th>Delay</th><th>Duration</th><th>Easing</th></tr></thead>
+          <tbody>
+            <tr><td>Tapped button</td><td>Scale</td><td><code>100% → 90%</code></td><td>0 ms</td><td>167 ms</td><td><code>cubic-bezier(0.33, 0, 0.25, 1)</code></td></tr>
+            <tr><td>Tapped button</td><td>Scale</td><td><code>90% → 100%</code></td><td>167 ms</td><td>167 ms</td><td><code>cubic-bezier(0.44, 0, 0.30, 2.08)</code><br><small>overshoots past 100%, then settles</small></td></tr>
+            <tr><td>Old value</td><td>Position Y</td><td><code>0 → +3.75</code></td><td>0 ms</td><td>167 ms</td><td rowspan="4"><code>cubic-bezier(0.33, 0, 0.25, 1)</code></td></tr>
+            <tr><td>Old value</td><td>Opacity</td><td><code>100% → 0%</code></td><td>0 ms</td><td>83 ms</td></tr>
+            <tr><td>New value</td><td>Position Y</td><td><code>−3.75 → 0</code></td><td>33 ms</td><td>167 ms</td></tr>
+            <tr><td>New value</td><td>Opacity</td><td><code>0% → 100%</code></td><td>33 ms</td><td>83 ms</td></tr>
+          </tbody>
+        </table>
+        <h3>Rules</h3>
+        <ul>
+          <li>Values are in px (web) = pt (iOS) = dp (Android).</li>
+          <li><b>Only digits that change roll.</b> Digits are compared position by position: 12 → 13 rolls just the last digit, 19 → 20 rolls both, 9 → 10 rolls both (the "0" is new).</li>
+          <li>Old and new digits overlap at the same spot; nothing clips them.</li>
+          <li>Typing a number does not animate, only − / + do. Going from an empty field to the first number doesn't animate either (the label floats instead).</li>
+          <li>The button scales from its center. Only the tapped button animates; a disabled one (at the min / max limit) doesn't.</li>
+          <li>Reduce Motion / Remove animations on: no squeeze, swap the number instantly.</li>
+        </ul>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="design">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="spec">Copy spec as text</button></div>
+      </section>
+
+      <!-- iOS -->
+      <section class="motion-pane" id="motion-ios" data-pane="ios" hidden>
+        <p>Each digit position gets its own <code>ZStack</code> keyed by the digit, so only digits that change roll, and the old and new digit overlap during the transition. Pass the direction of the last tap.</p>
+        <pre><code data-snippet="ios">import SwiftUI
+
+extension Animation {
+    // Component Motion Guidelines › Numeric Stepper
+    static let stepperMove = Animation.timingCurve(0.33, 0, 0.25, 1, duration: 0.167)
+    static let stepperFade = Animation.timingCurve(0.33, 0, 0.25, 1, duration: 0.083)
+}
+
+extension AnyTransition {
+    /// direction: 1 after "+", -1 after "−"
+    static func stepperRoll(_ direction: CGFloat) -&gt; AnyTransition {
+        let shift: CGFloat = 3.75
+        return .asymmetric(
+            insertion: AnyTransition.offset(y: -shift * direction).animation(.stepperMove.delay(0.033))
+                .combined(with: AnyTransition.opacity.animation(.stepperFade.delay(0.033))),
+            removal: AnyTransition.offset(y: shift * direction).animation(.stepperMove)
+                .combined(with: AnyTransition.opacity.animation(.stepperFade))
+        )
+    }
+}
+
+struct StepperValue: View {
+    let value: Int
+    let direction: CGFloat
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        let digits = Array(String(value))
+        let roll: AnyTransition = reduceMotion ? .identity : .stepperRoll(direction)
+        // One slot per digit position: only a digit that changes gets a new id, so only it rolls
+        // (12 → 13 rolls just the "3"; 19 → 20 rolls both).
+        HStack(spacing: 0) {
+            ForEach(digits.indices, id: \.self) { i in
+                ZStack {
+                    Text(String(digits[i]))
+                        .id(digits[i])
+                        .transition(roll)
+                }
+                .transition(roll)   // a new position (9 → 10) rolls in too
+            }
+        }
+    }
+}
+
+// Button squeeze: 100% → 90% (167 ms) → 100% (167 ms, overshoot). iOS 17+.
+struct StepperBump: ViewModifier {
+    let trigger: Int   // bump it on every tap
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -&gt; some View {
+        if reduceMotion { content } else {
+            content.keyframeAnimator(initialValue: CGFloat(1), trigger: trigger) { view, scale in
+                view.scaleEffect(scale)
+            } keyframes: { _ in
+                KeyframeTrack(\.self) {
+                    LinearKeyframe(0.9, duration: 0.167, timingCurve: .bezier(
+                        startControlPoint: UnitPoint(x: 0.33, y: 0), endControlPoint: UnitPoint(x: 0.25, y: 1)))
+                    LinearKeyframe(1.0, duration: 0.167, timingCurve: .bezier(
+                        startControlPoint: UnitPoint(x: 0.44, y: 0), endControlPoint: UnitPoint(x: 0.30, y: 2.08)))
+                }
+            }
+        }
+    }
+}
+
+// Usage
+// @State private var value = 0
+// @State private var direction: CGFloat = 1
+// @State private var minusTaps = 0, plusTaps = 0
+// Button { direction = -1; minusTaps += 1; withAnimation(.stepperMove) { value -= 1 } } label: { Image(systemName: "minus") }
+//     .modifier(StepperBump(trigger: minusTaps))
+// StepperValue(value: value, direction: direction)
+// Button { direction = 1; plusTaps += 1; withAnimation(.stepperMove) { value += 1 } } label: { Image(systemName: "plus") }
+//     .modifier(StepperBump(trigger: plusTaps))</code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="ios">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="ios">Copy code</button></div>
+      </section>
+
+      <!-- Android -->
+      <section class="motion-pane" id="motion-android" data-pane="android" hidden>
+        <p>Each digit position has its own <code>AnimatedContent</code>, so only the digits that change animate. Pass the direction of the last tap.
+          Note: a digit position that is added (9 → 10) appears without the roll in this version.</p>
+        <pre><code data-snippet="android">import androidx.compose.animation.*
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.Row
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+
+// Component Motion Guidelines › Numeric Stepper
+private val StepperEasing = CubicBezierEasing(0.33f, 0f, 0.25f, 1f)
+private const val MOVE_MS = 167
+private const val FADE_MS = 83
+private const val DELAY_MS = 33
+
+@Composable
+fun StepperValue(value: Int, direction: Int, modifier: Modifier = Modifier) {   // direction: 1 after "+", -1 after "−"
+    val shift = with(LocalDensity.current) { 3.75.dp.roundToPx() }
+    // One AnimatedContent per digit position: only a digit that changes animates
+    // (12 → 13 rolls just the "3"; 19 → 20 rolls both).
+    Row(modifier) {
+        value.toString().forEachIndexed { i, digit -&gt;
+            key(i) {
+                AnimatedContent(
+                    targetState = digit,
+                    transitionSpec = {
+                        (slideInVertically(tween(MOVE_MS, DELAY_MS, StepperEasing)) { -shift * direction } +
+                            fadeIn(tween(FADE_MS, DELAY_MS, StepperEasing))) togetherWith
+                            (slideOutVertically(tween(MOVE_MS, 0, StepperEasing)) { shift * direction } +
+                                fadeOut(tween(FADE_MS, 0, StepperEasing))) using
+                            SizeTransform(clip = false)
+                    },
+                    label = "stepper-digit-$i",
+                ) { Text(it.toString()) }
+            }
+        }
+    }
+}
+
+// Button squeeze: 100% → 90% (167 ms) → 100% (167 ms, overshoot)
+private val ReleaseEasing = CubicBezierEasing(0.44f, 0f, 0.30f, 2.08f)
+
+@Composable
+fun StepperButton(onClick: () -&gt; Unit, enabled: Boolean = true, content: @Composable () -&gt; Unit) {
+    val scale = remember { Animatable(1f) }
+    val scope = rememberCoroutineScope()
+    IconButton(
+        onClick = {
+            onClick()
+            scope.launch {
+                scale.animateTo(0.9f, tween(MOVE_MS, 0, StepperEasing))
+                scale.animateTo(1f, tween(MOVE_MS, 0, ReleaseEasing))
+            }
+        },
+        enabled = enabled,
+        modifier = Modifier.graphicsLayer { scaleX = scale.value; scaleY = scale.value },
+    ) { content() }
+}
+
+// Usage
+// var value by remember { mutableIntStateOf(0) }
+// var direction by remember { mutableIntStateOf(1) }
+// Row(verticalAlignment = Alignment.CenterVertically) {
+//     StepperButton({ direction = -1; value-- }) { Icon(Icons.Default.Remove, "Decrease") }
+//     StepperValue(value, direction)
+//     StepperButton({ direction = 1; value++ }) { Icon(Icons.Default.Add, "Increase") }
+// }
+// Compose follows the system "Remove animations" setting (animator duration scale 0) automatically.</code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="android">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="android">Copy code</button></div>
+      </section>
+
+      <!-- Web -->
+      <section class="motion-pane" id="motion-web" data-pane="web" hidden>
+        <p>Built into <code>bog-ui.js</code>: any <code>.bog-number-input</code> animates when − / + is tapped, so prototypes need no extra code. Under <code>prefers-reduced-motion: reduce</code> the number swaps instantly. The values, for reference:</p>
+        <pre><code data-snippet="web">const EASE = "cubic-bezier(0.33, 0, 0.25, 1)";
+const dir = 1;  // + = 1 (down), − = -1 (up)
+
+oldEl.animate({ transform: ["translateY(0)", `translateY(${3.75 * dir}px)`] }, { duration: 167, easing: EASE, fill: "forwards" });
+oldEl.animate({ opacity: [1, 0] },                                          { duration: 83,  easing: EASE, fill: "forwards" });
+newEl.animate({ transform: [`translateY(${-3.75 * dir}px)`, "translateY(0)"] }, { duration: 167, delay: 33, easing: EASE, fill: "backwards" });
+newEl.animate({ opacity: [0, 1] },                                          { duration: 83,  delay: 33, easing: EASE, fill: "backwards" });
+
+// Button squeeze, on the tapped − / + button
+button.animate([
+  { transform: "scale(1)",   easing: EASE },
+  { transform: "scale(0.9)", easing: "cubic-bezier(0.44, 0, 0.30, 2.08)" },
+  { transform: "scale(1)" }
+], { duration: 334 });</code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="web">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="web">Copy code</button></div>
+      </section>
+    </div>
+
+    <div id="input-motion"></div>
+
     <h2>States</h2>
     <div class="panel"><table id="matrix"></table></div>
 
@@ -47,6 +306,57 @@
   document.getElementById("demo").innerHTML = ni({ value: "1", msg: 1, limits: 1 });
   const ROWS = [["Default", {}], ["Active", {state: "active"}], ["Typing", {state: "typing", value: "100"}], ["Filled", {value: "100"}], ["Typing · Success", {state: "typing", value: "100", v: "success"}], ["Filled · Success", {value: "100", v: "success"}], ["Default · Error", {v: "error"}], ["Filled · Error", {value: "100", v: "error"}], ["Filled · Warning", {value: "100", v: "warning"}], ["Read-only", {value: "100", readonly: 1}], ["Disabled", {disabled: 1}], ["Disabled · Filled", {value: "100", disabled: 1}], ["Skeleton", {state: "skeleton"}]];
   document.getElementById("matrix").innerHTML = ROWS.map(([n, o]) => `<tr><th>${n}</th><td style="width:316px;min-width:316px">${ni(o)}</td></tr>`).join("");
+
+  // ---- Motion section ----
+  document.getElementById("motion-demo").innerHTML = ni({ value: "18" });
+
+  // Slow motion: stretch the animations bog-ui.js starts on the same click (next tick, after its handler)
+  const slow = document.getElementById("motion-slow");
+  document.addEventListener("click", (e) => {
+    if (!slow.checked || !e.target.closest(".bog-number-input [data-step]")) return;
+    setTimeout(() => document.getAnimations().forEach((a) => {
+      if (a.effect && a.effect.target && a.effect.target.closest(".bog-number-input")) a.playbackRate = 0.1;
+    }));
+  });
+
+  // Timeline (0–360 ms)
+  const TL = [["Button · Scale 100 → 90%", 0, 167, "move"], ["Button · Scale 90 → 100%", 167, 167, "move"], ["Old value · Position Y", 0, 167, "move"], ["Old value · Opacity", 0, 83, "fade"], ["New value · Position Y", 33, 167, "move"], ["New value · Opacity", 33, 83, "fade"]];
+  const pct = (ms) => (ms / 360 * 100).toFixed(2) + "%";
+  document.getElementById("motion-tl").innerHTML = TL.map(([n, d, l, k]) =>
+    `<span>${n}</span><div class="motion-tl__track"><span class="motion-tl__bar" data-kind="${k}" style="left:${pct(d)};width:${pct(l)}">${l} ms</span></div>`).join("") +
+    `<span></span><div class="motion-tl__axis">${[0, 45, 90, 135, 180, 225, 270, 315, 360].map((t) => `<span>${t}</span>`).join("")}</div>`;
+
+  // Tabs, opened from the URL hash (#motion-ios, #motion-android, …) so links can be shared
+  const tabs = document.querySelectorAll(".motion-tabs [data-tab]");
+  function openTab(name) {
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+    document.querySelectorAll(".motion-pane").forEach((p) => { p.hidden = p.dataset.pane !== name; });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => { openTab(t.dataset.tab); history.replaceState(null, "", "#motion-" + t.dataset.tab); }));
+  const fromHash = location.hash.match(/^#motion-(design|ios|android|web)$/);
+  if (fromHash) { openTab(fromHash[1]); document.getElementById("motion").scrollIntoView(); }
+
+  // Copy buttons
+  const SPEC = `Number Input · Numeric Stepper motion
+Source: https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=362-9475
+Trigger: tap − or + (typing does not animate). Total 334 ms.
+Easing: cubic-bezier(0.33, 0, 0.25, 1) unless noted
+Button     Scale       100 → 90%   delay 0 ms   167 ms
+Button     Scale       90 → 100%   delay 167 ms 167 ms  cubic-bezier(0.44, 0, 0.30, 2.08) (overshoot)
+Old value  Position Y  0 → +3.75   delay 0 ms   167 ms
+Old value  Opacity     100 → 0%    delay 0 ms   83 ms
+New value  Position Y  −3.75 → 0   delay 33 ms  167 ms
+New value  Opacity     0 → 100%    delay 33 ms  83 ms
++ moves digits down, − mirrors it (up). Units: px = pt = dp.
+Only digits that change roll (compared position by position): 12 → 13 rolls only the last digit.
+Reduce Motion: no squeeze, swap the number instantly.`;
+  function copy(btn, text) {
+    navigator.clipboard.writeText(text).then(() => { const was = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = was; }, 1200); });
+  }
+  document.querySelectorAll("[data-copy-link]").forEach((b) => b.addEventListener("click", () =>
+    copy(b, location.href.split("#")[0] + "#motion-" + b.dataset.copyLink)));
+  document.querySelectorAll("[data-copy]").forEach((b) => b.addEventListener("click", () =>
+    copy(b, b.dataset.copy === "spec" ? SPEC : document.querySelector(`[data-snippet="${b.dataset.copy}"]`).textContent)));
 
 </script>
   </main>

@@ -38,7 +38,7 @@
 <script>
   const v = document.getElementById("variants"), C = '<span class="bog-code__cell"></span>'.repeat(4);
   [["Medium · Empty", 'data-size="medium"', ""], ["Medium · Filled 2 (active)", 'data-size="medium" data-active', "12"], ["Large · Masked 3", 'data-size="large" data-mask data-active', "123"], ["Medium · Error", 'data-size="medium" data-validation="error"', "0000"], ["Large · Loading", 'data-size="large" data-mask data-state="loading"', "1234"]]
-    .forEach(([l, a, val], i) => { v.insertAdjacentHTML("beforeend", `<div><div class="row-label"><code>${l}</code></div><div class="bog-code" ${a} id="v${i}">${C}</div></div>`); setTimeout(() => { const e = document.getElementById("v" + i); const err = e.getAttribute("data-validation"); BOG.setCode(e, val); if (err) e.setAttribute("data-validation", err); }); });
+    .forEach(([l, a, val], i) => { v.insertAdjacentHTML("beforeend", `<div><div class="row-label"><code>${l}</code></div><div class="bog-code" ${a} id="v${i}">${C}</div></div>`); addEventListener("DOMContentLoaded", () => { const e = document.getElementById("v" + i); const err = e.getAttribute("data-validation"); BOG.setCode(e, val); if (err) e.setAttribute("data-validation", err); }); });
   const t = document.getElementById("try-otp");
   t.addEventListener("codecomplete", e => { if (e.detail.value === "0000") t.setAttribute("data-validation", "error"); document.getElementById("try-out").textContent = "codecomplete: " + e.detail.value; });
 </script>

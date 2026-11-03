@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Menu — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="menu"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Menu</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">A grey pill with a chevron (Onboarding OTP screen) that opens an iOS-style pull-down menu: blurred light panel, 17pt rows, a checkmark on the chosen row. The panel copies Apple's native menu on purpose, so it uses Apple's font and colors, not BOG tokens. Use it for a short switch like the code delivery method. For longer lists, use Select (it opens a Bottom Sheet).</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-menu" id="otp-method"&gt;
+  &lt;button type="button" class="bog-menu__trigger" aria-haspopup="menu" aria-expanded="false"&gt;
+    &lt;span class="bog-menu__value"&gt;SMS კოდი&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;div class="bog-menu__panel" role="menu"&gt;
+    &lt;button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="true" data-value="sms"&gt;SMS კოდი&lt;/button&gt;
+    &lt;button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="false" data-value="email"&gt;ელფოსტა&lt;/button&gt;
+    &lt;button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="false" data-value="whatsapp"&gt;WhatsApp&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+    <p>Selected row = <code>aria-checked="true"</code>. On <code>.bog-menu</code>: <code>data-align="start | end"</code> (default centered). Events: <code>menuchange</code> (<code>detail.value</code>, <code>detail.label</code>). JS: <code>BOG.selectMenu(el, value)</code>, <code>BOG.closeMenu()</code>.</p>
+
+    <h2>Try it</h2>
+    <div class="panel" style="min-height:260px;display:flex;gap:48px;justify-content:center;align-items:flex-start">
+      <div class="bog-menu" id="demo">
+        <button type="button" class="bog-menu__trigger" aria-haspopup="menu" aria-expanded="false"><span class="bog-menu__value">SMS კოდი</span></button>
+        <div class="bog-menu__panel" role="menu">
+          <button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="true" data-value="sms">SMS კოდი</button>
+          <button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="false" data-value="email">ელფოსტა</button>
+          <button type="button" class="bog-menu__item" role="menuitemradio" aria-checked="false" data-value="whatsapp">WhatsApp</button>
+        </div>
+      </div>
+    </div>
+    <p class="row-label" id="log"><code>Pick a method</code></p>
+  </main>
+</div>
+<script>
+  document.getElementById("demo").addEventListener("menuchange", e => { document.getElementById("log").innerHTML = `<code>menuchange: ${e.detail.value}</code>`; });
+</script>
+</body>
+</html>

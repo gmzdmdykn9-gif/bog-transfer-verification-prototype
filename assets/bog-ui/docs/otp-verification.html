@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OTP Verification — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="otp-verification"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>OTP Verification</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">The block for typing a one-time code: an optional SMS / Email choice, the code field, where the code went, a resend timer and a Resend button. It is made of library parts: Radio Button Group, Text Input, Inline Message and a Ghost Small Button. States: Default, Resend, Loading, Expired, plus Hard (hardware token) and Skeleton, each in Themed and Inverse Static.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-otp" data-timer="35"&gt;
+  &lt;fieldset class="bog-radio-group" data-direction="horizontal"&gt;                                  &lt;!-- optional: Selector (Radio Button Group) --&gt;
+    &lt;legend class="bog-radio-group__label"&gt;Where should we send the verification code?&lt;/legend&gt;
+    &lt;div class="bog-radio-group__options"&gt;
+      &lt;label class="bog-radio"&gt;&lt;span class="bog-radio__row"&gt;&lt;input type="radio" class="bog-radio__input" name="otp-to" checked&gt;&lt;span class="bog-radio__text"&gt;&lt;span class="bog-radio__title"&gt;SMS&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/label&gt;
+      &lt;label class="bog-radio"&gt;&lt;span class="bog-radio__row"&gt;&lt;input type="radio" class="bog-radio__input" name="otp-to"&gt;&lt;span class="bog-radio__text"&gt;&lt;span class="bog-radio__title"&gt;Email&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/fieldset&gt;
+  &lt;div class="bog-otp__form"&gt;
+    &lt;div class="bog-field"&gt;
+      &lt;label class="bog-field__box"&gt;&lt;span class="bog-field__text"&gt;
+        &lt;span class="bog-field__label"&gt;Enter 4-digit code&lt;/span&gt;
+        &lt;input class="bog-field__input" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder=" "&gt;
+      &lt;/span&gt;&lt;/label&gt;
+    &lt;/div&gt;
+    &lt;div class="bog-otp__info"&gt;
+      &lt;p class="bog-otp__message"&gt;We've sent a verification code to ••• •• 56 78&lt;/p&gt;
+      &lt;p class="bog-otp__timer"&gt;Resend code in &lt;b class="bog-otp__time"&gt;00:35&lt;/b&gt;&lt;/p&gt;   &lt;!-- optional: Timer-Resend --&gt;
+      &lt;span class="bog-inline-message bog-otp__expired" data-status="negative"&gt;This verification code has expired&lt;/span&gt;
+      &lt;div class="bog-otp__actions"&gt;
+        &lt;button type="button" class="bog-btn bog-otp__resend" data-type="ghost" data-size="small"&gt;&lt;span class="bog-icon" data-icon="retry"&gt;&lt;/span&gt;Resend code&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+    <table>
+      <tr><th>Figma property</th><th>Attribute on <code>.bog-otp</code></th></tr>
+      <tr><td>State = Default / Resend / Loading / Expired</td><td>no attribute · <code>data-state="resend | loading | expired"</code>. Use <code>BOG.setOtpState(el, state)</code> so Loading also disables the inputs and the button.</td></tr>
+      <tr><td>Verification Method = Hard</td><td><code>data-method="hard"</code>: message only, no timer or button</td></tr>
+      <tr><td>Appearance = Inverse Static</td><td><code>data-appearance="inverse"</code>, also on the field, radio group, inline message and button</td></tr>
+      <tr><td>Skeleton = True</td><td><code>data-skeleton</code></td></tr>
+      <tr><td>Selector / Timer-Resend = False</td><td>leave out the radio group / the <code>.bog-otp__timer</code></td></tr>
+    </table>
+    <p>Behavior (bog-ui.js): <code>data-timer="35"</code> counts down, then hides the timer and switches to Resend. Resend clears the field, restarts the timer and fires <code>otpresend</code>. Typing all digits fires <code>otpcomplete</code> (<code>detail.value</code>). On iPhone, <code>autocomplete="one-time-code"</code> suggests the code from the SMS.</p>
+
+    <h2>Try it</h2>
+    <div class="panel"><div style="width:326px" id="demo"></div></div>
+    <p class="row-label" id="demo-log"><code>Type 4 digits, or wait 10 s for Resend</code></p>
+
+    <h2>Variants: Themed</h2>
+    <div class="panel"><div id="themed" style="display:grid;grid-template-columns:repeat(2,326px);gap:32px;align-items:start"></div></div>
+
+    <h2>Variants: Inverse Static</h2>
+    <div class="panel dark"><div id="inverse" style="display:grid;grid-template-columns:repeat(2,326px);gap:32px;align-items:start"></div></div>
+
+  </main>
+</div>
+<script>
+  let n = 0;
+  const otp = (o = {}) => {
+    const inv = o.inverse ? ' data-appearance="inverse"' : "";
+    const name = "otp" + (n++);
+    const radio = (label, on) => `<label class="bog-radio"><span class="bog-radio__row"><input type="radio" class="bog-radio__input" name="${name}"${on ? " checked" : ""}><span class="bog-radio__text"><span class="bog-radio__title">${label}</span></span></span></label>`;
+    const selector = o.hard || o.selector === false ? "" : `<fieldset class="bog-radio-group" data-direction="horizontal"${inv}><legend class="bog-radio-group__label">Where should we send the verification code?</legend><div class="bog-radio-group__options">${radio("SMS", 1)}${radio("Email")}</div></fieldset>`;
+    return `<div class="bog-otp"${inv}${o.state ? ` data-state="${o.state}"` : ""}${o.hard ? ' data-method="hard"' : ""}${o.skeleton ? " data-skeleton" : ""}${o.timer ? ` data-timer="${o.timer}"` : ""}${o.id ? ` id="${o.id}"` : ""}>${selector}<div class="bog-otp__form"><div class="bog-field"${inv}><label class="bog-field__box"><span class="bog-field__text"><span class="bog-field__label">Enter 4-digit code</span><input class="bog-field__input" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder=" " aria-label="Verification code"></span></label></div><div class="bog-otp__info"><p class="bog-otp__message">We've sent a verification code to ••• •• 56 78</p>${o.noTimer ? "" : `<p class="bog-otp__timer">Resend code in <b class="bog-otp__time">00:35</b></p>`}<span class="bog-inline-message bog-otp__expired" data-status="negative"${inv}>This verification code has expired</span><div class="bog-otp__actions"><button type="button" class="bog-btn bog-otp__resend" data-type="ghost" data-size="small"${inv}><span class="bog-icon" data-icon="retry"></span>Resend code</button></div></div></div></div>`;
+  };
+  document.getElementById("demo").innerHTML = otp({timer: 10, id: "demo-otp"});
+  const log = document.getElementById("demo-log");
+  document.getElementById("demo").addEventListener("otpcomplete", e => {
+    log.innerHTML = `<code>otpcomplete: ${e.detail.value}. Loading for 1.5 s…</code>`;
+    BOG.setOtpState("demo-otp", "loading");
+    setTimeout(() => { BOG.setOtpState("demo-otp", "expired"); log.innerHTML = "<code>Set to Expired. Press Resend code</code>"; }, 1500);
+  });
+  document.getElementById("demo").addEventListener("otpresend", () => { log.innerHTML = "<code>otpresend: timer restarted</code>"; });
+
+  const ROWS = [
+    ["Default", {}], ["Skeleton", {skeleton: 1}],
+    ["Loading", {state: "loading"}], ["Expired", {state: "expired"}],
+    ["Resend", {state: "resend"}], ["Resend · no timer", {state: "resend", noTimer: 1}],
+    ["Hard (hardware token)", {hard: 1}], ["Default · no selector", {selector: false}],
+  ];
+  const grid = inverse => ROWS.map(([label, o]) => `<div><div class="row-label"><code>${label}</code></div>${otp({...o, inverse})}</div>`).join("");
+  document.getElementById("themed").innerHTML = grid(false);
+  document.getElementById("inverse").innerHTML = grid(true);
+</script>
+</body>
+</html>

@@ -6,11 +6,18 @@
 <title>Account Picker — BOG UI</title>
 <link rel="stylesheet" href="../bog-ui.css">
 <link rel="stylesheet" href="docs.css">
+<script src="theme.js"></script>
 <script src="../bog-ui.js" defer></script>
 <script src="components.js" defer></script>
 <style>
-  .pickers { display: grid; grid-template-columns: repeat(auto-fill, 343px); gap: 24px; align-items: start; }
+  .pickers { display: grid; grid-template-columns: repeat(auto-fill, 343px); gap: 34px; align-items: start; }
   .pickers .cell { width: 343px; }
+
+/* "Where from?" screen inside the shared phone preview (docs.css) */
+.pk-page { position: absolute; inset: 88px 0 0; display: flex; flex-direction: column; gap: 16px; padding: 24px 16px 0; background: #fff; }
+.pk-title { margin: 0; font: 600 14px/20px var(--font-family-bog); }
+.pk-page .bog-picker-group { display: flex; flex-direction: column; gap: 12px; }
+.pk-bar { margin: auto -16px 0; padding: 16px 16px 34px; }
 </style>
 </head>
 <body>
@@ -19,7 +26,8 @@
     <a class="docs-nav__brand" href="../index.html">BOG UI</a>
     <nav id="bog-nav" data-current="picker"></nav>
   </aside>
-  <main class="docs-main">
+  <main class="docs-main docs-split">
+  <div class="pk-content">
     <header><h1>Account Picker</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
     <p class="lead">Selectable account card. It's assembled from library parts: <strong>Amount</strong> (medium), account balances, and a <strong>UI Element</strong> in the media slot (card art, illustration or media circle). Currency chips use <strong>Country Flags</strong>. Put pickers in a <code>.bog-picker-group</code> to make them single-select.</p>
 
@@ -57,8 +65,54 @@
     <p class="lead">Tap a multi-currency card: it gets selected and expands to show the currency chips (Figma <em>Expandable</em>). Tap it again to collapse. Opening another card closes the first. Tap a chip to switch currency.</p>
     <div class="panel"><div class="bog-picker-group pickers" id="demo"></div></div>
 
+    <h2 id="motion">Motion</h2>
+    <p class="lead">Chips check on and off, a card expands when selected and minimizes when another is picked, the page loads in, and an error shakes the list. The phone on the right plays all of it.
+      Source: <a href="https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=919-13920" target="_blank" rel="noopener">Component Motion Guidelines › Account Picker ↗</a></p>
+    <div class="panel">
+      <div class="motion-tabs" role="tablist">
+        <button role="tab" data-tab="design" aria-selected="true">Designers</button>
+        <button role="tab" data-tab="ios">iOS · SwiftUI</button>
+        <button role="tab" data-tab="android">Android · Compose</button>
+        <button role="tab" data-tab="web">Web</button>
+      </div>
+      <section class="motion-pane" data-pane="design" id="motion-design"></section>
+      <section class="motion-pane" data-pane="ios" hidden>
+        <p>Drop-in pieces for each motion: a currency chip, the expanding card, the page entrance and the error shake. Each property gets its own <code>withAnimation</code>; two-step keyframes chain with <code>completion</code> (iOS 17+).</p>
+        <pre><code data-snippet="ios"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="ios">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="ios">Copy code</button></div>
+      </section>
+      <section class="motion-pane" data-pane="android" hidden>
+        <p>The same pieces in Compose, one <code>Animatable</code> per property.</p>
+        <pre><code data-snippet="android"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="android">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="android">Copy code</button></div>
+      </section>
+      <section class="motion-pane" data-pane="web" hidden>
+        <p>Built into <code>bog-ui.js</code>: chips, Select / Minimize and the error shake run on their own. The page load is one call.</p>
+        <pre><code data-snippet="web"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="web">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="web">Copy code</button></div>
+      </section>
+    </div>
+
     <h2>Variants</h2>
     <div class="panel"><div class="pickers" id="variants"></div></div>
+  </div>
+
+  <aside class="docs-preview" aria-label="Mobile preview">
+    <div class="docs-preview__controls">
+      <button class="bog-btn" data-type="secondary" data-size="small" id="pk-replay">Replay page load</button>
+      <label><input type="checkbox" id="pk-slow"> Slow motion (×10)</label>
+    </div>
+    <div class="docs-phone">
+      <div class="docs-phone__status"><span>9:41</span><span>●●●</span></div>
+      <div class="docs-phone__nav"><span class="bog-icon-btn" data-type="neutral" data-size="small"><span class="bog-icon" data-icon="chevron-right"></span></span>Where from?</div>
+      <div class="pk-page" id="pk-page">
+        <h3 class="pk-title" data-picker-title>Select an account</h3>
+        <div class="bog-picker-group" id="pk-group"></div>
+        <div class="pk-bar"><button class="bog-btn" data-type="primary" data-width="fill" id="pk-choose">Choose</button></div>
+      </div>
+    </div>
+    <small>375 × 812 · tap cards and chips. Choose with nothing selected, or with the 0.00 account, shows the error.</small>
+  </aside>
   </main>
 </div>
 <script>
@@ -88,6 +142,435 @@
   ];
   document.getElementById("variants").innerHTML = VARIANTS.map(([n, t, o]) => `<div class="cell"><small>${n}</small>${picker(t, o)}</div>`).join("");
   document.getElementById("demo").innerHTML = picker("multi", {tapExpand: 1}) + picker("multi", {tapExpand: 1, fav: 1}) + picker("single") + picker("card");
+
+  // ---- Mobile preview: "Where from?" page ----
+  const account = (title, value, balances, o = {}) =>
+    `<div class="bog-picker"${o.empty ? " data-empty" : ""}><div class="bog-picker__box" role="button" tabindex="0"><div class="bog-picker__head"><div class="bog-picker__info">` +
+    `<span class="bog-picker__title">${title}${o.fav ? '<span class="bog-picker__fav"></span>' : ""}</span>` +
+    `<div class="bog-amount" data-size="medium"><div class="bog-amount__main"><span class="bog-amount__value">${value}</span><span class="bog-amount__currency">₾</span></div></div>` +
+    `</div><span class="bog-card-art" data-size="56"></span></div>${bal(balances)}${o.chips ? `<div class="bog-picker__expand">${chips}</div>` : ""}</div></div>`;
+  const group = document.getElementById("pk-group");
+  function buildPreview() {
+    group.innerHTML =
+      account("Multi-currency Account", "2,000.00", [["200.00", "₾", 1], ["28.00", "$", 1], ["0.00", "€"], ["0.00", "£"]], {fav: 1, chips: 1}) +
+      account("GE00BG0000000123456789", "40.00", [["200.00", "₾", 1], ["28.00", "$", 1], ["0.00", "€"], ["0.00", "£"]]) +
+      account("GE00BG0000000123456789", "0.00", [["0.00", "₾"], ["0.00", "$"], ["0.00", "€"], ["0.00", "£"]], {empty: 1});
+  }
+  buildPreview();
+  // Choose: nothing selected, or the empty account → Error (the list shakes)
+  document.getElementById("pk-choose").addEventListener("click", () => {
+    const sel = group.querySelector(".bog-picker[data-selected]");
+    const bad = !sel ? [...group.querySelectorAll(".bog-picker")] : sel.hasAttribute("data-empty") ? [sel] : [];
+    bad.forEach((p) => {
+      if (sel && !p.querySelector(".bog-picker__message")) p.insertAdjacentHTML("beforeend", '<p class="bog-picker__message">Not enough money on this account</p>');
+      p.setAttribute("data-validation", "error");
+    });
+  });
+  // Tapping a card clears the error
+  group.addEventListener("click", () => {
+    group.querySelectorAll(".bog-picker[data-validation]").forEach((p) => {
+      p.removeAttribute("data-validation");
+      const m = p.querySelector(".bog-picker__message");
+      if (m) m.remove();
+    });
+  });
+
+  // Slow motion: stretch animations that start on this interaction (next tick, after bog-ui.js)
+  const slow = document.getElementById("pk-slow");
+  function slowDown() {
+    if (!slow.checked) return;
+    setTimeout(() => document.getAnimations().forEach((a) => {
+      const t = a.effect && a.effect.target;
+      if (t && t.closest && t.closest(".docs-split") && a.effect.getComputedTiming().endTime !== Infinity) a.playbackRate = 0.1;
+    }));
+  }
+  document.addEventListener("click", slowDown);
+  document.addEventListener("keydown", slowDown);
+
+  function playPage() { buildPreview(); BOG.pickerPageIn(document.getElementById("pk-page")); slowDown(); }
+  document.getElementById("pk-replay").addEventListener("click", playPage);
+  window.addEventListener("DOMContentLoaded", () => BOG.pickerPageIn(document.getElementById("pk-page")));
+
+  // ---- Motion handoff ----
+  const FIG = "https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=";
+  // Timelines: [label, [[start, length], …], kind]; spec rows: [layer, property, keyframes, timing, easing]
+  const MOTIONS = [
+    { title: "Chip on", node: "919-13920", max: 300, text: "The tapped chip grows to fit its check, overshooting 3 px, and fills with the selected color. The check draws in from the left 67 ms later.",
+      tl: [["Shape · Width", [[0, 200], [200, 50]], "move"], ["Shape · Color", [[0, 100]], "color"], ["Check · Position X", [[67, 100]], "move"], ["Check · Draw (trim end)", [[67, 100]], "fade"]],
+      spec: [["Shape", "Width", "+24 → −3 (ends +21: room for the check)", "0–200 · 200–250 ms", "0.33, 0, 0.16, 1 → 0.17, 0, 0.16, 1"],
+             ["Shape", "Color", "#FFFFFF → #FFE0D0 (Chip / Selected)", "0–100 ms", "Linear"],
+             ["Check", "Position X", "−3.33 → 0", "67–167 ms", "0.33, 0, 0.10, 1"],
+             ["Check", "Draw (trim end)", "0 → 100%", "67–167 ms", "0.33, 0, 0.07, 1"]] },
+    { title: "Chip off", node: "919-15157", max: 300, text: "The check un-draws while sliding 3.33 px left; 17 ms later the chip shrinks, undershooting 2 px, and turns white.",
+      tl: [["Check · Position X", [[0, 100]], "move"], ["Check · Draw (trim end)", [[0, 100]], "fade"], ["Shape · Width", [[17, 100], [117, 50]], "move"], ["Shape · Color", [[17, 100]], "color"]],
+      spec: [["Check", "Position X", "0 → −3.33", "0–100 ms", "0.17, 0, 0.67, 1"],
+             ["Check", "Draw (trim end)", "100% → 0", "0–100 ms", "0.17, 0, 0.67, 1"],
+             ["Shape", "Width", "−23 → +2 (ends −21)", "17–117 · 117–167 ms", "0.17, 0, 0.67, 1 → 0.33, 0, 0.67, 1"],
+             ["Shape", "Color", "#FFE0D0 → #FFFFFF", "17–117 ms", "Linear"]] },
+    { title: "Select (expand)", node: "951-18757", max: 500, text: "The card grows 11 px past its open height and settles back while its border fades in. The chips drop in 10 px, rise 3 px and fade in.",
+      tl: [["Card · Height 118 → 185 → 174", [[0, 200], [200, 150]], "move"], ["Card · Border opacity", [[0, 200]], "fade"], ["Chips · Position Y +10, −3", [[50, 200], [250, 150]], "move"], ["Chips · Opacity", [[100, 150]], "fade"]],
+      spec: [["Card", "Height", "closed → open +11 → open", "0–200 · 200–350 ms", "0.33, 0, 0.28, 1 *"],
+             ["Card", "Border opacity", "0 → 100%", "0–200 ms", "0.33, 0, 0.67, 1"],
+             ["Chips", "Position Y", "−6.66 → +3.34 → 0", "50–250 · 250–400 ms", "0.33, 0, 0.28, 1"],
+             ["Chips", "Opacity", "0 → 100%", "100–250 ms", "0.33, 0, 0.28, 1"]] },
+    { title: "Minimize", node: "961-19904", max: 500, text: "When another card is picked, the open one minimizes: its chips rise 6 px and fade, then the card shrinks 3 px past its closed height, settles, and its border fades out.",
+      tl: [["Chips · Position Y −6", [[0, 150]], "move"], ["Chips · Opacity", [[0, 100]], "fade"], ["Card · Height 174 → 115 → 118", [[20, 150], [170, 80]], "move"], ["Card · Border opacity", [[20, 80]], "fade"]],
+      spec: [["Chips", "Position Y", "0 → −6", "0–150 ms", "0.72, 0, 0.67, 1"],
+             ["Chips", "Opacity", "100% → 0", "0–100 ms", "0.91, 0, 0.67, 1"],
+             ["Card", "Height", "open → closed −3 → closed", "20–170 · 170–250 ms", "0.72, 0, 0.67, 1 → 1, 0, 0.67, 1 *"],
+             ["Card", "Border opacity", "100% → 0", "20–100 ms", "1, 0, 0.67, 1"]] },
+    { title: "Page load", node: "1241-4887", max: 800, text: "The page slides in 190 px from the right while fading in; the title rises 39.65 px, then each card rises 30 px, 70 ms apart.",
+      tl: [["Page · Position X +190", [[0, 400]], "move"], ["Page · Opacity", [[0, 400]], "fade"], ["Title · Position Y +39.65", [[100, 400]], "move"], ["Card 1 · Position Y +30", [[130, 500]], "move"], ["Card 2", [[200, 500]], "move"], ["Card 3", [[270, 500]], "move"]],
+      spec: [["Page", "Position X · Opacity", "+190 → 0 · 0 → 100%", "0–400 ms", "0.33, 0, 0.12, 1"],
+             ["Title", "Position Y · Opacity", "+39.65 → 0 · 0 → 100%", "100–500 ms", "0.33, 0, 0.12, 1"],
+             ["Card n", "Position Y · Opacity", "+30 → 0 · 0 → 100%", "130 + 70·(n−1) ms, 500 ms long", "0.33, 0, 0.12, 1"]] },
+    { title: "Error", node: "1424-4099", max: 600, text: "When a picker turns Error (e.g. Choose with nothing selected, or not enough money), the list shakes.",
+      tl: [["List · Position X", [[0, 200], [200, 150], [350, 100], [450, 100]], "move"]],
+      spec: [["List", "Position X", "0 → +10 → −5 → +5 → 0", "0–200 · 200–350 · 350–450 · 450–550 ms", "0.33, 0, 0.25, 1"]] }
+  ];
+  const timeline = (rows, max) => {
+    const pct = (ms) => (ms / max * 100).toFixed(2) + "%";
+    return `<div class="motion-tl">${rows.map(([n, bars, k]) => `<span>${n}</span><div class="motion-tl__track">${bars.map(([s, l]) =>
+      `<span class="motion-tl__bar" data-kind="${k}" style="left:${pct(s)};width:${pct(l)}">${l}</span>`).join("")}</div>`).join("")}` +
+      `<span></span><div class="motion-tl__axis">${Array.from({ length: 11 }, (_, i) => `<span>${Math.round(i * max / 10)}</span>`).join("")}</div></div>`;
+  };
+  const spec = (rows) => `<table class="motion-spec"><thead><tr><th>Layer</th><th>Property</th><th>Keyframes</th><th>Timing</th><th>Easing (cubic-bezier)</th></tr></thead><tbody>${rows.map((r) =>
+    `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><code>${r[4]}</code></td></tr>`).join("")}</tbody></table>`;
+  document.getElementById("motion-design").innerHTML =
+    "<p>Values are px (web) = pt (iOS) = dp (Android). Heights are relative to the card's real closed / open size, so the same motion fits every account layout.</p>" +
+    MOTIONS.map((m) => `<h3>${m.title}<a href="${FIG + m.node}" target="_blank" rel="noopener">Figma ↗</a></h3><p>${m.text}</p>${timeline(m.tl, m.max)}${spec(m.spec)}`).join("") +
+    "<h3>Rules</h3><ul>" +
+      "<li>* The card-height curves are exported with a broken last number (e.g. 0.33, 0, 0.28, 4574.7); 1 is used.</li>" +
+      "<li>Tapping the open card again only collapses it (it stays selected, so its border stays).</li>" +
+      "<li>The check draw is a left-to-right reveal of the check icon (the guide trims the stroke).</li>" +
+      "<li>Reduce Motion / Remove animations on: every change is instant.</li>" +
+    "</ul>" +
+    '<div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="design">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="spec">Copy spec as text</button></div>';
+
+  const SPEC_TEXT = ["Account Picker motion", FIG + "919-13920", "Units: px = pt = dp", ""].concat(
+    MOTIONS.flatMap((m) => [m.title.toUpperCase() + " — " + FIG + m.node].concat(m.spec.map((r) => "  " + r.join("  ·  ")), [""])),
+    ["Card-height curves: the exported last number is broken; 1 is used.", "Reduce Motion: instant."]).join("\n");
+
+  const CODE = {
+    web: `<!-- Every .bog-picker animates on its own (bog-ui.js): chips on / off, Select, Minimize, Error shake. -->
+<div class="bog-picker-group"> …pickers… </div>
+
+<script>
+  // Error: set the state; the closest .bog-picker-group shakes
+  picker.setAttribute("data-validation", "error");
+
+  // Page load: the screen content under the navigation bar.
+  // Title = [data-picker-title] (or the first heading); every .bog-picker inside is a card.
+  BOG.pickerPageIn(document.querySelector("#account-page"));
+<\/script>`,
+
+    ios: `import SwiftUI
+
+// Component Motion Guidelines › Account Picker — chips on / off, Select, Minimize, page load, Error. iOS 17+.
+extension Animation {
+    static func bog(_ x1: Double, _ y1: Double, _ x2: Double, _ y2: Double, _ ms: Double, delay: Double = 0) -> Animation {
+        .timingCurve(x1, y1, x2, y2, duration: ms / 1000).delay(delay / 1000)
+    }
+}
+private let chipSelected = Color(red: 1, green: 224 / 255, blue: 208 / 255)   // Chip / Selected #FFE0D0
+private let borderColor = Color(red: 81 / 255, green: 84 / 255, blue: 87 / 255)  // Border / Selected neutral strong
+
+// MARK: Currency chip
+struct CurrencyChip: View {
+    let flag: String          // image asset
+    let symbol: String
+    let isOn: Bool
+    let action: () -> Void
+
+    private let onSlot: CGFloat = 21          // extra width of the checked chip (check + gap)
+    @State private var slot: CGFloat = 0
+    @State private var bump: CGFloat = 0       // overshoot: +3 on, −2 off
+    @State private var draw: CGFloat = 0       // check stroke trim
+    @State private var checkX: CGFloat = -3.33
+    @State private var fill = Color.white
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 0) {
+                HStack(spacing: 8) {
+                    Image(flag).resizable().frame(width: 20, height: 20).clipShape(Circle())
+                    Text(symbol).font(.system(size: 16, weight: .semibold))
+                }
+                Check().trim(from: 0, to: draw)
+                    .stroke(Color.primary, style: StrokeStyle(lineWidth: 1.5, lineCap: .round, lineJoin: .round))
+                    .frame(width: 12, height: 12)
+                    .offset(x: checkX)
+                    .padding(.leading, 6)
+                    .frame(width: max(0, slot + bump), alignment: .leading)
+                    .clipped()
+            }
+            .padding(.horizontal, 12)
+            .frame(height: 40)
+            .background(fill, in: Capsule())
+            .overlay(Capsule().strokeBorder(Color.black.opacity(0.08)))
+        }
+        .buttonStyle(.plain)
+        .onAppear { if isOn { slot = onSlot; draw = 1; checkX = 0; fill = chipSelected } }
+        .onChange(of: isOn) { _, on in on ? turnOn() : turnOff() }
+    }
+
+    private func turnOn() {
+        withAnimation(.linear(duration: 0.1)) { fill = chipSelected }
+        withAnimation(.bog(0.33, 0, 0.16, 1, 200)) { slot = onSlot; bump = 3 } completion: {
+            withAnimation(.bog(0.17, 0, 0.16, 1, 50)) { bump = 0 }
+        }
+        withAnimation(.bog(0.33, 0, 0.10, 1, 100, delay: 67)) { checkX = 0 }
+        withAnimation(.bog(0.33, 0, 0.07, 1, 100, delay: 67)) { draw = 1 }
+    }
+    private func turnOff() {
+        withAnimation(.bog(0.17, 0, 0.67, 1, 100)) { checkX = -3.33; draw = 0 }
+        withAnimation(.linear(duration: 0.1).delay(0.017)) { fill = .white }
+        withAnimation(.bog(0.17, 0, 0.67, 1, 100, delay: 17)) { slot = 0; bump = -2 } completion: {
+            withAnimation(.bog(0.33, 0, 0.67, 1, 50)) { bump = 0 }
+        }
+    }
+}
+struct Check: Shape {
+    func path(in r: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: r.minX + r.width * 0.15, y: r.midY))
+        p.addLine(to: CGPoint(x: r.minX + r.width * 0.42, y: r.maxY - r.height * 0.22))
+        p.addLine(to: CGPoint(x: r.maxX - r.width * 0.12, y: r.minY + r.height * 0.25))
+        return p
+    }
+}
+
+// MARK: Account picker card — Select (expand) / Minimize
+struct AccountPickerCard<Header: View, Chips: View>: View {
+    let isSelected: Bool
+    let isExpanded: Bool
+    @ViewBuilder var header: () -> Header
+    @ViewBuilder var chips: () -> Chips
+
+    @State private var open = false
+    @State private var extra: CGFloat = 0        // height overshoot: +11 on Select, −3 on Minimize
+    @State private var chipsY: CGFloat = -6.66
+    @State private var chipsOpacity = 0.0
+    @State private var borderOpacity = 0.0
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            header()
+            chips()
+                .offset(y: chipsY)
+                .opacity(chipsOpacity)
+                .padding(.top, 8)
+                .frame(height: open ? nil : 0, alignment: .top)
+                .clipped()
+        }
+        .padding(16)
+        .padding(.bottom, extra)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color(white: 0.97), in: RoundedRectangle(cornerRadius: 16))
+        .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(borderColor.opacity(borderOpacity), lineWidth: 1))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .onAppear {
+            open = isExpanded; borderOpacity = isSelected ? 1 : 0
+            if isExpanded { chipsY = 0; chipsOpacity = 1 }
+        }
+        .onChange(of: isExpanded) { _, isOpen in isOpen ? expand() : minimize() }
+        .onChange(of: isSelected) { _, on in
+            withAnimation(on ? .bog(0.33, 0, 0.67, 1, 200) : .bog(1, 0, 0.67, 1, 80, delay: 20)) { borderOpacity = on ? 1 : 0 }
+        }
+    }
+
+    // Grows 11pt past its open height and settles; chips drop 10pt, rise 3pt, fade in
+    private func expand() {
+        withAnimation(.bog(0.33, 0, 0.28, 1, 200)) { open = true; extra = 11 } completion: {
+            withAnimation(.bog(0.33, 0, 0.28, 1, 150)) { extra = 0 }
+        }
+        withAnimation(.bog(0.33, 0, 0.28, 1, 200, delay: 50)) { chipsY = 3.34 } completion: {
+            withAnimation(.bog(0.33, 0, 0.28, 1, 150)) { chipsY = 0 }
+        }
+        withAnimation(.bog(0.33, 0, 0.28, 1, 150, delay: 100)) { chipsOpacity = 1 }
+    }
+    // Chips rise 6pt and fade; 20ms later the card shrinks 3pt past its closed height and settles
+    private func minimize() {
+        withAnimation(.bog(0.72, 0, 0.67, 1, 150)) { chipsY = -6 }
+        withAnimation(.bog(0.91, 0, 0.67, 1, 100)) { chipsOpacity = 0 }
+        withAnimation(.bog(0.72, 0, 0.67, 1, 150, delay: 20)) { open = false; extra = -3 } completion: {
+            withAnimation(.bog(1, 0, 0.67, 1, 80)) { extra = 0 }
+            chipsY = -6.66   // start pose for the next Select
+        }
+    }
+}
+
+// MARK: Page load — page slides in from the right, then the title and cards rise in (70ms apart)
+struct EntranceEffect: ViewModifier {
+    let dx: CGFloat, dy: CGFloat, ms: Double, delay: Double
+    @State private var shown = false
+    @Environment(\\.accessibilityReduceMotion) private var reduceMotion
+    func body(content: Content) -> some View {
+        content
+            .offset(x: shown ? 0 : dx, y: shown ? 0 : dy)
+            .opacity(shown ? 1 : 0)
+            .onAppear {
+                if reduceMotion { shown = true } else { withAnimation(.bog(0.33, 0, 0.12, 1, ms, delay: delay)) { shown = true } }
+            }
+    }
+}
+extension View {
+    func pageIn() -> some View { modifier(EntranceEffect(dx: 190, dy: 0, ms: 400, delay: 0)) }
+    func titleIn() -> some View { modifier(EntranceEffect(dx: 0, dy: 39.65, ms: 400, delay: 100)) }
+    func cardIn(_ index: Int) -> some View { modifier(EntranceEffect(dx: 0, dy: 30, ms: 500, delay: 130 + 70 * Double(index))) }
+}
+
+// MARK: Error — the list shakes +10, −5, +5, 0 over 550ms
+struct ErrorShake: ViewModifier {
+    let trigger: Int      // bump it when a picker turns Error
+    private let curve = UnitCurve.bezier(startControlPoint: UnitPoint(x: 0.33, y: 0), endControlPoint: UnitPoint(x: 0.25, y: 1))
+    func body(content: Content) -> some View {
+        content.keyframeAnimator(initialValue: CGFloat(0), trigger: trigger) { view, x in
+            view.offset(x: x)
+        } keyframes: { _ in
+            KeyframeTrack(\\.self) {
+                LinearKeyframe(10, duration: 0.2, timingCurve: curve)
+                LinearKeyframe(-5, duration: 0.15, timingCurve: curve)
+                LinearKeyframe(5, duration: 0.1, timingCurve: curve)
+                LinearKeyframe(0, duration: 0.1, timingCurve: curve)
+            }
+        }
+    }
+}
+
+// Usage
+// VStack(alignment: .leading, spacing: 16) {
+//     Text("Select an account").titleIn()
+//     VStack(spacing: 12) {
+//         ForEach(Array(accounts.enumerated()), id: \\.element.id) { i, account in
+//             AccountPickerCard(isSelected: selected == account.id, isExpanded: open == account.id) { … } chips: { … }
+//                 .cardIn(i)
+//         }
+//     }
+//     .modifier(ErrorShake(trigger: errorCount))
+// }
+// .pageIn()`,
+
+    android: `import androidx.compose.animation.Animatable as ColorAnimatable
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+
+// Component Motion Guidelines › Account Picker — chips on / off, Select, Minimize, page load, Error
+private fun t(ms: Int, x1: Float, y1: Float, x2: Float, y2: Float, delay: Int = 0) =
+    tween<Float>(ms, delay, CubicBezierEasing(x1, y1, x2, y2))
+val ChipSelected = Color(0xFFFFE0D0)   // Chip / Selected
+val BorderStrong = Color(0xFF515457)   // Border / Selected neutral strong
+
+/** Currency chip. Drive the chip's extra width (dp), fill, and the check (trim + x offset) from these. */
+class ChipMotion(on: Boolean) {
+    val slot = Animatable(if (on) 21f else 0f)      // extra width of the checked chip
+    val bump = Animatable(0f)                       // overshoot: +3 on, −2 off
+    val draw = Animatable(if (on) 1f else 0f)       // check stroke trim
+    val checkX = Animatable(if (on) 0f else -3.33f)
+    val fill = ColorAnimatable(if (on) ChipSelected else Color.White)
+
+    suspend fun turnOn() = coroutineScope {
+        launch { fill.animateTo(ChipSelected, tween(100, easing = LinearEasing)) }
+        launch { slot.animateTo(21f, t(200, .33f, 0f, .16f, 1f)) }
+        launch { bump.animateTo(3f, t(200, .33f, 0f, .16f, 1f)); bump.animateTo(0f, t(50, .17f, 0f, .16f, 1f)) }
+        launch { checkX.animateTo(0f, t(100, .33f, 0f, .10f, 1f, 67)) }
+        launch { draw.animateTo(1f, t(100, .33f, 0f, .07f, 1f, 67)) }
+    }
+    suspend fun turnOff() = coroutineScope {
+        launch { checkX.animateTo(-3.33f, t(100, .17f, 0f, .67f, 1f)) }
+        launch { draw.animateTo(0f, t(100, .17f, 0f, .67f, 1f)) }
+        launch { fill.animateTo(Color.White, tween(100, 17, LinearEasing)) }
+        launch { slot.animateTo(0f, t(100, .17f, 0f, .67f, 1f, 17)) }
+        launch { bump.animateTo(-2f, t(100, .17f, 0f, .67f, 1f, 17)); bump.animateTo(0f, t(50, .33f, 0f, .67f, 1f)) }
+    }
+}
+@Composable
+fun rememberChipMotion(on: Boolean): ChipMotion {
+    val m = remember { ChipMotion(on) }
+    var seen by remember { mutableStateOf(false) }
+    LaunchedEffect(on) {
+        if (!seen) { seen = true; return@LaunchedEffect }
+        if (on) m.turnOn() else m.turnOff()
+    }
+    return m
+}
+
+/** Account picker card. Animate the card height between its measured closed / open heights. */
+class CardMotion(expanded: Boolean, selected: Boolean) {
+    val progress = Animatable(if (expanded) 1f else 0f)   // 0 closed … 1 open (lerp the heights with it)
+    val extra = Animatable(0f)                            // height overshoot: +11 Select, −3 Minimize (dp)
+    val chipsY = Animatable(if (expanded) 0f else -6.66f)
+    val chipsAlpha = Animatable(if (expanded) 1f else 0f)
+    val border = Animatable(if (selected) 1f else 0f)
+
+    suspend fun expand() = coroutineScope {
+        launch { progress.animateTo(1f, t(200, .33f, 0f, .28f, 1f)) }
+        launch { extra.animateTo(11f, t(200, .33f, 0f, .28f, 1f)); extra.animateTo(0f, t(150, .33f, 0f, .28f, 1f)) }
+        launch { chipsY.animateTo(3.34f, t(200, .33f, 0f, .28f, 1f, 50)); chipsY.animateTo(0f, t(150, .33f, 0f, .28f, 1f)) }
+        launch { chipsAlpha.animateTo(1f, t(150, .33f, 0f, .28f, 1f, 100)) }
+    }
+    suspend fun minimize() {
+        coroutineScope {
+            launch { chipsY.animateTo(-6f, t(150, .72f, 0f, .67f, 1f)) }
+            launch { chipsAlpha.animateTo(0f, t(100, .91f, 0f, .67f, 1f)) }
+            launch { progress.animateTo(0f, t(150, .72f, 0f, .67f, 1f, 20)) }
+            launch { extra.animateTo(-3f, t(150, .72f, 0f, .67f, 1f, 20)); extra.animateTo(0f, t(80, 1f, 0f, .67f, 1f)) }
+        }
+        chipsY.snapTo(-6.66f)   // start pose for the next Select
+    }
+    suspend fun select(on: Boolean) =
+        border.animateTo(if (on) 1f else 0f, if (on) t(200, .33f, 0f, .67f, 1f) else t(80, 1f, 0f, .67f, 1f, 20))
+}
+
+/** Page load: page from +190dp right, title from +39.65dp, card n from +30dp after 130 + 70·n ms. */
+@Composable
+fun Modifier.entrance(dx: Float = 0f, dy: Float = 0f, ms: Int = 500, delayMs: Int = 0): Modifier {
+    val p = remember { Animatable(0f) }
+    LaunchedEffect(Unit) { p.animateTo(1f, t(ms, .33f, 0f, .12f, 1f, delayMs)) }
+    return graphicsLayer {
+        translationX = dx * (1 - p.value) * density
+        translationY = dy * (1 - p.value) * density
+        alpha = p.value
+    }
+}
+// page: Modifier.entrance(dx = 190f, ms = 400) · title: Modifier.entrance(dy = 39.65f, ms = 400, delayMs = 100)
+// card i: Modifier.entrance(dy = 30f, delayMs = 130 + 70 * i)
+
+/** Error: shake the list +10, −5, +5, 0dp over 550ms. Call when a picker turns Error. */
+suspend fun Animatable<Float, AnimationVector1D>.errorShake() {
+    for ((x, ms) in listOf(10f to 200, -5f to 150, 5f to 100, 0f to 100)) animateTo(x, t(ms, .33f, 0f, .25f, 1f))
+}
+// val shake = remember { Animatable(0f) } · Modifier.graphicsLayer { translationX = shake.value * density }
+// Compose follows the system "Remove animations" setting (animator duration scale 0) automatically.`
+  };
+  document.querySelectorAll("[data-snippet]").forEach((c) => { c.textContent = CODE[c.dataset.snippet]; });
+
+  // Tabs (shareable via #motion-ios etc.) + copy buttons
+  const tabs = document.querySelectorAll(".motion-tabs [data-tab]");
+  function openTab(name) {
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+    document.querySelectorAll(".motion-pane").forEach((p) => { p.hidden = p.dataset.pane !== name; });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => { openTab(t.dataset.tab); history.replaceState(null, "", "#motion-" + t.dataset.tab); }));
+  const fromHash = location.hash.match(/^#motion-(design|ios|android|web)$/);
+  if (fromHash) { openTab(fromHash[1]); document.getElementById("motion").scrollIntoView(); }
+  function copy(btn, text) {
+    navigator.clipboard.writeText(text).then(() => { const was = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = was; }, 1200); });
+  }
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("[data-copy-link]"), code = e.target.closest("[data-copy]");
+    if (link) copy(link, location.href.split("#")[0] + "#motion-" + link.dataset.copyLink);
+    if (code) copy(code, code.dataset.copy === "spec" ? SPEC_TEXT : CODE[code.dataset.copy]);
+  });
 </script>
 </body>
 </html>

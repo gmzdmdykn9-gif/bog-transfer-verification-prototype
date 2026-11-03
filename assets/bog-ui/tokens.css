@@ -94,6 +94,8 @@
   --spacing-padding-x-small: 4px;
   --spacing-padding-m-small: 6px;
   --spacing-gap-default: 16px;
+  --spacing-gap-large: 24px;   /* Spacing/gap-large — Toggle Switch Group rows */
+  --spacing-form-gap: 16px;    /* Spacing/form-gap — Radio Button Group options */
   --spacing-chips-gap-horizontal: 8px;
   --spacing-padding-small: 8px;
   --spacing-gap-medium: 12px;
@@ -101,10 +103,9 @@
   --spacing-gap-small: 8px;
   --spacing-padding-medium: 12px;
   --spacing-padding-default: 16px;
-  --spacing-gap-large: 24px;
   --spacing-padding-2x-large: 40px;
-  --spacing-form-gap: 16px;
   --spacing-button-gap: 8px;
+  --spacing-padding-large: 24px;      /* Spacing/padding-large — Result Page sticky bar */
   --input-container-height: 56px; /* font/_Scale haks/input/container height */
 
   /* ---- Radius / border ---------------------------------------------- */
@@ -156,6 +157,7 @@
   /* ---- Background / support / border / status ----------------------- */
   --background-inverse-accent-static: #ff8345;
   --support-static-02: #6c7075;
+  --support-support-01: #8a8e93;   /* Support/support_01 — Toggle Switch off track */
   --support-support-02: #73777d;
   --support-skeleton: #ecedee;
   --support-skeleton-inverse-static: #2f3032;
@@ -174,6 +176,7 @@
   --support-skeleton-inverse-background-static: #222425;
   --layer-alpha-0: #ffffff00;
   --layer-alpha-01: #6c70750f;
+  --layer-white: #ffffff;   /* Layer/white — Toggle Switch thumb */
   --layer-white-alpha-01: #ffffff12;
   --layer-white-alpha-02: #ffffff1a;
   --layer-inverse-alpha-02: #ffffff1a;
@@ -332,8 +335,44 @@
 
   /* ---- Toggle Switch (Figma Toggle Switch track, Themed) --------------- */
   --toggle-track-off: #8a8e93;
+  /* tooltip */
+  --radius-small: 8px;                                     /* Figma Radius/small */
+  --shadow-30: 0 8px 16px 1px rgba(0, 0, 0, 0.04);         /* Figma effect style "Shadow 30" */
+  /* search-input */
+  --size-default: 40px;                                   /* Size/default */
+  --shadow-elevation-surface-1: 0 2px 4px -2px #6c707529, 0 4px 6px -2px #6c707529; /* effect style Shadow/elevation/Surface-1 */
+  /* segmented-control */
+  --ios-materials-ultrathin-layer-01: #ffffff12;     /* _iOS/Materials/Ultrathin/layer_01 (white 7%) */
+  --ios-materials-ultrathin-layer-02: #ffffff08;     /* _iOS/Materials/Ultrathin/layer_02 (white 3%) */
+  /* toggle */
+  /* numpad */
+  --button-black-ghost-pressed: #6c70751f;        /* Button/Black Ghost/pressed (#6c7075 @ 12%) */
+  --layer-inverse-alpha-pressed-01: #ffffff1f;    /* Layer/inverse_alpha_pressed_01 (#ffffff @ 12%) */
+  /* sticky-bar */
+  --sticky-bar-container-page-layer-01: #ffffff00;           /* Sticky Bar/Container/page_layer_01 (Light; Dark #1b1c1d00) */
+  --sticky-bar-container-page-layer-02: #ffffff;             /* Sticky Bar/Container/page_layer_02 (Light; Dark #1b1c1d) */
+  --sticky-bar-container-overlay-layer-01: #ffffff00;        /* Sticky Bar/Container/overlay_layer_01 (Light; Dark #2f303200) */
+  --sticky-bar-container-overlay-layer-02: #ffffff;          /* Sticky Bar/Container/overlay_layer_02 (Light; Dark #313335) */
+  --sticky-bar-container-page-layer-black-01: #1b1c1d00;     /* Sticky Bar/Container/page_layer_black_01 */
+  --sticky-bar-container-page-layer-black-02: #1b1c1d;       /* Sticky Bar/Container/page_layer_black_02 */
+  --sticky-bar-container-overlay-layer-black-01: #2f303200;  /* Sticky Bar/Container/overlay_layer_black_01 */
+  --sticky-bar-container-overlay-layer-black-02: #313335;    /* Sticky Bar/Container/overlay_layer_black_02 */
+  --spacing-layout-padding-sides: 16px;                      /* Spacing/layout-padding-sides */
+  /* progress-bar */
+  --layer-alpha-03: #6c70751f;                    /* Layer/alpha_03 — the Rail (#6c7075 @ 12%) */
+  /* progress-tracker */
+  --size-large: 48px;     /* Size/large — min height of a step's content column */
+  --size-4x-small: 8px;   /* Size/4x-small — skeleton text bar height */
+  /* tab-bar */
+  --layer-layer-03: #f4f4f4;       /* Layer/layer_03 (Android system bar) */
 }
 
 
 
 
+
+/* ---- Dark theme ----------------------------------------------------------
+   <html data-theme="dark"> (set by the docs theme switch, or by a prototype) switches components to their
+   dark values. The dark token values from Figma go here; until then components keep their light values. */
+:root[data-theme="dark"] {
+}

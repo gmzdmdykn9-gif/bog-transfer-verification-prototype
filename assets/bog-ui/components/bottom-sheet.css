@@ -93,6 +93,14 @@ html.bog-sheet-locked, html.bog-sheet-locked body { overflow: hidden; overscroll
 }
 .bog-sheet[data-open] .bog-sheet__panel { transform: translateY(var(--drag, 0px)); }
 .bog-sheet[data-dragging] .bog-sheet__panel { transition: none; }
+/* Open motion (bog-ui.js, Chat Motion Guidelines › Action Sheet 2:4924): rises from below the screen,
+   20px past its spot (300ms, cubic-bezier(0.33, 0, 0.25, 1)), settles back (250ms, cubic-bezier(0.17, 0, 0.25, 1)).
+   Meanwhile the slide-up transition is off, and a panel-coloured shadow fills the gap under the overshoot. */
+.bog-sheet[data-entering] .bog-sheet__panel { transition: none; box-shadow: 0 24px 0 var(--layer-layer-05); }
+/* Close motion (bog-ui.js): drops its own height + 24px in 250ms, cubic-bezier(0.75, 0, 0.67, 1); the overlay
+   fades out in 200ms (linear). Meanwhile the CSS transitions are off and the panel holds its spot for the motion. */
+.bog-sheet[data-leaving] .bog-sheet__panel { transition: none; transform: none; }
+.bog-sheet[data-leaving]::before { transition: none; }
 /* No sticky bar: keep room for the home indicator area */
 .bog-sheet__panel:not(:has(.bog-sheet__bar)) { padding-bottom: max(var(--spacing-padding-default), env(safe-area-inset-bottom)); }
 

@@ -6,6 +6,7 @@
 <title>Bottom Sheet — BOG UI</title>
 <link rel="stylesheet" href="../bog-ui.css">
 <link rel="stylesheet" href="docs.css">
+<script src="theme.js"></script>
 <script src="../bog-ui.js" defer></script>
 <script src="components.js" defer></script>
 <style>
@@ -15,6 +16,15 @@
   .phone__screen h3 { margin: 0 0 4px; font-size: 22px; }
   .phone .bog-sheet__panel { max-height: calc(100% - 40px); }
   .caption { margin: 12px 0 0; color: var(--support-static-02); font-size: 12px; text-align: center; }
+  /* Phone preview: "Payments" screen, sheets open inside it */
+  .bs-screen { position: absolute; inset: 88px 0 0; display: flex; flex-direction: column; gap: 12px; padding: 16px; background: #fff; }
+  .bs-screen h3 { margin: 0 0 4px; font: 600 20px/28px var(--font-family-bog); }
+  .bs-screen span { height: 56px; border-radius: 12px; }
+  .docs-phone .bog-sheet__panel { max-height: calc(100% - 48px); }
+  /* iOS home indicator: part of the phone, so it stays put while sheets move */
+  /* The state that is open */
+  [data-bs-state][aria-pressed="true"] { box-shadow: inset 0 0 0 1.6px var(--docs-fg); }
+  .bs-home { position: absolute; bottom: 8px; left: 50%; z-index: 1001; width: 134px; height: 5px; margin-left: -67px; border-radius: 100px; background: #1b1c1d; pointer-events: none; }
 
 </style>
 </head>
@@ -24,7 +34,8 @@
     <a class="docs-nav__brand" href="../index.html">BOG UI</a>
     <nav id="bog-nav" data-current="bottom-sheet"></nav>
   </aside>
-  <main class="docs-main">
+  <main class="docs-main docs-split">
+  <div>
     <header><h1>Bottom Sheet</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
     <p class="lead">Slides up from the bottom over a dark overlay. The content area is a free slot: put any component inside. The header can have a title, description, both, or be blank. There's an optional sticky bar with a message and buttons at the bottom. Every sheet has an X close button by default (<code>data-close="false"</code> to hide it). You can also close it by tapping the overlay, pressing Escape, dragging the handle down, or with any <code>data-sheet-close</code> button.</p>
 
@@ -50,70 +61,33 @@
 &lt;button class="bog-btn" data-type="primary" data-sheet-open="my-sheet"&gt;Open sheet&lt;/button&gt;
 &lt;!-- or from JS: BOG.openSheet("my-sheet"); BOG.closeSheet(); --&gt;</code></pre>
 
-    <h2>Try it</h2>
-    <div class="phones">
-      <div>
-        <div class="phone bog-sheet-host">
-          <div class="phone__screen">
-            <h3>Payments</h3>
-            <button class="bog-btn" data-type="primary" data-sheet-open="s-list">List + sticky bar</button>
-            <button class="bog-btn" data-type="secondary" data-sheet-open="s-free">Free content</button>
-            <button class="bog-btn" data-type="neutral" data-sheet-open="s-buttons">Header buttons</button>
-            <button class="bog-btn" data-type="neutral" data-sheet-open="s-nooverlay">No overlay</button>
-          </div>
-          <div class="bog-sheet" id="s-list" hidden data-home-indicator>
-        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
-          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2></div></header>
-          <div class="bog-sheet__content" data-type="list">
-          <div class="bog-list">
-            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
-            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
-            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
-          </div>
-          </div>
-          <div class="bog-sheet__bar"><p class="bog-sheet__bar-text">Message text</p><button class="bog-btn" data-type="primary" data-width="fill" data-sheet-close>Primary</button></div>
-        </div>
-      </div>
-          <div class="bog-sheet" id="s-free" hidden data-home-indicator>
-        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
-          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2><p class="bog-sheet__desc">Description</p></div></header>
-          <div class="bog-sheet__content">
-          <p style="margin:0 0 16px;color:var(--text-secondary);font-size:14px;line-height:20px">Free content: put anything here — text, amounts, inputs, pickers.</p>
-          <div class="bog-field"><label class="bog-field__box"><span class="bog-field__text"><span class="bog-field__label">Amount</span><input class="bog-field__input" inputmode="decimal" placeholder="0.00"></span><button type="button" class="bog-field__clear" aria-label="Clear"></button></label></div>
-          </div>
-          
-        </div>
-      </div>
-          <div class="bog-sheet" id="s-buttons" hidden data-home-indicator>
-        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
-          <header class="bog-sheet__nav"><button type="button" class="bog-icon-btn" data-type="neutral" aria-label="Back"><span class="bog-icon"></span></button><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2></div><button type="button" class="bog-icon-btn" data-type="neutral" aria-label="Close" data-sheet-close><span class="bog-icon" data-icon="close"></span></button></header>
-          <div class="bog-sheet__content" data-type="list">
-          <div class="bog-list">
-            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
-            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
-            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
-          </div>
-          </div>
-          
-        </div>
-      </div>
-          <div class="bog-sheet" id="s-nooverlay" hidden data-overlay="false" data-home-indicator>
-        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
-          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><p class="bog-sheet__desc">Description</p></div></header>
-          <div class="bog-sheet__content" data-type="list">
-          <div class="bog-list">
-            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
-            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
-            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
-          </div>
-          </div>
-          
-        </div>
-      </div>
-        </div>
-        <p class="caption">Tap a button · drag the handle down to close</p>
-      </div>
-    </div>
+<h2 id="motion">Motion</h2>
+<p class="lead">The sheet rises from below the screen, overshoots its spot by 20 px and settles back; it closes with a quick accelerating drop while the overlay fades. Open every state from the buttons next to the phone on the right.
+  Source: <a href="https://www.figma.com/design/Xhy3YpxKNhhQzuYa1U2g54/Chat-Motion-Guidlines?node-id=2-4924" target="_blank" rel="noopener">Chat Motion Guidelines › Action Sheet ↗</a></p>
+<div class="panel">
+  <div class="motion-tabs" role="tablist">
+    <button role="tab" data-tab="design" aria-selected="true">Designers</button>
+    <button role="tab" data-tab="ios">iOS · SwiftUI</button>
+    <button role="tab" data-tab="android">Android · Compose</button>
+    <button role="tab" data-tab="web">Web</button>
+  </div>
+  <section class="motion-pane" data-pane="design" id="motion-design"></section>
+  <section class="motion-pane" data-pane="ios" hidden>
+    <p>A presenter that keeps the sheet below the screen and plays the two-step rise. iOS 17+ (for the <code>completion</code>).</p>
+    <pre><code data-snippet="ios"></code></pre>
+    <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="ios">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="ios">Copy code</button></div>
+  </section>
+  <section class="motion-pane" data-pane="android" hidden>
+    <p>A host composable with one <code>Animatable</code> for the sheet's offset.</p>
+    <pre><code data-snippet="android"></code></pre>
+    <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="android">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="android">Copy code</button></div>
+  </section>
+  <section class="motion-pane" data-pane="web" hidden>
+    <p>Built into <code>bog-ui.js</code>: every sheet opened with <code>data-sheet-open</code> or <code>BOG.openSheet()</code> plays it.</p>
+    <pre><code data-snippet="web"></code></pre>
+    <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="web">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="web">Copy code</button></div>
+  </section>
+</div>
 
     <h2>Variants</h2>
     <div class="phones">
@@ -167,7 +141,282 @@
         </div>
       </div></div><p class="caption">Description only · Overlay=False</p></div>
     </div>
+  </div>
+
+  <aside class="docs-preview" aria-label="Mobile preview">
+    <div class="docs-preview__controls">
+<button class="bog-btn" data-type="neutral" data-size="small" data-bs-state="s-list" aria-pressed="false">List + sticky bar</button>
+<button class="bog-btn" data-type="neutral" data-size="small" data-bs-state="s-free" aria-pressed="false">Free content</button>
+<button class="bog-btn" data-type="neutral" data-size="small" data-bs-state="s-buttons" aria-pressed="false">Header buttons</button>
+<button class="bog-btn" data-type="neutral" data-size="small" data-bs-state="s-nooverlay" aria-pressed="false">No overlay</button>
+<button class="bog-btn" data-type="secondary" data-size="small" id="bs-close">Close sheet</button>
+    </div>
+    <div class="docs-preview__controls"><label><input type="checkbox" id="bs-slow"> Slow motion (×10)</label></div>
+    <div class="docs-phone bog-sheet-host">
+      <div class="docs-phone__status"><span>9:41</span><span>●●●</span></div>
+      <div class="docs-phone__nav"><span class="bog-icon-btn" data-type="neutral" data-size="small"><span class="bog-icon" data-icon="chevron-right"></span></span>Payments</div>
+      <div class="bs-screen" aria-hidden="true"><span class="bog-skeleton-wave"></span><span class="bog-skeleton-wave"></span><span class="bog-skeleton-wave"></span><span class="bog-skeleton-wave"></span></div>
+          <div class="bog-sheet" id="s-list" hidden>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2></div></header>
+          <div class="bog-sheet__content" data-type="list">
+          <div class="bog-list">
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+          </div>
+          </div>
+          <div class="bog-sheet__bar"><p class="bog-sheet__bar-text">Message text</p><button class="bog-btn" data-type="primary" data-width="fill" data-sheet-close>Primary</button></div>
+        </div>
+      </div>
+          <div class="bog-sheet" id="s-free" hidden>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2><p class="bog-sheet__desc">Description</p></div></header>
+          <div class="bog-sheet__content">
+          <p style="margin:0 0 16px;color:var(--text-secondary);font-size:14px;line-height:20px">Free content: put anything here — text, amounts, inputs, pickers.</p>
+          <div class="bog-field"><label class="bog-field__box"><span class="bog-field__text"><span class="bog-field__label">Amount</span><input class="bog-field__input" inputmode="decimal" placeholder="0.00"></span><button type="button" class="bog-field__clear" aria-label="Clear"></button></label></div>
+          </div>
+          
+        </div>
+      </div>
+          <div class="bog-sheet" id="s-buttons" hidden>
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><button type="button" class="bog-icon-btn" data-type="neutral" aria-label="Back"><span class="bog-icon"></span></button><div class="bog-sheet__heading"><h2 class="bog-sheet__title">Title</h2></div><button type="button" class="bog-icon-btn" data-type="neutral" aria-label="Close" data-sheet-close><span class="bog-icon" data-icon="close"></span></button></header>
+          <div class="bog-sheet__content" data-type="list">
+          <div class="bog-list">
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+          </div>
+          </div>
+          
+        </div>
+      </div>
+          <div class="bog-sheet" id="s-nooverlay" hidden data-overlay="false">
+        <div class="bog-sheet__panel" role="dialog" aria-modal="true" aria-label="Example">
+          <header class="bog-sheet__nav"><div class="bog-sheet__heading"><p class="bog-sheet__desc">Description</p></div></header>
+          <div class="bog-sheet__content" data-type="list">
+          <div class="bog-list">
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+            <button type="button" class="bog-list-item"><span class="bog-media-circle" data-size="40"></span><span class="bog-list-item__content"><span class="bog-list-item__subtitle">Subtitle</span><span class="bog-list-item__label">Primary Label</span></span><span class="bog-list-item__chevron"></span></button>
+          </div>
+          </div>
+          
+        </div>
+      </div>
+      <span class="bs-home" aria-hidden="true"></span>
+    </div>
+    <small>375 × 812 · open a state with the buttons above · tap the overlay, the X or drag the handle to close.</small>
+  </aside>
   </main>
 </div>
+<script>
+  // Slow motion: stretch the sheet animations that start on this tap (next tick, after bog-ui.js)
+  const phone = document.querySelector(".docs-preview .docs-phone"), slow = document.getElementById("bs-slow");
+  function slowDown() {
+    if (!slow.checked) return;
+    setTimeout(() => phone.getAnimations({ subtree: true }).forEach((a) => {
+      if (a.effect.getComputedTiming().endTime !== Infinity) a.playbackRate = 0.1;
+    }));
+  }
+  document.addEventListener("click", slowDown);
+  document.addEventListener("pointerup", slowDown);
+
+// States: one sheet at a time. Switching closes the open one first and opens the next once it has left.
+const stateBtns = document.querySelectorAll("[data-bs-state]");
+const openSheets = () => [...phone.querySelectorAll(".bog-sheet:not([hidden])")];
+function closeAll() {
+  const leaving = openSheets();
+  leaving.forEach((s) => BOG.closeSheet(s));
+  return Promise.all(leaving.flatMap((s) => s.getAnimations({ subtree: true })
+    .filter((a) => a.effect.getComputedTiming().endTime !== Infinity)
+    .map((a) => a.finished.catch(() => {}))));
+}
+function mark(id) { stateBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.bsState === id))); }
+let pending = 0;
+stateBtns.forEach((b) => b.addEventListener("click", () => {
+  const id = b.dataset.bsState, ticket = ++pending;
+  if (document.getElementById(id).hasAttribute("data-open")) return;
+  mark(id);
+  closeAll().then(() => { if (ticket === pending) { BOG.openSheet(id); mark(id); slowDown(); } });
+}));
+document.getElementById("bs-close").addEventListener("click", () => { pending++; mark(null); closeAll(); });
+// Closed from inside the phone (X, overlay, drag, Escape): clear the highlight
+phone.addEventListener("sheetclose", (e) => { if (e.target.id && !phone.querySelector(".bog-sheet[data-open]")) mark(null); });
+
+  // ---- Motion handoff ----
+  const FIG = "https://www.figma.com/design/Xhy3YpxKNhhQzuYa1U2g54/Chat-Motion-Guidlines?node-id=2-4924";
+  const SPEC = [
+    ["Sheet", "Position Y", "+788 (below the screen) → −20", "0–300 ms", "0.33, 0, 0.25, 1"],
+    ["Sheet", "Position Y", "−20 → 0 (settles)", "300–550 ms", "0.17, 0, 0.25, 1"]];
+  const SPEC_CLOSE = [
+    ["Sheet", "Position Y", "0 → its own height + 24 (off screen)", "0–250 ms", "0.75, 0, 0.67, 1"],
+    ["Overlay", "Opacity", "100% → 0", "0–200 ms", "Linear"]];
+  const pct = (ms) => (ms / 600 * 100).toFixed(2) + "%";
+  document.getElementById("motion-design").innerHTML =
+    "<p>Values are px (web) = pt (iOS) = dp (Android), measured from the sheet's resting spot; positive = down. The sheet starts 788 px below its spot — or its own height, if it is taller — so it always starts off screen.</p>" +
+    `<h3>Open<a href="${FIG}" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    `<div class="motion-tl"><span>Sheet · Position Y</span><div class="motion-tl__track"><span class="motion-tl__bar" style="left:0;width:${pct(300)}">300</span><span class="motion-tl__bar" style="left:${pct(300)};width:${pct(250)}">250</span></div>` +
+    `<span></span><div class="motion-tl__axis">${Array.from({ length: 11 }, (_, i) => `<span>${i * 60}</span>`).join("")}</div></div>` +
+    `<table class="motion-spec"><thead><tr><th>Layer</th><th>Property</th><th>Keyframes</th><th>Timing</th><th>Easing (cubic-bezier)</th></tr></thead><tbody>${SPEC.map((r) =>
+      `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><code>${r[4]}</code></td></tr>`).join("")}</tbody></table>` +
+    "<h3>Close</h3><p>Not part of the guide — a BOG UI addition that pairs with the open motion: the open curve mirrored, so the sheet accelerates away instead of settling. No overshoot, and the overlay is gone before the sheet, so closing feels quick.</p>" +
+    `<div class="motion-tl"><span>Sheet · Position Y</span><div class="motion-tl__track"><span class="motion-tl__bar" style="left:0;width:${pct(250)}">250</span></div>` +
+    `<span>Overlay · Opacity</span><div class="motion-tl__track"><span class="motion-tl__bar" data-kind="fade" style="left:0;width:${pct(200)}">200</span></div>` +
+    `<span></span><div class="motion-tl__axis">${Array.from({ length: 11 }, (_, i) => `<span>${i * 60}</span>`).join("")}</div></div>` +
+    `<table class="motion-spec"><thead><tr><th>Layer</th><th>Property</th><th>Keyframes</th><th>Timing</th><th>Easing (cubic-bezier)</th></tr></thead><tbody>${SPEC_CLOSE.map((r) =>
+      `<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><code>${r[4]}</code></td></tr>`).join("")}</tbody></table>` +
+    "<h3>Rules</h3><ul>" +
+      "<li>Open comes from the Action Sheet guide; Close is a BOG UI addition (above). The overlay fades in with the component's 280 ms fade.</li>" +
+      "<li>Dragging the sheet down and letting go continues the close from where the finger left off, over the remaining distance (never under 150 ms).</li>" +
+      "<li>During the 20 px overshoot the area under the sheet stays filled with the sheet's color, so no gap shows at the bottom edge.</li>" +
+      "<li>The iOS home indicator belongs to the screen, not the sheet: it doesn't move.</li>" +
+      "<li>The same motion runs for every sheet — including the ones Select, Currency Input and Phone Input open.</li>" +
+      "<li>Reduce Motion / Remove animations on: the sheet appears and disappears without moving.</li>" +
+    "</ul>" +
+    '<div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="design">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="spec">Copy spec as text</button></div>';
+  const SPEC_TEXT = ["Bottom Sheet · open motion — " + FIG, "Units: px = pt = dp; positive = down",
+    "OPEN (550 ms)"].concat(SPEC.map((r) => "  " + r.join("  ·  ")),
+    ["Start = 788 below the resting spot, or the sheet's height if taller.", "", "CLOSE (250 ms, BOG UI addition)"],
+    SPEC_CLOSE.map((r) => "  " + r.join("  ·  ")),
+    ["After a drag: continues from the finger over the remaining distance (min 150 ms).", "Home indicator: static. Reduce Motion: no movement."]).join("\n");
+
+  const CODE = {
+    web: `<!-- Built in: every sheet opened with data-sheet-open / BOG.openSheet() plays the open motion -->
+<button class="bog-btn" data-sheet-open="my-sheet">Open</button>
+<script>BOG.openSheet("my-sheet");<\/script>
+
+// bog-ui.js — what plays on the panel
+panel.animate([
+  { translate: "0 max(100%, 788px)", easing: "cubic-bezier(0.33, 0, 0.25, 1)" },
+  { translate: "0 -20px", offset: 300 / 550, easing: "cubic-bezier(0.17, 0, 0.25, 1)" },
+  { translate: "0 0" }
+], { duration: 550 });
+
+// …and on close (BOG.closeSheet, X, overlay, Escape, drag)
+panel.animate({ translate: ["0 0", "0 " + (panel.offsetHeight + 24) + "px"] },
+  { duration: 250, easing: "cubic-bezier(0.75, 0, 0.67, 1)", fill: "forwards" });
+overlay.animate({ opacity: [1, 0] }, { duration: 200, easing: "linear", fill: "forwards" });`,
+
+    ios: `import SwiftUI
+
+// Chat Motion Guidelines › Action Sheet (2:4924) — open: rises 808pt (to 20pt past its spot) in 300ms,
+// settles back 20pt in 250ms. iOS 17+.
+struct BOGSheetPresenter<Sheet: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    @ViewBuilder var sheet: () -> Sheet
+
+    @State private var y: CGFloat = 788          // resting below the screen
+    @State private var height: CGFloat = 0
+    @State private var overlay = 0.0
+    @Environment(\\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content.overlay(alignment: .bottom) {
+            ZStack(alignment: .bottom) {
+                Color.black.opacity(0.68 * overlay).ignoresSafeArea()
+                    .onTapGesture { isPresented = false }
+                sheet()
+                    .background(alignment: .bottom) {
+                        // fills the gap under the sheet during the 20pt overshoot
+                        Color(.systemBackground).frame(height: 24).offset(y: 24)
+                    }
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height = $0 }
+                    .offset(y: y)
+            }
+            .allowsHitTesting(isPresented)
+        }
+        .onChange(of: isPresented) { _, open in open ? show() : hide() }
+    }
+
+    private func show() {
+        withAnimation(.easeOut(duration: 0.28)) { overlay = 1 }
+        if reduceMotion { y = 0; return }
+        withAnimation(.timingCurve(0.33, 0, 0.25, 1, duration: 0.3)) { y = -20 } completion: {
+            withAnimation(.timingCurve(0.17, 0, 0.25, 1, duration: 0.25)) { y = 0 }
+        }
+    }
+    // Close (BOG UI addition, pairs with the open): drops its height + 24pt in 250ms, accelerating;
+    // the overlay fades out in 200ms
+    private func hide() {
+        if reduceMotion { overlay = 0; y = 788; return }
+        withAnimation(.linear(duration: 0.2)) { overlay = 0 }
+        withAnimation(.timingCurve(0.75, 0, 0.67, 1, duration: 0.25)) { y = height + 24 } completion: { y = 788 }
+    }
+}
+
+extension View {
+    func bogSheet<S: View>(isPresented: Binding<Bool>, @ViewBuilder sheet: @escaping () -> S) -> some View {
+        modifier(BOGSheetPresenter(isPresented: isPresented, sheet: sheet))
+    }
+}
+// The home indicator is the system's — it doesn't move with the sheet.`,
+
+    android: `import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+
+// Chat Motion Guidelines › Action Sheet (2:4924) — open: rises 808dp (to 20dp past its spot) in 300ms,
+// settles back 20dp in 250ms
+private val RiseEasing = CubicBezierEasing(0.33f, 0f, 0.25f, 1f)
+private val SettleEasing = CubicBezierEasing(0.17f, 0f, 0.25f, 1f)
+private val CloseEasing = CubicBezierEasing(0.75f, 0f, 0.67f, 1f)   // close: BOG UI addition, the open curve mirrored
+
+@Composable
+fun BogSheetHost(visible: Boolean, sheet: @Composable () -> Unit) {
+    val y = remember { Animatable(788f) }   // resting below the screen (dp)
+    var heightDp by remember { mutableFloatStateOf(0f) }
+    val density = LocalDensity.current
+    LaunchedEffect(visible) {
+        if (visible) {
+            y.snapTo(788f)
+            y.animateTo(-20f, tween(300, easing = RiseEasing))
+            y.animateTo(0f, tween(250, easing = SettleEasing))
+        } else if (y.value != 788f) {
+            y.animateTo(heightDp + 24f, tween(250, easing = CloseEasing))   // drops its own height + 24dp
+            y.snapTo(788f)
+        }
+    }
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        Box(
+            Modifier
+                .onSizeChanged { heightDp = with(density) { it.height.toDp().value } }
+                .graphicsLayer { translationY = y.value * this.density }
+        ) { sheet() }
+    }
+}
+// Pair it with your scrim: fade in 280ms on open, out in 200ms (linear) on close. Keep the sheet's background
+// extending ~24dp below it for the overshoot.
+// Compose follows the system "Remove animations" setting (animator duration scale 0) automatically.`
+  };
+  document.querySelectorAll("[data-snippet]").forEach((c) => { c.textContent = CODE[c.dataset.snippet]; });
+
+  // Tabs (shareable via #motion-ios etc.) + copy buttons
+  const tabs = document.querySelectorAll(".motion-tabs [data-tab]");
+  function openTab(name) {
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+    document.querySelectorAll(".motion-pane").forEach((p) => { p.hidden = p.dataset.pane !== name; });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => { openTab(t.dataset.tab); history.replaceState(null, "", "#motion-" + t.dataset.tab); }));
+  const fromHash = location.hash.match(/^#motion-(design|ios|android|web)$/);
+  if (fromHash) { openTab(fromHash[1]); document.getElementById("motion").scrollIntoView(); }
+  function copy(btn, text) {
+    navigator.clipboard.writeText(text).then(() => { const was = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = was; }, 1200); });
+  }
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("[data-copy-link]"), code = e.target.closest("[data-copy]");
+    if (link) copy(link, location.href.split("#")[0] + "#motion-" + link.dataset.copyLink);
+    if (code) copy(code, code.dataset.copy === "spec" ? SPEC_TEXT : CODE[code.dataset.copy]);
+  });
+</script>
 </body>
 </html>

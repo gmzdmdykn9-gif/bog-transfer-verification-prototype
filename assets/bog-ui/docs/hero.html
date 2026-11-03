@@ -6,8 +6,21 @@
 <title>Hero Area — BOG UI</title>
 <link rel="stylesheet" href="../bog-ui.css">
 <link rel="stylesheet" href="docs.css">
+<script src="theme.js"></script>
 <script src="../bog-ui.js" defer></script>
 <script src="components.js" defer></script>
+<style>
+  /* Hero slider screen inside the shared phone preview (docs.css) */
+  .hp-screen { position: absolute; inset: 0; display: flex; flex-direction: column; overflow: hidden; background: #fff; }
+  .hp-dots { display: flex; justify-content: center; gap: 6px; padding: 12px 0; }
+  .hp-dots button { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 3px; background: #c9cbce; cursor: pointer; transition: width 200ms ease, background-color 200ms ease; }
+  .hp-dots button[aria-current="true"] { width: 18px; background: #1b1c1d; }
+  .hp-list { display: flex; flex-direction: column; gap: 12px; padding: 4px 16px; }
+  .hp-list span { height: 44px; border-radius: 12px; }
+  /* Status + Navigation bar stay on the page while the heroes slide underneath (the gradient shows through) */
+  .hp-bars { position: absolute; inset: 0 0 auto; z-index: 2; pointer-events: none; }
+  .hp-bars .bog-icon-btn { pointer-events: auto; }
+</style>
 </head>
 <body>
 <div class="docs">
@@ -15,7 +28,8 @@
     <a class="docs-nav__brand" href="../index.html">BOG UI</a>
     <nav id="bog-nav" data-current="hero"></nav>
   </aside>
-  <main class="docs-main">
+  <main class="docs-main docs-split">
+  <div>
     <header><h1>Hero Area</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
     <p class="lead">Top-of-screen header: a centered visual (avatar, image, illustration or card), label, title and description, with optional badges, a Feedback message and actions.</p>
 
@@ -35,7 +49,35 @@
   &lt;/div&gt;
 &lt;/section&gt;</code></pre>
 
-    <h2>Variants</h2>
+<h2 id="motion">Motion</h2>
+<p class="lead">The hero loads slot by slot, and pages slide between heroes while the background cross-fades. Try both in the phone on the right — it slides between the Peach and the Mint hero.
+  Source: <a href="https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=83-449" target="_blank" rel="noopener">Component Motion Guidelines › Hero Area ↗</a></p>
+<div class="panel">
+  <div class="motion-tabs" role="tablist">
+    <button role="tab" data-tab="design" aria-selected="true">Designers</button>
+    <button role="tab" data-tab="ios">iOS · SwiftUI</button>
+    <button role="tab" data-tab="android">Android · Compose</button>
+    <button role="tab" data-tab="web">Web</button>
+  </div>
+  <section class="motion-pane" data-pane="design" id="motion-design"></section>
+  <section class="motion-pane" data-pane="ios" hidden>
+    <p>A slot modifier with its index (the delay comes from it, so any number of slots loads the same way), a background fade, and a pager that slides heroes over a cross-fading background.</p>
+    <pre><code data-snippet="ios"></code></pre>
+    <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="ios">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="ios">Copy code</button></div>
+  </section>
+  <section class="motion-pane" data-pane="android" hidden>
+    <p>The same pieces in Compose: an indexed slot modifier, the background fade, and a pager.</p>
+    <pre><code data-snippet="android"></code></pre>
+    <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="android">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="android">Copy code</button></div>
+  </section>
+  <section class="motion-pane" data-pane="web" hidden>
+    <p>Built into <code>bog-ui.js</code> + <code>hero.css</code>.</p>
+    <pre><code data-snippet="web"></code></pre>
+    <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="web">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="web">Copy code</button></div>
+  </section>
+</div>
+
+<h2>Variants</h2>
     <p class="lead">Shown at phone width (375px). The Navigation bar that sits above the hero in Figma is a separate component (not built yet).</p>
     <div class="row" id="heroes" style="gap:24px;align-items:flex-start"></div>
 
@@ -43,6 +85,28 @@
     <p class="lead"><code>data-gradient="peach | mint | green | brown"</code>. The colour covers the whole hero, including buttons and action items, and fades out only towards the bottom edge. On the dark ones (green, brown) the hero text turns white; use light content inside (Amount <code>data-color="white"</code>, inverse Feedback). Figma marks these as work in progress.</p>
     <div class="row" id="gradients" style="gap:24px;align-items:flex-start"></div>
 
+  </div>
+
+  <aside class="docs-preview" aria-label="Mobile preview">
+    <div class="docs-preview__controls">
+      <button class="bog-btn" data-type="secondary" data-size="small" id="hp-replay">Replay load</button>
+      <button class="bog-btn" data-type="neutral" data-size="small" id="hp-prev">← Previous</button>
+      <button class="bog-btn" data-type="neutral" data-size="small" id="hp-next">Next →</button>
+    </div>
+    <div class="docs-preview__controls"><label><input type="checkbox" id="hp-slow"> Slow motion (×10)</label></div>
+    <div class="docs-phone">
+      <div class="hp-screen">
+        <div class="hp-bars">
+          <div class="docs-phone__status"><span>9:41</span><span>●●●</span></div>
+          <div class="docs-phone__nav"><span class="bog-icon-btn" data-type="neutral" data-size="small"><span class="bog-icon" data-icon="chevron-right"></span></span>Credit card</div>
+        </div>
+        <div class="bog-hero-slider" id="hp-slider"></div>
+        <div class="hp-dots" id="hp-dots"></div>
+        <div class="hp-list" aria-hidden="true"><span class="bog-skeleton-wave"></span><span class="bog-skeleton-wave"></span><span class="bog-skeleton-wave"></span></div>
+      </div>
+    </div>
+    <small>375 × 812 · Replay load, or slide between the Peach and Mint hero.</small>
+  </aside>
 <script>
   const IMG = "../assets/media/placeholder.png";
   const txt = '<div class="bog-hero__text"><p class="bog-hero__label">Label</p><h1 class="bog-hero__title">Header text</h1><p class="bog-hero__desc">Description</p></div>';
@@ -62,6 +126,267 @@
     return `<div style="width:375px;border-radius:16px;overflow:hidden;background:${dark ? "#1b1c1d" : "#fff"}"><section class="bog-hero" data-gradient="${g}"><div class="bog-hero__content"><span class="bog-card-art" data-size="80"></span><div class="bog-hero__text"><p class="bog-hero__label">Credit Card</p></div>${amount(c)}</div><div class="bog-feedback" data-status="warning"${dark ? ' data-appearance="inverse"' : ""}><div class="bog-feedback__text"><p class="bog-feedback__title">Warning</p><p class="bog-feedback__desc">Small description goes here</p></div></div>${withBtns ? btns(dark) : items(dark)}</section><p style="margin:0;padding:8px 16px 16px;font-size:12px;color:${dark ? "#d7d9db" : "#6c7075"}"><code>data-gradient="${g}"</code></p></div>`;
   });
   document.getElementById("gradients").innerHTML = G.join("");
+
+  // ---- Phone preview: a slider with the Peach and Mint heroes from above ----
+  const slider = document.getElementById("hp-slider"), dots = document.getElementById("hp-dots");
+  // Room for the status + navigation bar overlay (not a slot), so the gradient runs behind them from the top
+  const bars = () => `<div data-hero-static style="flex:none;height:72px"></div>`;
+  function buildPreview() {
+    slider.innerHTML = [G[0], G[1]].map((html, i) => {
+      const t = document.createElement("template");
+      t.innerHTML = html;
+      const hero = t.content.querySelector(".bog-hero");
+      hero.insertAdjacentHTML("afterbegin", bars());
+      if (i === 0) hero.setAttribute("data-active", "");
+      return hero.outerHTML;
+    }).join("");
+    renderDots();
+  }
+  const heroes = () => [...slider.querySelectorAll(":scope > .bog-hero")];
+  let index = 0;
+  function renderDots() {
+    dots.innerHTML = heroes().map((_, i) => `<button type="button" aria-label="Page ${i + 1}" aria-current="${i === index}" data-i="${i}"></button>`).join("");
+  }
+  function go(i) {
+    const n = heroes().length;
+    i = (i + n) % n;
+    if (i === index) return;
+    index = i;
+    renderDots();
+    slowDown(BOG.heroSlide(slider, i));
+  }
+  const slow = document.getElementById("hp-slow");
+  function slowDown(list) { if (slow.checked) (list || []).forEach((a) => { a.playbackRate = 0.1; }); }
+  document.getElementById("hp-prev").addEventListener("click", () => go(index - 1));
+  document.getElementById("hp-next").addEventListener("click", () => go(index + 1));
+  dots.addEventListener("click", (e) => { const b = e.target.closest("[data-i]"); if (b) go(+b.dataset.i); });
+  function replay() {
+    index = 0;
+    buildPreview();
+    slowDown(BOG.heroIn(slider.querySelector(".bog-hero[data-active]")));
+  }
+  buildPreview();
+  document.getElementById("hp-replay").addEventListener("click", replay);
+  window.addEventListener("DOMContentLoaded", () => BOG.heroIn(slider.querySelector(".bog-hero[data-active]")));
+
+  // ---- Motion handoff ----
+  const FIG = "https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=";
+  const timeline = (rows, max) => {
+    const pct = (ms) => (ms / max * 100).toFixed(2) + "%";
+    return `<div class="motion-tl">${rows.map(([n, bars, k]) => `<span>${n}</span><div class="motion-tl__track">${bars.map(([st, l]) =>
+      `<span class="motion-tl__bar"${k ? ` data-kind="${k}"` : ""} style="left:${pct(st)};width:${pct(l)}">${l}</span>`).join("")}</div>`).join("")}` +
+      `<span></span><div class="motion-tl__axis">${Array.from({ length: 11 }, (_, i) => `<span>${i * max / 10}</span>`).join("")}</div></div>`;
+  };
+  const spec = (rows) => `<table class="motion-spec"><thead><tr><th>Layer</th><th>Property</th><th>Keyframes</th><th>Timing</th><th>Easing (cubic-bezier)</th></tr></thead><tbody>${rows.map((r) =>
+    `<tr>${r.map((c, i) => `<td>${i === 4 ? `<code>${c}</code>` : c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  const SLOT_NAMES = ["Media", "Label", "Title", "Description", "Badges", "Feedback", "Actions"];
+  const LOAD_TL = [["Background · Opacity", [[0, 600]], "fade"]].concat(SLOT_NAMES.map((n, i) => [`Slot ${i + 1} · ${n}`, [[Math.round(i * 1000 / 15), 500]]]));
+  const SPEC_LOAD = [
+    ["Background", "Opacity", "0 → 100%", "0–600 ms", "Linear"],
+    ["Slot n", "Position Y", "+20 → 0", "starts (n − 1) × 66.7 ms · 500 ms long", "0.29, 0, 0.01, 1"],
+    ["Slot n", "Opacity", "0 → 100%", "starts (n − 1) × 66.7 ms · 333 ms long", "0.29, 0, 0.01, 1"]];
+  const SPEC_SLIDE = [
+    ["Current hero", "Position X", "0 → −760 (2 × screen width + 10)", "0–750 ms", "0.36, 0, 0.02, 1"],
+    ["Next hero", "Position X", "+760 → 0", "0–750 ms", "0.36, 0, 0.02, 1"],
+    ["Current background", "Opacity", "100% → 0 (stays in place)", "0–150 ms", "Linear"],
+    ["Next background", "Opacity", "0 → 100% (stays in place)", "150–400 ms", "Linear"]];
+  document.getElementById("motion-design").innerHTML =
+    "<p>Values are px (web) = pt (iOS) = dp (Android).</p>" +
+    `<h3>Load<a href="${FIG}83-2126" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    "<p><b>Slot n starts (n − 1) × 66.7 ms after the first</b> (every 4 frames at 60 fps). The step never changes, so a hero with 2, 3, 4 or 10 slots loads with the same rhythm: each new slot just comes 66.7 ms after the one above it. Slots are counted top to bottom: media, label, title, description, badges, feedback, actions. The Navigation bar is not a slot.</p>" +
+    timeline(LOAD_TL, 1000) + spec(SPEC_LOAD) +
+    `<h3>Slide between heroes<a href="${FIG}110-2041" target="_blank" rel="noopener">Figma ↗</a></h3>` +
+    "<p>The heroes slide 760 px while the background stays put and switches color: the current one fades out in 150 ms, then the next one fades in over 250 ms.</p>" +
+    timeline([["Current hero · Position X", [[0, 750]]], ["Next hero · Position X", [[0, 750]]], ["Current background · Opacity", [[0, 150]], "fade"], ["Next background · Opacity", [[150, 250]], "fade"]], 1000) + spec(SPEC_SLIDE) +
+    "<h3>Rules</h3><ul>" +
+      "<li>The guide's \"Content\" tracks (−20 px, fade, 250 ms) are greyed out — switched off — so the content moves only with its hero.</li>" +
+      "<li>Sliding back (previous page) mirrors the direction.</li>" +
+      "<li>Reduce Motion / Remove animations on: show the hero at once; switch pages without sliding.</li>" +
+    "</ul>" +
+    '<div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="design">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="spec">Copy spec as text</button></div>';
+  const SPEC_TEXT = ["Hero Area motion — " + FIG + "83-449", "Units: px = pt = dp", "",
+    "LOAD (any number of slots; slot n starts (n − 1) × 66.7 ms after the first)"].concat(SPEC_LOAD.map((r) => "  " + r.join("  ·  ")),
+    ["", "SLIDE"], SPEC_SLIDE.map((r) => "  " + r.join("  ·  ")), ["", "Content tracks in the guide are switched off. Reduce Motion: instant."]).join("\n");
+
+  const CODE = {
+    web: `<!-- Load: call once the hero is on screen. Slots = media, label, title, description, badges,
+     feedback, actions (top to bottom); mark anything else data-hero-static (e.g. the Navigation bar). -->
+<script>BOG.heroIn(document.querySelector(".bog-hero"));<\/script>
+
+<!-- Slide: stack heroes in a .bog-hero-slider; the visible one has data-active -->
+<div class="bog-hero-slider" id="cards">
+  <section class="bog-hero" data-gradient="peach" data-active>…</section>
+  <section class="bog-hero" data-gradient="green">…</section>
+</div>
+<script>BOG.heroSlide(document.getElementById("cards"), 1);   // to the 2nd hero<\/script>`,
+
+    ios: `import SwiftUI
+
+// Component Motion Guidelines › Hero Area (83:449) — Load and Slider. iOS 17+.
+private let loadCurve = { (ms: Double, delay: Double) in Animation.timingCurve(0.29, 0, 0.01, 1, duration: ms / 1000).delay(delay / 1000) }
+private let slotStep = 1000.0 / 15     // 66.7ms between slots — the same for any number of slots
+
+// MARK: Load — slot n (0-based) rises 20pt and fades in, n × 66.7ms after the first
+struct HeroSlot: ViewModifier {
+    let index: Int
+    @State private var y: CGFloat = 20
+    @State private var opacity = 0.0
+    @Environment(\\.accessibilityReduceMotion) private var reduceMotion
+    func body(content: Content) -> some View {
+        content
+            .offset(y: y)
+            .opacity(opacity)
+            .onAppear {
+                if reduceMotion { y = 0; opacity = 1; return }
+                let delay = Double(index) * slotStep
+                withAnimation(loadCurve(500, delay)) { y = 0 }
+                withAnimation(loadCurve(333, delay)) { opacity = 1 }
+            }
+    }
+}
+extension View {
+    func heroSlot(_ index: Int) -> some View { modifier(HeroSlot(index: index)) }
+}
+
+// Background fades in over 600ms, linear
+struct HeroBackgroundIn: ViewModifier {
+    @State private var opacity = 0.0
+    func body(content: Content) -> some View {
+        content.opacity(opacity).onAppear { withAnimation(.linear(duration: 0.6)) { opacity = 1 } }
+    }
+}
+
+// Usage — number the slots top to bottom; adding a slot just adds the next index
+// VStack(spacing: 16) {
+//     Avatar().heroSlot(0)
+//     Text("Label").heroSlot(1)
+//     Text("Header text").heroSlot(2)
+//     Text("Description").heroSlot(3)
+//     PrimaryButton("Action").heroSlot(4)
+// }
+// .background(HeroGradient(.peach).modifier(HeroBackgroundIn()))
+
+// MARK: Slide — heroes travel 760pt (2 × width + 10) over a background that cross-fades in place
+struct HeroPager<Hero: View>: View {
+    let gradients: [AnyShapeStyle]          // one background per page
+    @Binding var page: Int
+    @ViewBuilder var hero: (Int) -> Hero
+
+    @State private var shown = 0           // page whose content is in place
+    @State private var bgOpacity: [Double] = []
+
+    var body: some View {
+        GeometryReader { geo in
+            let distance = 2 * geo.size.width + 10
+            ZStack {
+                ForEach(gradients.indices, id: \\.self) { i in
+                    Rectangle().fill(gradients[i]).opacity(i < bgOpacity.count ? bgOpacity[i] : (i == page ? 1 : 0))
+                }
+                ForEach(gradients.indices, id: \\.self) { i in
+                    hero(i).offset(x: CGFloat(i - shown) * distance)
+                }
+            }
+            .clipped()
+        }
+        .onAppear { bgOpacity = gradients.indices.map { $0 == page ? 1 : 0 }; shown = page }
+        .onChange(of: page) { old, new in
+            withAnimation(.timingCurve(0.36, 0, 0.02, 1, duration: 0.75)) { shown = new }
+            withAnimation(.linear(duration: 0.15)) { bgOpacity[old] = 0 }
+            withAnimation(.linear(duration: 0.25).delay(0.15)) { bgOpacity[new] = 1 }
+        }
+    }
+}`,
+
+    android: `import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+
+// Component Motion Guidelines › Hero Area (83:449) — Load and Slider
+private val LoadEasing = CubicBezierEasing(0.29f, 0f, 0.01f, 1f)
+private val SlideEasing = CubicBezierEasing(0.36f, 0f, 0.02f, 1f)
+private const val SLOT_STEP_MS = 1000f / 15   // 66.7ms between slots — the same for any number of slots
+
+/** Load: slot n (0-based) rises 20dp and fades in, n × 66.7ms after the first. */
+@Composable
+fun Modifier.heroSlot(index: Int): Modifier {
+    val y = remember { Animatable(20f) }
+    val alpha = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        val delay = (index * SLOT_STEP_MS).toInt()
+        coroutineScope {
+            launch { y.animateTo(0f, tween(500, delay, LoadEasing)) }
+            launch { alpha.animateTo(1f, tween(333, delay, LoadEasing)) }
+        }
+    }
+    return graphicsLayer { translationY = y.value * density; this.alpha = alpha.value }
+}
+
+/** Background fades in over 600ms, linear. */
+@Composable
+fun Modifier.heroBackgroundIn(): Modifier {
+    val a = remember { Animatable(0f) }
+    LaunchedEffect(Unit) { a.animateTo(1f, tween(600, easing = LinearEasing)) }
+    return graphicsLayer { alpha = a.value }
+}
+// Column { Avatar(Modifier.heroSlot(0)); Text("Label", Modifier.heroSlot(1)); Text("Header text", Modifier.heroSlot(2)) … }
+
+/** Slide: heroes travel 760dp (2 × width + 10) over a background that cross-fades in place. */
+@Composable
+fun HeroPager(page: Int, backgrounds: List<Brush>, hero: @Composable (Int) -> Unit) {
+    var width by remember { mutableFloatStateOf(0f) }
+    val shown = remember { Animatable(page.toFloat()) }
+    val bg = remember { backgrounds.indices.map { Animatable(if (it == page) 1f else 0f) } }
+    var previous by remember { mutableIntStateOf(page) }
+    LaunchedEffect(page) {
+        if (page == previous) return@LaunchedEffect
+        val old = previous
+        previous = page
+        coroutineScope {
+            launch { shown.animateTo(page.toFloat(), tween(750, easing = SlideEasing)) }
+            launch { bg[old].animateTo(0f, tween(150, easing = LinearEasing)) }
+            launch { bg[page].animateTo(1f, tween(250, 150, LinearEasing)) }
+        }
+    }
+    Box(Modifier.fillMaxWidth().onSizeChanged { width = it.width.toFloat() }) {
+        backgrounds.forEachIndexed { i, b ->
+            Box(Modifier.matchParentSize().graphicsLayer { alpha = bg[i].value }.background(b))
+        }
+        backgrounds.indices.forEach { i ->
+            Box(Modifier.graphicsLayer { translationX = (i - shown.value) * (2 * width + 10 * density) }) { hero(i) }
+        }
+    }
+}
+// Compose follows the system "Remove animations" setting (animator duration scale 0) automatically.`
+  };
+  document.querySelectorAll("[data-snippet]").forEach((c) => { c.textContent = CODE[c.dataset.snippet]; });
+
+  // Tabs (shareable via #motion-ios etc.) + copy buttons
+  const tabs = document.querySelectorAll(".motion-tabs [data-tab]");
+  function openTab(name) {
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+    document.querySelectorAll(".motion-pane").forEach((p) => { p.hidden = p.dataset.pane !== name; });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => { openTab(t.dataset.tab); history.replaceState(null, "", "#motion-" + t.dataset.tab); }));
+  const fromHash = location.hash.match(/^#motion-(design|ios|android|web)$/);
+  if (fromHash) { openTab(fromHash[1]); document.getElementById("motion").scrollIntoView(); }
+  function copy(btn, text) {
+    navigator.clipboard.writeText(text).then(() => { const was = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = was; }, 1200); });
+  }
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("[data-copy-link]"), code = e.target.closest("[data-copy]");
+    if (link) copy(link, location.href.split("#")[0] + "#motion-" + link.dataset.copyLink);
+    if (code) copy(code, code.dataset.copy === "spec" ? SPEC_TEXT : CODE[code.dataset.copy]);
+  });
 </script>
   </main>
 </div>

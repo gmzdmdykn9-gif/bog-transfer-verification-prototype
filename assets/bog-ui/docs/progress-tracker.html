@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress Tracker — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="progress-tracker"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Progress Tracker</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Vertical list of the steps of a process users wait on (application, delivery): completed, current, warning, error and pending steps joined by a connector.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-progress-tracker"&gt;
+  &lt;p class="bog-progress-tracker__label"&gt;Label&lt;/p&gt;                       &lt;!-- optional --&gt;
+  &lt;ol class="bog-progress-tracker__steps"&gt;
+    &lt;li class="bog-progress-tracker__step" data-status="completed"&gt;
+      &lt;span class="bog-progress-tracker__indicator"&gt;&lt;/span&gt;
+      &lt;div class="bog-progress-tracker__content"&gt;
+        &lt;p class="bog-progress-tracker__title"&gt;Application sent&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/li&gt;
+    &lt;li class="bog-progress-tracker__step" data-status="current"&gt;
+      &lt;span class="bog-progress-tracker__indicator"&gt;&lt;/span&gt;
+      &lt;div class="bog-progress-tracker__content"&gt;
+        &lt;p class="bog-progress-tracker__title"&gt;Under review&lt;/p&gt;
+        &lt;p class="bog-progress-tracker__helper"&gt;Helper text&lt;/p&gt;         &lt;!-- optional --&gt;
+        &lt;p class="bog-progress-tracker__desc"&gt;Description&lt;/p&gt;           &lt;!-- optional --&gt;
+      &lt;/div&gt;
+    &lt;/li&gt;
+    &lt;li class="bog-progress-tracker__step" data-status="warning"&gt;
+      &lt;span class="bog-progress-tracker__indicator"&gt;&lt;/span&gt;
+      &lt;div class="bog-progress-tracker__content"&gt;
+        &lt;p class="bog-progress-tracker__title"&gt;Documents&lt;/p&gt;
+        &lt;span class="bog-inline-message" data-status="warning" data-size="small"&gt;Message text&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/li&gt;
+    &lt;li class="bog-progress-tracker__step"&gt;                             &lt;!-- pending; last item has no connector --&gt;
+      &lt;span class="bog-progress-tracker__indicator"&gt;&lt;/span&gt;
+      &lt;div class="bog-progress-tracker__content"&gt;
+        &lt;p class="bog-progress-tracker__title"&gt;Money on the account&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+
+step data-status     pending (default) | current | completed | warning | error
+step data-indicator  icon | outline | number   (default: pending = outline, others = icon)
+step data-connector  false  (hide the green connector of a completed step)
+data-state           skeleton  (on the tracker or a single step)</code></pre>
+
+
+    <h2>Try it</h2>
+    <p class="lead">Move through the steps: the circle color and the green connector animate when <code>data-status</code> changes.</p>
+    <div class="panel" style="display:grid;gap:20px;width:375px;box-sizing:border-box">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button type="button" class="bog-btn" data-type="neutral" data-size="small" id="pt-back">Back</button>
+        <button type="button" class="bog-btn" data-type="primary" data-size="small" id="pt-next">Next step</button>
+        <button type="button" class="bog-btn" data-type="negative-secondary" data-size="small" id="pt-error">Fail current</button>
+        <button type="button" class="bog-btn" data-type="ghost" data-size="small" id="pt-skel">Skeleton</button>
+      </div>
+      <div class="bog-progress-tracker" id="pt-demo">
+        <p class="bog-progress-tracker__label">Loan application</p>
+        <ol class="bog-progress-tracker__steps"></ol>
+      </div>
+    </div>
+
+    <h2>Step item × State</h2>
+    <div class="panel"><table id="pt-states"></table></div>
+
+    <h2>Indicator styles (_Progress Indicator Path)</h2>
+    <div class="panel"><table id="pt-indicators"></table></div>
+
+    <h2>Progress Tracker</h2>
+    <div class="panel"><table id="pt-trackers"></table></div>
+
+<script>
+
+const C = "bog-progress-tracker";
+const content = (title, o = {}) => `<div class="${C}__content"><p class="${C}__title">${title}</p>${o.helper ? `<p class="${C}__helper">${o.helper}</p>` : ""}${o.msg ? `<span class="bog-inline-message" data-status="${o.msg}" data-size="small">Message text</span>` : (o.desc ? `<p class="${C}__desc">${o.desc}</p>` : "")}</div>`;
+const step = (status, title, o = {}) => `<li class="${C}__step"${status ? ` data-status="${status}"` : ""}${o.ind ? ` data-indicator="${o.ind}"` : ""}${o.skel ? ' data-state="skeleton"' : ""}><span class="${C}__indicator">${o.num || ""}</span>${content(title, o)}</li>`;
+const tracker = (steps, label = "Label", extra = "") => `<div class="${C}"${extra}>${label ? `<p class="${C}__label">${label}</p>` : ""}<ol class="${C}__steps">${steps}</ol></div>`;
+const head = cols => "<tr><th></th>" + cols.map(c => `<th>${c}</th>`).join("") + "</tr>";
+const cell = (h, w = 280) => `<td><div style="min-width:${w}px;width:${w}px">${h}</div></td>`;
+const msgFor = s => (s === "warning" || s === "error") ? (s === "error" ? "negative" : "warning") : null;
+
+// State matrix: step item (with a following step so the connector shows) and last item
+const STATES = [["Current","current"],["Completed","completed"],["Warning","warning"],["Error","error"],["Pending","pending"]];
+const item = s => tracker(step(s, "Step title", {helper: "Helper text", desc: "Description", msg: msgFor(s)}) + step("pending", "Next step"), "");
+const last = s => tracker(step(s, "Step title", {msg: msgFor(s)}), "");
+const lastFull = s => tracker(step(s, "Step title", {helper: "Helper text", desc: "Description", msg: msgFor(s)}), "");
+document.getElementById("pt-states").innerHTML = head(["Step item", "Last item", "Last item + Helper + Description"]) +
+  STATES.map(([n, s]) => `<tr><th>${n}</th>${cell(item(s))}${cell(last(s))}${cell(lastFull(s))}</tr>`).join("") +
+  `<tr><th>Skeleton</th>${cell(tracker(step("pending", "x", {skel: 1}) + step("pending", "x"), ""))}${cell(tracker(step("pending", "x", {skel: 1}), ""))}<td></td></tr>`;
+
+// Indicator styles
+const IND = [["Icon · Current", "current", ""], ["Outline · Pending", "pending", "outline"], ["Number · Pending + text", "pending", "number", "2"], ["Icon · Completed", "completed", ""], ["Icon · Error", "error", ""], ["Icon · Warning", "warning", ""], ["Icon · Pending (placeholder)", "pending", "icon"]];
+const path = (s, ind, num) => tracker(step(s, "Step title", {ind, num}) + step("pending", ""), "");
+document.getElementById("pt-indicators").innerHTML = "<tr>" + IND.map(([n]) => `<th>${n}</th>`).join("") + "</tr><tr>" +
+  IND.map(([, s, ind, num]) => `<td><div style="min-width:120px">${path(s, ind, num)}</div></td>`).join("") + "</tr>" +
+  `<tr><th colspan="7" style="text-align:left">Skeleton</th></tr><tr><td>${tracker(step("pending", "", {skel: 1}) + step("pending", ""), "", "")}</td></tr>`;
+
+// Trackers: default (Step 2 on, 3–5 off), all 6 steps, skeleton
+const def = tracker(step("completed", "Step title") + step("current", "Step title", {helper: "Helper text", desc: "Description"}) + step("pending", "Step title"));
+const six = tracker(step("completed", "Application sent") + step("completed", "Identity checked") + step("warning", "Documents", {msg: "warning"}) + step("current", "Under review", {helper: "Usually 1–2 days"}) + step("pending", "Contract") + step("pending", "Money on the account"), "Loan application");
+const noLabel = tracker(step("completed", "Step title") + step("error", "Step title", {msg: "negative"}) + step("pending", "Step title"), "");
+const skel = tracker(step("pending", "x") + step("pending", "x") + step("pending", "x"), "Label", ' data-state="skeleton"');
+document.getElementById("pt-trackers").innerHTML = head(["Default (Step 2)", "All steps (Step 2–5)", "No label", "Skeleton"]) +
+  `<tr><th></th>${cell(def)}${cell(six)}${cell(noLabel)}${cell(skel)}</tr>`;
+
+// Try it
+const TITLES = ["Application sent", "Identity checked", "Under review", "Contract signed", "Money on the account"];
+const ol = document.querySelector("#pt-demo ol");
+ol.innerHTML = TITLES.map(t => step("pending", t)).join("");
+const items = [...ol.children];
+let cur = 1, failed = false;
+const render = () => items.forEach((li, i) => {
+  const st = i < cur ? "completed" : i === cur ? (failed ? "error" : "current") : "pending";
+  li.dataset.status = st;
+  const c = li.querySelector(`.${C}__content`);
+  c.querySelectorAll(`.${C}__helper, .bog-inline-message`).forEach(e => e.remove());
+  if (st === "current") c.insertAdjacentHTML("beforeend", `<p class="${C}__helper">In progress</p>`);
+  if (st === "error") c.insertAdjacentHTML("beforeend", `<span class="bog-inline-message" data-status="negative" data-size="small">Couldn’t verify — try again</span>`);
+});
+render();
+document.getElementById("pt-next").onclick = () => { failed = false; cur = Math.min(items.length, cur + 1); render(); };
+document.getElementById("pt-back").onclick = () => { failed = false; cur = Math.max(0, cur - 1); render(); };
+document.getElementById("pt-error").onclick = () => { if (cur < items.length) { failed = true; render(); } };
+document.getElementById("pt-skel").onclick = () => { const d = document.getElementById("pt-demo"); d.dataset.state === "skeleton" ? delete d.dataset.state : d.dataset.state = "skeleton"; };
+
+</script>
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+/* ==========================================================================
+   BOG UI — Tab Bar (bottom app navigation; BOG Design source)
+   Figma: Tab Bar page (63155:50986)
+     Tab Bar - iOS (63155:50769)  Mode = Light | Dark  — floating pill, 5 tabs
+     _Tab items    (63155:50790)  Page × Selected × Dark × Notification
+     Toolbar {Non 🤖 SwiftUI & Compose} (64088:15031)  Platform = iOS | Android × Indicator = Yes | No
+       (flat full-width bar used in non-native mockups; its .iOS / .And Toolbar Icons are library sub-components)
+
+   Tab Bar (default, floating)
+     <nav class="bog-tab-bar" aria-label="Main">
+       <div class="bog-tab-bar__items">
+         <a class="bog-tab-bar__item" href="#" data-icon="home" aria-current="page"><span class="bog-icon"></span>Home</a>
+         <a class="bog-tab-bar__item" href="#" data-icon="products"><span class="bog-icon"></span>My Space</a>
+         <a class="bog-tab-bar__item" href="#" data-icon="payment"><span class="bog-icon"></span>Payments</a>
+         <a class="bog-tab-bar__item" href="#" data-icon="offer"><span class="bog-icon"></span>Offers
+           <span class="bog-notification-badge" data-status="negative"></span></a>          Notification=True (dot)
+         <a class="bog-tab-bar__item" href="#" data-icon="dashboard"><span class="bog-icon"></span>Hub</a>
+       </div>
+     </nav>
+       data-mode       light (default) | dark                         Mode / Dark
+       data-position   fixed — pinned to the bottom of the page (or of a .bog-sheet-host phone frame)
+       Items           aria-current="page" = Selected=True · any count (Figma shows 5)
+       data-icon       home | products (My Space) | payment | offer | dashboard (Hub) | pfm (Transactions)
+                       — outline icon, filled when selected. Custom: style="--icon: url(a.svg); --icon-selected: url(a-fill.svg)"
+
+   Toolbar (flat bar)
+     <nav class="bog-tab-bar" data-type="toolbar" data-platform="ios" data-indicator> … same items … </nav>
+       data-platform   ios (default, 50px) | android (56px)
+       data-indicator  Indicator=Yes — iOS home indicator (34px) / Android system navigation (48px)
+       Center item     <a class="bog-tab-bar__item" data-icon="payment" data-center aria-label="Payments"><span class="bog-icon"></span></a>
+                       data-center = Background=Yes (grey circle) · data-center="plain" = Background=No
+       Badge           <span class="bog-notification-badge" data-status="negative">4</span>
+
+   bog-ui.js: tapping an item moves aria-current (the selection pill slides) and fires
+   "tabbarchange" on the .bog-tab-bar (detail.index, detail.item, detail.value = data-value or text).
+   Call e.preventDefault() on it to keep the current tab. BOG.selectTabBar(barOrId, index) selects from code.
+   ========================================================================== */
+
+.bog-tab-bar {
+  /* Raw Figma values without variables */
+  --_label-size: 8px;            /* _Tab items label: BOG 8 / 12, -0.1 */
+  --_label-line: 12px;
+  --_pad-bottom: 25px;
+  --_glass: rgb(248 248 248 / 0.6);           /* Liquid Glass Regular Small (Light), approximated */
+  --_glass-edge: #e8e8e8;
+  --_selection: #ededed;                       /* Selection, Linear Burn */
+  --_selection-blend: multiply;
+  --_fg: var(--text-primary);
+  --_icon: var(--icon-primary);
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-padding-default) var(--spacing-padding-large) var(--_pad-bottom);
+  font-family: var(--font-family-bog);
+}
+.bog-tab-bar[data-mode="dark"] {
+  --_glass: rgb(58 58 60 / 0.55);
+  --_glass-edge: rgb(0 0 0 / 0.35);
+  --_selection: #121212;                       /* Selection, Linear Dodge */
+  --_selection-blend: plus-lighter;
+  --_fg: var(--text-inverse-primary);
+  --_icon: var(--icon-inverse-primary);
+}
+.bog-tab-bar[data-position="fixed"] {
+  position: fixed;
+  z-index: 20;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding-bottom: max(var(--_pad-bottom), env(safe-area-inset-bottom));
+  pointer-events: none;          /* the transparent margin around the pill lets taps through */
+}
+.bog-tab-bar[data-position="fixed"] > .bog-tab-bar__items { pointer-events: auto; }
+
+/* ---- Tab Bar Buttons (the pill) --------------------------------------- */
+.bog-tab-bar__items {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  padding: 0 var(--spacing-padding-2x-small);
+  border-radius: var(--radius-full);
+}
+/* BG: 4px larger than the buttons on every side */
+.bog-tab-bar__items::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: calc(-1 * var(--spacing-padding-x-small));
+  border-radius: var(--radius-full);
+  background: var(--_glass);
+  box-shadow: 0 8px 15px rgb(0 0 0 / 0.02), 0 0 0 var(--border-width-thin) var(--_glass-edge);
+  -webkit-backdrop-filter: blur(6px) saturate(1.6);
+          backdrop-filter: blur(6px) saturate(1.6);
+}
+
+/* ---- _Tab items -------------------------------------------------------- */
+.bog-tab-bar__item {
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  box-sizing: border-box;
+  height: 50px;
+  margin: 0;
+  padding: var(--spacing-padding-m-small) var(--spacing-padding-small) 7px;
+  gap: 1px;
+  border: 0;
+  background: none;
+  color: var(--_fg);
+  font: inherit;
+  font-size: var(--_label-size);
+  line-height: var(--_label-line);
+  font-weight: var(--body-medium-weight);
+  letter-spacing: -0.1px;
+  white-space: nowrap;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-tab-bar__item + .bog-tab-bar__item { margin-left: calc(-1 * var(--spacing-padding-small)); } /* gap −8 */
+.bog-tab-bar__item:focus-visible { outline: 2px solid var(--text-accent); outline-offset: -2px; border-radius: var(--radius-full); }
+.bog-tab-bar__item > .bog-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--_icon);
+}
+.bog-tab-bar__item[aria-current="page"] { font-weight: var(--label-medium-weight); }
+.bog-tab-bar__item[aria-current="page"] > .bog-icon {
+  -webkit-mask-image: var(--icon-selected, var(--icon, url("../icons/placeholder.svg")));
+          mask-image: var(--icon-selected, var(--icon, url("../icons/placeholder.svg")));
+}
+
+/* Built-in BOG app tab icons (outline / filled when selected) */
+.bog-tab-bar__item[data-icon="home"]      { --icon: url("../icons/tab-home-24.svg");      --icon-selected: url("../icons/tab-home-fill-24.svg"); }
+.bog-tab-bar__item[data-icon="products"]  { --icon: url("../icons/tab-products-24.svg");  --icon-selected: url("../icons/tab-products-fill-24.svg"); }
+.bog-tab-bar__item[data-icon="payment"]   { --icon: url("../icons/tab-payment-24.svg");   --icon-selected: url("../icons/tab-payment-24.svg"); }
+.bog-tab-bar__item[data-icon="offer"]     { --icon: url("../icons/tab-offer-24.svg");     --icon-selected: url("../icons/tab-offer-fill-24.svg"); }
+.bog-tab-bar__item[data-icon="dashboard"] { --icon: url("../icons/tab-dashboard-24.svg"); --icon-selected: url("../icons/tab-dashboard-fill-24.svg"); }
+.bog-tab-bar__item[data-icon="pfm"]       { --icon: url("../icons/tab-pfm-24.svg");       --icon-selected: url("../icons/tab-pfm-fill-24.svg"); }
+
+/* Selection: 4px wider than the item, full radius. Static fallback on the item;
+   bog-ui.js swaps it for one sliding .bog-tab-bar__selection. */
+.bog-tab-bar__item[aria-current="page"]::before,
+.bog-tab-bar__selection {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  border-radius: var(--radius-full);
+  background: var(--_selection);
+  mix-blend-mode: var(--_selection-blend);
+  pointer-events: none;
+}
+.bog-tab-bar__item[aria-current="page"]::before { left: calc(-1 * var(--spacing-padding-2x-small)); right: calc(-1 * var(--spacing-padding-2x-small)); }
+.bog-tab-bar[data-ready]:not([data-type="toolbar"]) .bog-tab-bar__item::before { display: none; }
+.bog-tab-bar__selection {
+  left: 0;
+  width: var(--_w, 0);
+  transform: translateX(var(--_x, 0));
+}
+.bog-tab-bar[data-ready="animate"] .bog-tab-bar__selection {
+  transition: transform 300ms cubic-bezier(0.2, 0, 0, 1), width 300ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Notification=True: 7px Status/error_02 dot on the icon's top-right */
+.bog-tab-bar__item > .bog-notification-badge {
+  position: absolute;
+  top: var(--spacing-padding-m-small);
+  left: calc(50% + 13px);
+}
+.bog-tab-bar:not([data-type="toolbar"]) .bog-tab-bar__item > .bog-notification-badge:empty { min-width: 7px; width: 7px; height: 7px; }
+
+/* ==========================================================================
+   Toolbar {Non 🤖 SwiftUI & Compose}
+   ========================================================================== */
+.bog-tab-bar[data-type="toolbar"] {
+  --_label-size: 10px;           /* .iOS / .And Toolbar Icons label: BOG Medium 10, auto line height */
+  --_label-line: 13px;
+  --_top: var(--spacing-padding-small);        /* icon top: iOS 8 */
+  --_center-top: var(--spacing-padding-2x-small); /* grey circle top: iOS 2 */
+  --_fg: var(--text-helper);
+  --_icon: var(--icon-helper);
+  padding: 0;
+  background: var(--layer-layer-01);
+  box-shadow: inset 0 var(--border-width-default) 0 var(--border-alpha-01);
+}
+.bog-tab-bar[data-type="toolbar"][data-platform="android"] {
+  --_top: var(--spacing-padding-medium);       /* 12 */
+  --_center-top: 5px;
+}
+.bog-tab-bar[data-type="toolbar"][data-position="fixed"] { padding-bottom: 0; pointer-events: auto; }
+.bog-tab-bar[data-type="toolbar"] > .bog-tab-bar__items { padding: 0; border-radius: 0; }
+.bog-tab-bar[data-type="toolbar"] > .bog-tab-bar__items::before,
+.bog-tab-bar[data-type="toolbar"] .bog-tab-bar__item::before,
+.bog-tab-bar[data-type="toolbar"] .bog-tab-bar__selection { display: none; }
+.bog-tab-bar[data-type="toolbar"] .bog-tab-bar__item {
+  height: 50px;
+  margin: 0;
+  padding: var(--_top) 0 0;
+  gap: 3px;
+  font-weight: var(--body-medium-weight);
+  letter-spacing: 0;
+}
+.bog-tab-bar[data-type="toolbar"][data-platform="android"] .bog-tab-bar__item { height: 56px; }
+.bog-tab-bar[data-type="toolbar"] .bog-tab-bar__item[aria-current="page"] { --_fg: var(--text-accent); --_icon: var(--icon-accent); }
+
+/* Badge: Single / Multi Number, Negative, with a 1px Border/border_03 ring */
+.bog-tab-bar[data-type="toolbar"] .bog-tab-bar__item > .bog-notification-badge {
+  top: calc(var(--_top) - var(--spacing-gap-m-small));
+  left: calc(50% + 3px);
+  box-shadow: 0 0 0 var(--border-width-default) var(--border-border-03);
+}
+
+/* Center item (.iOS / .And Toolbar Center Icons): 46px grey circle, icon only */
+.bog-tab-bar[data-type="toolbar"] .bog-tab-bar__item[data-center] { padding-top: calc(var(--_center-top) + 10px); }
+.bog-tab-bar[data-type="toolbar"] .bog-tab-bar__item[data-center]:not([data-center="plain"])::before {
+  content: "";
+  display: block;
+  position: absolute;
+  z-index: -1;
+  top: var(--_center-top);
+  left: calc(50% - 23px);
+  width: 46px;
+  height: 46px;
+  border-radius: var(--radius-full);
+  background: var(--button-secondary-grey-default);
+  mix-blend-mode: normal;
+}
+.bog-tab-bar[data-type="toolbar"] .bog-tab-bar__item[data-center] > .bog-notification-badge {
+  top: var(--_center-top);
+  left: calc(50% + 12px);
+}
+.bog-tab-bar[data-type="toolbar"][data-platform="android"] .bog-tab-bar__item[data-center] > .bog-notification-badge { left: calc(50% + 10px); }
+
+/* Indicator=Yes — iOS home indicator: 134×5 bar, 21px down a 34px strip */
+.bog-tab-bar[data-type="toolbar"][data-indicator]::after {
+  content: "";
+  display: block;
+  width: 134px;
+  height: 5px;
+  margin: 21px auto var(--spacing-padding-small);
+  border-radius: var(--radius-full);
+  background: var(--layer-inverse-01);
+}
+/* Indicator=Yes — Android system navigation: 48px Layer/layer_03 strip, back / home / recent */
+.bog-tab-bar[data-type="toolbar"][data-platform="android"][data-indicator] {
+  background: linear-gradient(to top, var(--layer-layer-03) 48px, var(--layer-layer-01) 48px);
+}
+.bog-tab-bar[data-type="toolbar"][data-platform="android"][data-indicator]::after {
+  width: 302px;
+  height: 48px;
+  margin: 0 auto;
+  border-radius: 0;
+  background: var(--icon-helper);
+  -webkit-mask: url("../icons/android-nav-back.svg") 0 0 / 100px 48px no-repeat,
+                url("../icons/android-nav-home.svg") 101px 0 / 100px 48px no-repeat,
+                url("../icons/android-nav-recent.svg") 202px 0 / 100px 48px no-repeat;
+          mask: url("../icons/android-nav-back.svg") 0 0 / 100px 48px no-repeat,
+                url("../icons/android-nav-home.svg") 101px 0 / 100px 48px no-repeat,
+                url("../icons/android-nav-recent.svg") 202px 0 / 100px 48px no-repeat;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bog-tab-bar[data-ready="animate"] .bog-tab-bar__selection { transition: none; }
+}

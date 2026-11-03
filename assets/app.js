@@ -210,6 +210,7 @@
     $("#result-amount").textContent = n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     resultScr.removeAttribute("aria-hidden"); resultScr.inert = false;
     resultScr.setAttribute("data-open", "");
+    if (window.BOG && BOG.resultIn) BOG.resultIn(resultScr.querySelector(".bog-result-page"));   // Result Page load-in motion
   }
   function hideResult(then) {
     resultScr.removeAttribute("data-open"); resultScr.setAttribute("aria-hidden", "true"); resultScr.inert = true;

@@ -1,0 +1,258 @@
+/* ==========================================================================
+   BOG UI — Progress Tracker (Vertical)
+   Figma: Progress Tracker - Vertical page (64634:6060)
+     Progress Tracker - Vertical (64891:20193)
+     _Progress tracker step item - vertical (64741:3544)
+     _Progress tracker step last item - vertical (64891:19910)   = the last <li> (no connector)
+     _Progress Indicator Path (64736:410)                          = indicator circle + connector
+
+   Markup — one <li> per step (Figma shows 3–6: Step 2–5 toggles + the last item)
+     <div class="bog-progress-tracker">
+       <p class="bog-progress-tracker__label">Label</p>                               optional (Label)
+       <ol class="bog-progress-tracker__steps">
+         <li class="bog-progress-tracker__step" data-status="completed">
+           <span class="bog-progress-tracker__indicator"></span>
+           <div class="bog-progress-tracker__content">
+             <p class="bog-progress-tracker__title">Step title</p>
+             <p class="bog-progress-tracker__helper">Helper text</p>                     optional (Helper text)
+             <p class="bog-progress-tracker__desc">Description</p>                       optional (Description)
+             <span class="bog-inline-message" data-status="warning" data-size="small">Message text</span>
+                                                                                          Warning / Error use an Inline Message instead of the description
+           </div>
+         </li>
+         …
+       </ol>
+     </div>
+
+   On a step (.bog-progress-tracker__step)
+     data-status     pending (default) | current | completed | warning | error            State / Status
+                     Changing it animates the circle color and the green connector (completed).
+     data-indicator  icon | outline | number    Indicator Style. Default: pending = outline, the rest = icon.
+                     number: put the digit in the indicator → <span class="…__indicator">2</span>
+                     icon: Current shows a clock; custom icon → <span class="…__indicator"><span class="bog-icon" style="--icon:url(…)"></span></span>
+     data-connector  false — hide the green "Connector Progress" on a completed step
+   On .bog-progress-tracker (or a single step)
+     data-state      skeleton                                                              Skeleton = True
+   ========================================================================== */
+
+.bog-progress-tracker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-medium);
+  font-family: var(--font-family-bog);
+}
+.bog-progress-tracker__label {
+  margin: 0;
+  color: var(--text-helper);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+}
+.bog-progress-tracker__steps {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---- Step item: 24px track · 16px gap · content ------------------------- */
+.bog-progress-tracker__step {
+  --_dot: transparent;                   /* circle fill */
+  --_ring: var(--border-border-03);      /* outline (Outline style) */
+  --_glyph: transparent;                 /* icon color */
+  --_mask: none;
+  --_mask-size: 16px;
+  --_title: var(--text-secondary);
+  --_title-weight: var(--body-medium-weight);
+  --_line: var(--border-border-03);      /* connector */
+  --_progress: var(--status-success-02); /* Connector Progress */
+  --_fill: 0;                            /* 0 = connector empty, 1 = green */
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  column-gap: var(--spacing-gap-default);
+  align-items: start;
+}
+/* Connector: 2px wide, 2px below the circle, 2px above the next one */
+.bog-progress-tracker__step::before,
+.bog-progress-tracker__step::after {
+  content: "";
+  position: absolute;
+  top: calc(24px + var(--spacing-gap-2x-small));
+  bottom: var(--spacing-gap-2x-small);
+  left: 11px;
+  width: 2px;
+  background: var(--_line);
+}
+.bog-progress-tracker__step::after {
+  background: var(--_progress);
+  transform: scaleY(var(--_fill));
+  transform-origin: top center;
+  transition: transform 400ms cubic-bezier(.4, 0, .2, 1);
+}
+.bog-progress-tracker__step:last-child::before,
+.bog-progress-tracker__step:last-child::after { display: none; }
+
+/* Indicator circle (24px) */
+.bog-progress-tracker__indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-full);
+  background: var(--_dot);
+  box-shadow: inset 0 0 0 var(--border-width-bold) var(--_ring);
+  color: var(--text-helper);
+  font-size: var(--label-medium-size);
+  line-height: var(--label-medium-line-height);
+  font-weight: var(--label-medium-weight);
+  transition: background-color 240ms ease, box-shadow 240ms ease;
+}
+.bog-progress-tracker__indicator::before {
+  content: "";
+  width: var(--_mask-size);
+  height: var(--_mask-size);
+  background-color: var(--_glyph);
+  -webkit-mask: var(--_mask) center / contain no-repeat;
+          mask: var(--_mask) center / contain no-repeat;
+  transition: background-color 240ms ease;
+}
+.bog-progress-tracker__indicator:not(:empty)::before { display: none; }   /* number or custom icon inside */
+.bog-progress-tracker__indicator > .bog-icon { width: 16px; height: 16px; color: var(--icon-secondary); }
+
+/* ---- Statuses ----------------------------------------------------------- */
+/* Pending (default) — Outline: 2px ring, no fill */
+.bog-progress-tracker__step[data-status="current"] {
+  --_dot: var(--border-border-03);
+  --_ring: transparent;
+  --_glyph: var(--icon-secondary);
+  --_mask: url("../icons/clock-16.svg");
+  --_title: var(--text-primary);
+  --_title-weight: var(--body-medium-bold-weight);
+}
+.bog-progress-tracker__step[data-status="completed"] {
+  --_dot: var(--status-success-02);
+  --_ring: transparent;
+  --_glyph: var(--icon-inverse-primary);
+  --_mask: url("../icons/check-12.svg");
+  --_mask-size: 12px;
+  --_title: var(--text-primary);
+  --_fill: 1;
+}
+.bog-progress-tracker__step[data-status="completed"][data-connector="false"] { --_fill: 0; }
+.bog-progress-tracker__step[data-status="warning"] {
+  --_dot: var(--status-warning-02);
+  --_ring: transparent;
+  --_glyph: var(--icon-black);
+  --_mask: url("../icons/alert-24.svg");
+  --_mask-size: 24px;
+  --_title: var(--text-primary);
+}
+.bog-progress-tracker__step[data-status="error"] {
+  --_dot: var(--status-error-02);
+  --_ring: transparent;
+  --_glyph: var(--icon-inverse-primary);
+  --_mask: url("../icons/alert-24.svg");
+  --_mask-size: 24px;
+}
+
+/* Indicator Style overrides */
+.bog-progress-tracker__step[data-indicator="number"] { --_dot: var(--border-border-03); --_ring: transparent; }
+.bog-progress-tracker__step[data-indicator="outline"] { --_dot: transparent; --_ring: var(--border-border-03); --_mask: none; --_glyph: transparent; }
+.bog-progress-tracker__step[data-status="pending"][data-indicator="icon"],
+.bog-progress-tracker__step:not([data-status])[data-indicator="icon"] {
+  --_dot: var(--border-border-03);
+  --_ring: transparent;
+  --_glyph: var(--icon-secondary);
+  --_mask: url("../icons/placeholder.svg");
+}
+
+/* ---- Content column ----------------------------------------------------- */
+.bog-progress-tracker__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-gap-x-small);
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: var(--size-large);
+  padding-bottom: var(--spacing-padding-default);
+}
+.bog-progress-tracker__content > * { margin: 0; }
+.bog-progress-tracker__title {
+  padding: var(--spacing-padding-2x-small) 0;
+  color: var(--_title);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--_title-weight);
+  transition: color 240ms ease;
+}
+.bog-progress-tracker__helper {
+  color: var(--text-helper);
+  font-size: var(--label-xsmall-size);
+  line-height: var(--label-xsmall-line-height);
+  font-weight: var(--label-xsmall-weight);
+}
+.bog-progress-tracker__desc {
+  color: var(--text-primary);
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-line-height);
+  font-weight: var(--body-small-weight);
+}
+
+/* Last item: no connector, no bottom padding, helper + description in Body/Small */
+.bog-progress-tracker__step:last-child { min-height: calc(24px + var(--spacing-gap-2x-small)); }
+.bog-progress-tracker__step:last-child > .bog-progress-tracker__content { min-height: 0; padding-bottom: 0; }
+.bog-progress-tracker__step:last-child .bog-progress-tracker__helper {
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-line-height);
+  font-weight: var(--body-small-weight);
+}
+.bog-progress-tracker__step:last-child .bog-progress-tracker__desc { color: var(--text-secondary); }
+
+@media (prefers-reduced-motion: reduce) {
+  .bog-progress-tracker__step::after,
+  .bog-progress-tracker__indicator,
+  .bog-progress-tracker__indicator::before,
+  .bog-progress-tracker__title { transition: none; }
+}
+
+/* ---- Skeleton ----------------------------------------------------------- */
+.bog-progress-tracker[data-state="skeleton"] .bog-progress-tracker__step,
+.bog-progress-tracker__step[data-state="skeleton"] {
+  --_dot: var(--support-skeleton);
+  --_ring: transparent;
+  --_mask: none;
+  --_glyph: transparent;
+  --_line: var(--support-skeleton);
+  --_fill: 0;
+}
+.bog-progress-tracker[data-state="skeleton"] .bog-progress-tracker__indicator,
+.bog-progress-tracker__step[data-state="skeleton"] .bog-progress-tracker__indicator { color: transparent; }
+.bog-progress-tracker[data-state="skeleton"] .bog-progress-tracker__indicator > *,
+.bog-progress-tracker__step[data-state="skeleton"] .bog-progress-tracker__indicator > * { visibility: hidden; }
+/* Content: one 104×8 bar, 6px from the top */
+.bog-progress-tracker[data-state="skeleton"] .bog-progress-tracker__content,
+.bog-progress-tracker__step[data-state="skeleton"] .bog-progress-tracker__content { padding-top: var(--spacing-padding-m-small); }
+.bog-progress-tracker[data-state="skeleton"] .bog-progress-tracker__content > *,
+.bog-progress-tracker__step[data-state="skeleton"] .bog-progress-tracker__content > * { display: none; }
+.bog-progress-tracker[data-state="skeleton"] .bog-progress-tracker__content::before,
+.bog-progress-tracker__step[data-state="skeleton"] .bog-progress-tracker__content::before {
+  content: "";
+  width: 104px;
+  height: var(--size-4x-small);
+  border-radius: var(--radius-2x-small);
+  background: var(--support-skeleton);
+}
+/* Label: 64×6 bar in its 16px row */
+.bog-progress-tracker[data-state="skeleton"] > .bog-progress-tracker__label {
+  width: 64px;
+  height: 6px;
+  margin: 5px 0;
+  overflow: hidden;
+  border-radius: var(--radius-2x-small);
+  background: var(--support-skeleton);
+  color: transparent;
+}

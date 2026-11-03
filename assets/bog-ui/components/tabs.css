@@ -1,0 +1,128 @@
+/* ==========================================================================
+   BOG UI — Tabs (BOG Design source; Liquid Glass excluded)
+   Figma: Tab page (38862:23400) — Tabs (38989:7118), _Tab item (38989:7134)
+
+   Tabs
+     <div class="bog-tabs" role="tablist" aria-label="Accounts">
+       <button type="button" class="bog-tab" role="tab" aria-selected="true"  aria-controls="p1" id="t1">Tab</button>
+       <button type="button" class="bog-tab" role="tab" aria-selected="false" aria-controls="p2" id="t2">Tab</button>
+       <button type="button" class="bog-tab" role="tab" aria-selected="false" disabled>Tab</button>
+     </div>
+     <div class="bog-tab-panel" role="tabpanel" id="p1" aria-labelledby="t1">…</div>
+     <div class="bog-tab-panel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>…</div>
+
+       data-type   fixed (default — tabs share the width equally, Type=Fixed)
+                 | wrapped (tabs hug their label, row scrolls sideways, Type=Wrapped)
+     Figma "Tab 3 / Tab 4 / Tab 5" booleans = just add or remove tabs (2–5 in Figma, any number works).
+
+   _Tab item states
+     Default              aria-selected="false"
+     Pressed              :active, or data-state="pressed" (static preview)
+     Selected             aria-selected="true"
+     Disabled             disabled
+     Skeleton             <div class="bog-tab" data-state="skeleton"><span class="bog-skeleton-wave">Tab 1</span></div>
+
+   bog-ui.js: click / ←→ Home End select a tab, the orange indicator slides to it,
+   panels named in aria-controls are shown / hidden, and "tabchange" fires on the
+   .bog-tabs (detail.index, detail.tab, detail.value = data-value or id).
+   BOG.selectTab(tabsOrId, index) selects from code.
+   ========================================================================== */
+
+.bog-tabs {
+  --_line: var(--border-border-01);
+  --_indicator: var(--border-selected);
+  position: relative;
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-shadow: inset 0 calc(-1 * var(--border-width-default)) 0 var(--_line); /* Tab Group bottom stroke */
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.bog-tabs::-webkit-scrollbar { display: none; }
+
+/* ---- _Tab item --------------------------------------------------------- */
+.bog-tab {
+  --_fg: var(--text-secondary);
+  position: relative;
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 40px;
+  margin: 0;
+  padding: 0 var(--spacing-padding-medium);
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--_fg);
+  font-family: var(--font-family-bog);
+  font-size: var(--body-medium-size);
+  line-height: var(--body-medium-line-height);
+  font-weight: var(--body-medium-weight);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-tab:focus-visible { outline: 2px solid var(--text-accent); outline-offset: -2px; }
+
+/* Pressed: "layer-state" overlay */
+.bog-tab:active:not(:disabled, [data-state="skeleton"]),
+.bog-tab[data-state="pressed"] { background: var(--layer-alpha-pressed-01); }
+
+/* Selected: Label/Medium, Text/primary, 2px Border/selected underline */
+.bog-tab[aria-selected="true"] {
+  --_fg: var(--text-primary);
+  font-size: var(--label-medium-size);
+  line-height: var(--label-medium-line-height);
+  font-weight: var(--label-medium-weight);
+  box-shadow: inset 0 calc(-1 * var(--border-width-bold)) 0 var(--_indicator);
+}
+/* Once bog-ui.js adds the sliding indicator, the static underline steps aside */
+.bog-tabs[data-ready] > .bog-tab[aria-selected="true"] { box-shadow: none; }
+.bog-tabs__indicator {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  bottom: 0;
+  width: var(--_w, 0);
+  height: var(--border-width-bold);
+  background: var(--_indicator);
+  transform: translateX(var(--_x, 0));
+  pointer-events: none;
+}
+.bog-tabs[data-ready="animate"] > .bog-tabs__indicator {
+  transition: transform 250ms cubic-bezier(0.2, 0, 0, 1), width 250ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Disabled */
+.bog-tab:disabled { --_fg: var(--text-disabled); cursor: default; }
+
+/* Skeleton: 16px bar, Radius/x-small, 12px side padding (bar fills the tab) */
+.bog-tab[data-state="skeleton"] { padding: var(--spacing-padding-x-small) var(--spacing-padding-medium); cursor: default; pointer-events: none; }
+.bog-tab[data-state="skeleton"] > .bog-skeleton-wave {
+  flex: 1 1 auto;
+  height: 16px;
+  border-radius: var(--radius-x-small);
+  color: transparent;
+  line-height: 16px;
+}
+
+/* ---- Type=Wrapped: tabs hug their label, the row scrolls --------------- */
+.bog-tabs[data-type="wrapped"] > .bog-tab { flex: none; overflow: visible; }
+
+/* ---- Panels ------------------------------------------------------------ */
+.bog-tab-panel[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bog-tabs[data-ready="animate"] > .bog-tabs__indicator { transition: none; }
+}

@@ -27,3 +27,5 @@
 .bog-icon[data-icon="chevron-down"]  { -webkit-mask-image: url("../icons/chevron-down.svg");  mask-image: url("../icons/chevron-down.svg"); }
 .bog-icon[data-icon="chevron-right"] { -webkit-mask-image: url("../icons/chevron-right.svg"); mask-image: url("../icons/chevron-right.svg"); }
 .bog-icon[data-icon="retry"]         { -webkit-mask-image: url("../icons/retry-16.svg");      mask-image: url("../icons/retry-16.svg"); }
+.bog-icon[data-icon="chevron-left"] { -webkit-mask-image: url("../icons/chevron-left.svg"); mask-image: url("../icons/chevron-left.svg"); }
+.bog-icon[data-icon="chat"]         { -webkit-mask-image: url("../icons/chat.svg");         mask-image: url("../icons/chat.svg"); }

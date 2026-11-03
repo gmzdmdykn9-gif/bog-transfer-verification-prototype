@@ -159,33 +159,35 @@
   pointer-events: none;
 }
 .bog-toast-region[data-position="bottom"] { top: auto; bottom: 0; padding: 0 var(--spacing-padding-medium) max(var(--spacing-padding-medium), env(safe-area-inset-bottom)); }
-/* Toast motion (from the reference recording):
-   enter — slides down from above the screen (~290ms), overshoots ~6px, settles (~230ms)
-   stay  — 3s by default (BOG.toast timeout)
-   exit  — slides straight back up, fast (~140ms), no fade                                  */
+/* Toast motion — Figma: Component Motion Guidelines › Toast In (1511:6820) / Toast Out (1511:7281)
+   in   — rises 253px from below the screen in 250ms, 20px past its spot, then settles back 20px in 250ms
+   stay — 3s by default (BOG.toast timeout)
+   out  — drops 234px back off the screen in 250ms
+   Easing cubic-bezier(0.33, 0, 0.25, 1) throughout, position only (no fade).
+   The guide shows a bottom toast; top toasts (the default) play it mirrored. */
 .bog-toast-region > .bog-feedback {
   pointer-events: auto;
-  animation: bog-toast-in 520ms both;
+  animation: bog-toast-in 500ms both;
 }
-.bog-toast-region > .bog-feedback[data-leaving] { animation: bog-toast-out 140ms cubic-bezier(0.4, 0, 1, 1) forwards; }
+.bog-toast-region > .bog-feedback[data-leaving] { animation: bog-toast-out 250ms cubic-bezier(0.33, 0, 0.25, 1) forwards; }
 @keyframes bog-toast-in {
-  0%   { transform: translateY(calc(-100% - 96px)); animation-timing-function: cubic-bezier(0.15, 0.7, 0.3, 1); }
-  56%  { transform: translateY(6px); animation-timing-function: cubic-bezier(0.4, 0, 0.4, 1); }
+  0%   { transform: translateY(-233px); animation-timing-function: cubic-bezier(0.33, 0, 0.25, 1); }
+  50%  { transform: translateY(20px);   animation-timing-function: cubic-bezier(0.33, 0, 0.25, 1); }
   100% { transform: translateY(0); }
 }
 @keyframes bog-toast-out {
-  to { transform: translateY(calc(-100% - 96px)); }
+  to { transform: translateY(-234px); }
 }
-/* Bottom placement mirrors the motion */
+/* Bottom placement: the guide's direction */
 .bog-toast-region[data-position="bottom"] > .bog-feedback { animation-name: bog-toast-in-up; }
 .bog-toast-region[data-position="bottom"] > .bog-feedback[data-leaving] { animation-name: bog-toast-out-down; }
 @keyframes bog-toast-in-up {
-  0%   { transform: translateY(calc(100% + 96px)); animation-timing-function: cubic-bezier(0.15, 0.7, 0.3, 1); }
-  56%  { transform: translateY(-6px); animation-timing-function: cubic-bezier(0.4, 0, 0.4, 1); }
+  0%   { transform: translateY(233px); animation-timing-function: cubic-bezier(0.33, 0, 0.25, 1); }
+  50%  { transform: translateY(-20px); animation-timing-function: cubic-bezier(0.33, 0, 0.25, 1); }
   100% { transform: translateY(0); }
 }
 @keyframes bog-toast-out-down {
-  to { transform: translateY(calc(100% + 96px)); }
+  to { transform: translateY(234px); }
 }
 @media (prefers-reduced-motion: reduce) {
   .bog-toast-region > .bog-feedback, .bog-toast-region > .bog-feedback[data-leaving] { animation-duration: 1ms; }

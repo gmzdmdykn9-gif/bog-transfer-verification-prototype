@@ -47,22 +47,32 @@
   vertical-align: middle;
 }
 .bog-checkbox__input:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 0; }
-/* Box layer (20px at 2,2): outline when unchecked, filled when checked */
+/* Box layer (20px at 2,2): the outline, plus a fill layer shown when checked.
+   Motion (BOG UI proposal, same speeds as Radio Button): the box colour changes in 250 ms
+   (like the radio ring); the mark grows 0 → 100% in 333 ms with an overshoot (like the dot)
+   and shrinks away in 150 ms, the fill staying until it's gone. Slow it down with
+   --bog-checkbox-slow. In and out of Indeterminate runs in bog-ui.js. */
 .bog-checkbox__input::after {
   content: "";
   position: absolute;
   inset: 2px;
   background-color: var(--_line);
-  -webkit-mask: url("../icons/checkbox-box.svg") center / contain no-repeat;
-          mask: url("../icons/checkbox-box.svg") center / contain no-repeat;
+  -webkit-mask: url("../icons/checkbox-box.svg") center / 100% 100% no-repeat, url("../icons/checkbox-fill.svg") center / 0% 0% no-repeat;
+          mask: url("../icons/checkbox-box.svg") center / 100% 100% no-repeat, url("../icons/checkbox-fill.svg") center / 0% 0% no-repeat;
+  /* Uncheck: colour back in 250 ms; the fill drops once the mark has shrunk (150 ms) */
+  transition:
+    background-color calc(250ms * var(--bog-checkbox-slow, 1)) cubic-bezier(0.33, 0, 0.67, 1),
+    -webkit-mask-size 0s calc(150ms * var(--bog-checkbox-slow, 1)),
+    mask-size 0s calc(150ms * var(--bog-checkbox-slow, 1));
 }
 .bog-checkbox__input:is(:checked, :indeterminate, [data-indeterminate])::after {
   background-color: var(--_fill);
-  -webkit-mask-image: url("../icons/checkbox-fill.svg");
-          mask-image: url("../icons/checkbox-fill.svg");
+  -webkit-mask-size: 100% 100%, 100% 100%;
+          mask-size: 100% 100%, 100% 100%;
+  transition: background-color calc(250ms * var(--bog-checkbox-slow, 1)) cubic-bezier(0.33, 0, 0.67, 1);
 }
-/* Mark layer: check (10×7) or dash (10×1.4) */
-.bog-checkbox__input:is(:checked, :indeterminate, [data-indeterminate])::before {
+/* Mark layer: check (10×7) or dash (10×1.4). Hidden (scale 0) when unchecked so it can animate out. */
+.bog-checkbox__input::before {
   content: "";
   position: absolute;
   z-index: 1;
@@ -73,12 +83,31 @@
   background-color: var(--_mark);
   -webkit-mask: url("../icons/checkbox-check.svg") center / contain no-repeat;
           mask: url("../icons/checkbox-check.svg") center / contain no-repeat;
+  scale: 0;
+  /* Uncheck: 100% → 0 in 150 ms (radio Deselect) */
+  transition: scale calc(150ms * var(--bog-checkbox-slow, 1)) cubic-bezier(0.33, 0, 0.67, 1);
+}
+.bog-checkbox__input:is(:checked, :indeterminate, [data-indeterminate])::before {
+  scale: 1;
+  /* Check: 0 → 100% in 333 ms with overshoot (radio Select) */
+  transition: scale calc(333ms * var(--bog-checkbox-slow, 1)) cubic-bezier(0.33, 0, 0, 1.7);
 }
 .bog-checkbox__input:is(:indeterminate, [data-indeterminate])::before {
   top: 11.3px;
   height: 1.43px;
   -webkit-mask-image: url("../icons/checkbox-dash.svg");
           mask-image: url("../icons/checkbox-dash.svg");
+  transition: none;
+}
+/* No motion: while bog-ui.js animates the mark, read-only / disabled / skeleton, Reduce Motion */
+.bog-checkbox__input[data-motion]::before,
+.bog-checkbox__input:disabled::before, .bog-checkbox__input:disabled::after,
+:is(.bog-checkbox, .bog-checkbox-group):is([data-state="readonly"], [data-state="skeleton"]) .bog-checkbox__input::before,
+:is(.bog-checkbox, .bog-checkbox-group):is([data-state="readonly"], [data-state="skeleton"]) .bog-checkbox__input::after,
+.bog-checkbox__input:is([data-state="readonly"], [data-state="skeleton"])::before,
+.bog-checkbox__input:is([data-state="readonly"], [data-state="skeleton"])::after { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .bog-checkbox__input::before, .bog-checkbox__input::after { transition: none; }
 }
 
 /* ---- Error / Disabled / Read-only / Skeleton ---------------------------- */

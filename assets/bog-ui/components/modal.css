@@ -28,6 +28,16 @@
 
    Open:  <button data-modal-open="my-modal">  or  BOG.openModal("my-modal")
    Close: any [data-modal-close], Escape, or a tap on the dim background (data-dismiss="false" to prevent).
+
+   Motion (Figma: Component Motion Guidelines › Dialog - Open 3068:9229 / Dialog - Close 3070:10148).
+   Same for every layout. bog-ui.js sets data-open, then data-closing while it animates out.
+     Open   dialog   scale 60% → 100%, 333ms · translateY 70px → 0, 500ms · opacity 0 → 1, 117ms
+                     all cubic-bezier(0.33, 0, 0.09, 1)
+            overlay  opacity 0 → 1, 117ms, cubic-bezier(0.33, 0, 0.09, 1)
+     Close  dialog   scale 100% → 62%, 333ms, cubic-bezier(0.33, 0, 0.06, 1)
+                     opacity 1 → 0, 133ms, cubic-bezier(0.17, 0, 0.41, 1)
+            overlay  opacity 1 → 0, 183ms, cubic-bezier(0.17, 0, 0.83, 1)
+   The overlay fades through its background color so the dialog's own opacity stays separate.
    ========================================================================== */
 
 .bog-modal {
@@ -38,13 +48,15 @@
   align-items: center;
   justify-content: center;
   padding: var(--spacing-padding-default);
-  background: var(--support-overlay-canvas);
+  background: transparent;
   font-family: var(--font-family-bog);
-  opacity: 0;
-  transition: opacity 200ms ease;
 }
 .bog-modal[hidden] { display: none; }
-.bog-modal[data-open] { opacity: 1; }
+.bog-modal[data-open] {
+  background-color: var(--support-overlay-canvas);
+  transition: background-color 117ms cubic-bezier(0.33, 0, 0.09, 1);
+}
+.bog-modal[data-closing] { transition: background-color 183ms cubic-bezier(0.17, 0, 0.83, 1); }
 
 .bog-modal__dialog {
   display: flex;
@@ -58,10 +70,27 @@
   background: var(--layer-layer-05);
   color: var(--text-primary);
   outline: none;
-  transform: scale(0.94);
-  transition: transform 260ms cubic-bezier(0.2, 0, 0, 1);
+  /* Start of the open animation */
+  opacity: 0;
+  scale: 0.6;
+  translate: 0 70px;
 }
-.bog-modal[data-open] .bog-modal__dialog { transform: none; }
+.bog-modal[data-open] .bog-modal__dialog {
+  opacity: 1;
+  scale: 1;
+  translate: 0 0;
+  transition: scale 333ms cubic-bezier(0.33, 0, 0.09, 1),
+              translate 500ms cubic-bezier(0.33, 0, 0.09, 1),
+              opacity 117ms cubic-bezier(0.33, 0, 0.09, 1);
+}
+/* translate only moves here if the dialog is closed before it finished opening */
+.bog-modal[data-closing] .bog-modal__dialog {
+  scale: 0.62;
+  translate: 0 0;
+  transition: scale 333ms cubic-bezier(0.33, 0, 0.06, 1),
+              translate 333ms cubic-bezier(0.33, 0, 0.06, 1),
+              opacity 133ms cubic-bezier(0.17, 0, 0.41, 1);
+}
 
 /* ---- Header (Standard): title + X ------------------------------------ */
 .bog-modal__header {
@@ -129,5 +158,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .bog-modal, .bog-modal__dialog { transition: none; }
+  .bog-modal[data-open], .bog-modal[data-closing],
+  .bog-modal[data-open] .bog-modal__dialog, .bog-modal[data-closing] .bog-modal__dialog { transition: none; }
 }

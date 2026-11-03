@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Navigation Bar — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="navigation-bar"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Navigation Bar</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">The top bar of a screen: a status bar mockup (iOS or Android), an optional back button or media on the left, a title (with optional secondary text or caption) and up to two Icon Buttons, a Button or a timer on the right. Themed, White Static and Black Static appearances; optional divider and background, which can also appear automatically when the content scrolls.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;header class="bog-nav-bar" data-platform="ios" data-sticky data-scroll-effect&gt;
+  &lt;div class="bog-nav-bar__status"&gt;&lt;/div&gt;
+  &lt;div class="bog-nav-bar__header"&gt;
+    &lt;button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Back"&gt;&lt;span class="bog-icon" data-icon="chevron-left"&gt;&lt;/span&gt;&lt;/button&gt;
+    &lt;div class="bog-nav-bar__title"&gt;
+      &lt;h1 class="bog-nav-bar__heading"&gt;Title&lt;/h1&gt;
+      &lt;span class="bog-nav-bar__subtitle"&gt;Secondary text&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="bog-nav-bar__actions"&gt;
+      &lt;button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Edit"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;&lt;/button&gt;
+      &lt;button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Chat"&gt;&lt;span class="bog-icon" data-icon="chat"&gt;&lt;/span&gt;&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/header&gt;</code></pre>
+
+
+    <table>
+      <tr><th>Attribute (on .bog-nav-bar)</th><th>Values</th><th>Figma</th></tr>
+      <tr><td><code>data-platform</code></td><td><code>ios</code> (default, 44px status bar) · <code>android</code> (24px)</td><td>Platform</td></tr>
+      <tr><td><code>data-appearance</code></td><td><code>themed</code> (default) · <code>white</code> · <code>black</code></td><td>Appearance = Themed / White Static / Black Static</td></tr>
+      <tr><td><code>data-status-bar="false"</code></td><td>hide the status bar mockup</td><td>Status Bar = False</td></tr>
+      <tr><td><code>data-divider</code></td><td>1px line under the bar</td><td>Divider = True</td></tr>
+      <tr><td><code>data-background</code></td><td>layer_01 fill</td><td>Background = True</td></tr>
+      <tr><td><code>data-sticky</code></td><td>stick to the top of the scroll container</td><td>—</td></tr>
+      <tr><td><code>data-scroll-effect</code></td><td>background + divider appear once the content is scrolled (bog-ui.js)</td><td>Divider + Background</td></tr>
+    </table>
+    <p>Left slot: a small neutral Icon Button (back) or a <code>.bog-media-circle data-size="32"</code>. Title: <code>__heading</code> alone, + <code>__subtitle</code> (Title + Secondary text), or <code>__caption</code> before it (Caption + Title). Right slot (<code>__actions</code>): 1–2 small Icon Buttons (with optional <code>.bog-badge-dot</code>), a small Button, or <code>.bog-nav-bar__timer</code>. Item types per appearance: Themed → <code>data-type="neutral"</code>, White Static → <code>data-type="white"</code>, Black Static → <code>data-type="black-secondary"</code>.</p>
+
+    <h2>Try it</h2>
+    <div style="display:flex;gap:32px;align-items:flex-start;flex-wrap:wrap">
+      <div class="bog-sheet-host" style="position:relative;width:375px;height:700px;border-radius:24px;box-shadow:0 0 0 8px #1b1c1d;overflow:hidden;background:var(--background-background-01)">
+        <div style="height:100%;overflow-y:auto;display:flex;flex-direction:column">
+          <header class="bog-nav-bar" id="demo-nav" data-platform="ios" data-sticky data-scroll-effect>
+            <div class="bog-nav-bar__status"></div>
+            <div class="bog-nav-bar__header">
+              <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Back"><span class="bog-icon" data-icon="chevron-left"></span></button>
+              <div class="bog-nav-bar__title"><h1 class="bog-nav-bar__heading">Payments</h1><span class="bog-nav-bar__subtitle">Scroll the list</span></div>
+              <div class="bog-nav-bar__actions">
+                <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Chat"><span class="bog-icon" data-icon="chat"></span><span class="bog-badge-dot"></span></button>
+              </div>
+            </div>
+          </header>
+          <div class="bog-list" style="flex:1 0 auto" id="demo-list"></div>
+          <div class="bog-sticky-bar">
+            <span class="bog-inline-message" data-size="small" data-icon="false">The divider appears when you scroll</span>
+            <div class="bog-sticky-bar__buttons"><button class="bog-btn" data-type="primary" data-width="fill">Continue</button></div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="row"><button class="bog-btn" data-type="neutral" data-size="small" data-toggle="platform">Platform: iOS</button></div>
+        <div class="row"><button class="bog-btn" data-type="neutral" data-size="small" data-toggle="status">Status bar: on</button></div>
+        <div class="row"><button class="bog-btn" data-type="neutral" data-size="small" data-toggle="effect">Scroll effect: on</button></div>
+      </div>
+    </div>
+
+    <h2>Navigation bar — Platform × Appearance</h2>
+    <div class="panel"><table id="matrix"></table></div>
+
+    <h2>Header — Text Configuration × Left Slot</h2>
+    <div class="panel"><table id="headers"></table></div>
+
+    <h2>Right slot items</h2>
+    <div class="panel"><table id="items"></table></div>
+
+    <h2>Items per appearance</h2>
+    <div class="panel"><table id="appear"></table></div>
+
+<script>
+
+const T = { themed: "neutral", white: "white", black: "black-secondary" };
+const back = (t) => `<button class="bog-icon-btn" data-type="${t}" data-size="small" aria-label="Back"><span class="bog-icon" data-icon="chevron-left"></span></button>`;
+const ib = (t, icon, dot) => `<button class="bog-icon-btn" data-type="${t}" data-size="small" aria-label="Action"><span class="bog-icon"${icon ? ` data-icon="${icon}"` : ""}></span>${dot ? '<span class="bog-badge-dot"></span>' : ""}</button>`;
+const title = (cfg) => `<div class="bog-nav-bar__title">${cfg === "caption" ? '<span class="bog-nav-bar__caption">Caption text</span>' : ""}<h1 class="bog-nav-bar__heading">Title</h1>${cfg === "sub" ? '<span class="bog-nav-bar__subtitle">Secondary text</span>' : ""}</div>`;
+const nav = (o = {}) => {
+  const ap = o.ap || "themed", t = T[ap];
+  const attrs = `data-platform="${o.pf || "ios"}"${ap !== "themed" ? ` data-appearance="${ap}"` : ""}${o.divider ? " data-divider" : ""}${o.bg ? " data-background" : ""}${o.noStatus ? ' data-status-bar="false"' : ""}`;
+  const left = o.left === "media" ? '<span class="bog-media-circle" data-size="32"></span>' : o.left === false ? "" : back(t);
+  const right = o.right === undefined ? ib(t) + ib(t, "chat") : o.right;
+  return `<header class="bog-nav-bar" ${attrs}>${o.noStatus ? "" : '<div class="bog-nav-bar__status"></div>'}<div class="bog-nav-bar__header">${left}${title(o.cfg || "sub")}${right ? `<div class="bog-nav-bar__actions">${right}</div>` : ""}</div></header>`;
+};
+const cell = (html, bg) => `<td style="min-width:375px;width:375px;padding:0;background:${bg || "#fff"};outline:1px dashed #e5e6e7">${html}</td>`;
+const BG = { themed: "var(--background-background-01)", white: "#1b1c1d", black: "#f2f3f4" };
+
+// Platform × Appearance (+ divider / background)
+let m = "<tr><th></th><th>iOS</th><th>Android</th></tr>";
+for (const ap of ["themed", "white", "black"]) {
+  const name = { themed: "Themed", white: "White Static", black: "Black Static" }[ap];
+  m += `<tr><th>${name}</th>${cell(nav({ ap }), BG[ap])}${cell(nav({ ap, pf: "android" }), BG[ap])}</tr>`;
+}
+m += `<tr><th>Divider</th>${cell(nav({ divider: 1 }))}${cell(nav({ pf: "android", divider: 1 }))}</tr>`;
+m += `<tr><th>Divider + Background</th>${cell(nav({ divider: 1, bg: 1 }), "#f2f3f4")}${cell(nav({ pf: "android", divider: 1, bg: 1 }), "#f2f3f4")}</tr>`;
+m += `<tr><th>Status Bar = False</th>${cell(nav({ noStatus: 1 }))}${cell(nav({ pf: "android", noStatus: 1 }))}</tr>`;
+document.getElementById("matrix").innerHTML = m;
+
+// Text configuration × left slot
+let h = "<tr><th></th><th>Left Slot = True (Icon Button)</th><th>Left Slot = Media</th><th>Left Slot = False</th></tr>";
+for (const [cfg, name] of [["title", "Title"], ["sub", "Title + Secondary text"], ["caption", "Caption + Title"]]) {
+  h += `<tr><th>${name}</th>${cell(nav({ cfg, noStatus: 1 }))}${cell(nav({ cfg, noStatus: 1, left: "media" }))}${cell(nav({ cfg, noStatus: 1, left: false }))}</tr>`;
+}
+document.getElementById("headers").innerHTML = h;
+
+// Right slot items
+const t = "neutral";
+const items = [
+  ["Icon Button", ib(t, "chat")],
+  ["Icon Button + Notification", ib(t, "chat", 1)],
+  ["Icon Buttons", ib(t) + ib(t, "chat")],
+  ["Button", `<button class="bog-btn" data-type="${t}" data-size="small">Button</button>`],
+  ["Timer", '<span class="bog-nav-bar__timer">00 : 45</span>'],
+  ["None", ""],
+];
+document.getElementById("items").innerHTML = items.map(([n, r]) => `<tr><th>${n}</th>${cell(nav({ noStatus: 1, right: r }))}</tr>`).join("");
+
+// Items per appearance
+let a = "<tr><th></th><th>Icon Buttons</th><th>Button</th><th>Timer</th></tr>";
+for (const ap of ["themed", "white", "black"]) {
+  const tt = T[ap];
+  a += `<tr><th>${ap}</th>${cell(nav({ ap, noStatus: 1, right: ib(tt) + ib(tt, "chat") }), BG[ap])}${cell(nav({ ap, noStatus: 1, right: `<button class="bog-btn" data-type="${tt}" data-size="small">Button</button>` }), BG[ap])}${cell(nav({ ap, noStatus: 1, right: '<span class="bog-nav-bar__timer">00 : 45</span>' }), BG[ap])}</tr>`;
+}
+document.getElementById("appear").innerHTML = a;
+
+// Demo content + toggles (behavior itself lives in bog-ui.js)
+document.getElementById("demo-list").innerHTML = Array.from({ length: 16 }, (_, i) => `<button type="button" class="bog-list-item"><span class="bog-icon-holder" data-size="40"><span class="bog-icon"></span></span><span class="bog-list-item__content"><span class="bog-list-item__label">Payment ${i + 1}</span><span class="bog-list-item__secondary">Utility bill</span></span><span class="bog-list-item__end"><span class="bog-list-item__value">${(i * 12.5 + 10).toFixed(2)} ₾</span></span></button>`).join("");
+const dn = document.getElementById("demo-nav");
+document.querySelectorAll("[data-toggle]").forEach((b) => b.addEventListener("click", () => {
+  const k = b.dataset.toggle;
+  if (k === "platform") { const a = dn.dataset.platform === "ios" ? "android" : "ios"; dn.dataset.platform = a; b.textContent = "Platform: " + (a === "ios" ? "iOS" : "Android"); }
+  if (k === "status") { const off = dn.dataset.statusBar === "false"; if (off) dn.removeAttribute("data-status-bar"); else dn.dataset.statusBar = "false"; b.textContent = "Status bar: " + (off ? "on" : "off"); }
+  if (k === "effect") { const on = dn.hasAttribute("data-scroll-effect"); dn.toggleAttribute("data-scroll-effect", !on); if (on) dn.removeAttribute("data-scrolled"); else window.BOG && BOG.updateNavBars && BOG.updateNavBars(); b.textContent = "Scroll effect: " + (on ? "off" : "on"); }
+}));
+
+</script>
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

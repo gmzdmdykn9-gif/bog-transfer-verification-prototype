@@ -6,8 +6,29 @@
 <title>Modal Dialog — BOG UI</title>
 <link rel="stylesheet" href="../bog-ui.css">
 <link rel="stylesheet" href="docs.css">
+<script src="theme.js"></script>
 <script src="../bog-ui.js" defer></script>
 <script src="components.js" defer></script>
+<style>
+  /* Motion handoff section (this page only) */
+  .motion-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .motion-bar label { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+  .motion-tabs { display: flex; margin: 0 0 16px; border-bottom: 1px solid var(--docs-line); }
+  .motion-tabs button { margin-bottom: -1px; padding: 10px 16px; border: 0; border-bottom: 2px solid transparent; background: none; font: inherit; font-size: 14px; font-weight: 600; color: var(--docs-muted); cursor: pointer; }
+  .motion-tabs button[aria-selected="true"] { border-bottom-color: var(--docs-accent); color: var(--docs-fg); }
+  .motion-pane[hidden] { display: none; }
+  .motion-pane > p, .motion-pane li { max-width: 760px; font-size: 14px; line-height: 22px; }
+  .motion-pane h3 { margin: 24px 0 8px; font-size: 15px; }
+  .motion-actions { display: flex; gap: 8px; margin: 12px 0 0; }
+  .motion-spec { border-spacing: 0; width: 100%; font-size: 13px; }
+  .motion-spec th, .motion-spec td { padding: 10px 12px; border-bottom: 1px solid var(--docs-line); text-align: left; vertical-align: top; }
+  .motion-spec td code { white-space: nowrap; }
+  .motion-tl { display: grid; grid-template-columns: 170px 1fr; gap: 10px 16px; align-items: center; max-width: 760px; font-size: 13px; }
+  .motion-tl__track { position: relative; height: 22px; border-radius: 6px; background: repeating-linear-gradient(90deg, var(--docs-line) 0 1px, transparent 1px 10%); }
+  .motion-tl__bar { position: absolute; top: 3px; bottom: 3px; border-radius: 4px; background: var(--text-accent); color: #fff; font-size: 11px; line-height: 16px; text-align: center; }
+  .motion-tl__bar[data-kind="fade"] { background: var(--docs-muted); }
+  .motion-tl__axis { display: flex; justify-content: space-between; color: var(--docs-muted); font-size: 11px; }
+</style>
 </head>
 <body>
 <div class="docs">
@@ -53,6 +74,241 @@
     <p class="lead">Open each layout. Close with the X, a button, Escape or a tap on the dim background.</p>
     <div class="panel"><div class="bog-sheet-host" style="position:relative;width:375px;height:700px;border-radius:24px;background:#fff;box-shadow:0 0 0 8px #1b1c1d;padding:48px 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:12px;overflow:hidden" id="demo"></div></div>
 
+    <h2 id="motion">Motion</h2>
+    <p class="lead">The dialog grows in from 60% while rising 70&nbsp;px and fading in over a dimming background; on close it shrinks to 62% and fades out. Every layout (Standard, Minimal, Cover, Destructive, Single / Dual) uses the same motion.
+      Source: <a href="https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=3068-9229" target="_blank" rel="noopener">Dialog - Open ↗</a> · <a href="https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=3070-10148" target="_blank" rel="noopener">Dialog - Close ↗</a></p>
+
+    <div class="panel">
+      <div class="motion-bar">
+        <label><input type="checkbox" id="motion-slow"> Slow motion (×10) for the "Try it" dialogs above</label>
+      </div>
+
+      <div class="motion-tabs" role="tablist">
+        <button role="tab" data-tab="design" aria-selected="true">Designers</button>
+        <button role="tab" data-tab="ios">iOS · SwiftUI</button>
+        <button role="tab" data-tab="android">Android · Compose</button>
+        <button role="tab" data-tab="web">Web</button>
+      </div>
+
+      <!-- Designers -->
+      <section class="motion-pane" id="motion-design" data-pane="design">
+        <p><b>Open</b> takes 500 ms; the dialog is fully visible after 117 ms and keeps settling upward. <b>Close</b> is quicker: the dialog is gone after 133 ms, the dim background after 183 ms, and the shrink finishes at 333 ms.</p>
+        <h3>Open timeline</h3>
+        <div class="motion-tl" id="motion-tl-open"></div>
+        <h3>Close timeline</h3>
+        <div class="motion-tl" id="motion-tl-close"></div>
+        <h3>Spec</h3>
+        <table class="motion-spec">
+          <thead><tr><th></th><th>Layer</th><th>Property</th><th>From → To</th><th>Duration</th><th>Easing</th></tr></thead>
+          <tbody>
+            <tr><th rowspan="4">Open</th><td>Dialog</td><td>Scale</td><td><code>60% → 100%</code></td><td>333 ms</td><td rowspan="4"><code>cubic-bezier(0.33, 0, 0.09, 1)</code></td></tr>
+            <tr><td>Dialog</td><td>Position Y</td><td><code>+70 → 0</code> (rises)</td><td>500 ms</td></tr>
+            <tr><td>Dialog</td><td>Opacity</td><td><code>0% → 100%</code></td><td>117 ms</td></tr>
+            <tr><td>Overlay</td><td>Opacity</td><td><code>0% → 100%</code></td><td>117 ms</td></tr>
+            <tr><th rowspan="3">Close</th><td>Dialog</td><td>Scale</td><td><code>100% → 62%</code></td><td>333 ms</td><td><code>cubic-bezier(0.33, 0, 0.06, 1)</code></td></tr>
+            <tr><td>Dialog</td><td>Opacity</td><td><code>100% → 0%</code></td><td>133 ms</td><td><code>cubic-bezier(0.17, 0, 0.41, 1)</code></td></tr>
+            <tr><td>Overlay</td><td>Opacity</td><td><code>100% → 0%</code></td><td>183 ms</td><td><code>cubic-bezier(0.17, 0, 0.83, 1)</code></td></tr>
+          </tbody>
+        </table>
+        <h3>Rules</h3>
+        <ul>
+          <li>All tracks start together (no delays). Scale is from the dialog's center.</li>
+          <li>Values are in px (web) = pt (iOS) = dp (Android). The overlay at 100% is the <i>Support / Overlay canvas</i> color (<code>#0F0F10</code> at 68%).</li>
+          <li>Close does not move the dialog. If it's closed while still opening, it finishes its rise during the close.</li>
+          <li>Reopening while it closes animates back from where it is.</li>
+          <li>Same motion for every trigger: X, a footer button, a tap on the overlay, Escape / back.</li>
+          <li>Reduce Motion / Remove animations on: show and hide instantly.</li>
+        </ul>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="design">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="spec">Copy spec as text</button></div>
+      </section>
+
+      <!-- iOS -->
+      <section class="motion-pane" id="motion-ios" data-pane="ios" hidden>
+        <p>A modifier that draws the overlay and the dialog above your screen. Each property gets its own <code>withAnimation</code> because they have different durations. iOS 17+ (for the <code>completion</code>).</p>
+        <pre><code data-snippet="ios">import SwiftUI
+
+// Component Motion Guidelines › Dialog - Open / Close
+struct BOGDialogPresenter&lt;Dialog: View&gt;: ViewModifier {
+    @Binding var isPresented: Bool
+    @ViewBuilder var dialog: () -&gt; Dialog
+
+    // Resting (closed) values = where the open animation starts
+    @State private var scale: CGFloat = 0.6
+    @State private var offsetY: CGFloat = 70
+    @State private var opacity: Double = 0
+    @State private var overlay: Double = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    private let overlayColor = Color(red: 15 / 255, green: 15 / 255, blue: 16 / 255).opacity(0.68)
+
+    func body(content: Content) -&gt; some View {
+        content.overlay {
+            ZStack {
+                overlayColor.opacity(overlay).ignoresSafeArea()
+                    .onTapGesture { isPresented = false }
+                dialog()
+                    .scaleEffect(scale)
+                    .offset(y: offsetY)
+                    .opacity(opacity)
+                    .padding(16)
+            }
+            .allowsHitTesting(isPresented)
+            .accessibilityHidden(!isPresented)
+        }
+        .onChange(of: isPresented) { _, open in open ? present() : dismiss() }
+    }
+
+    private func present() {
+        if reduceMotion { scale = 1; offsetY = 0; opacity = 1; overlay = 1; return }
+        let ease = { (s: Double) in Animation.timingCurve(0.33, 0, 0.09, 1, duration: s) }
+        withAnimation(ease(0.333)) { scale = 1 }
+        withAnimation(ease(0.5))   { offsetY = 0 }
+        withAnimation(ease(0.117)) { opacity = 1; overlay = 1 }
+    }
+
+    private func dismiss() {
+        let reset = { scale = 0.6; offsetY = 70; opacity = 0; overlay = 0 }
+        if reduceMotion { reset(); return }
+        withAnimation(.timingCurve(0.33, 0, 0.06, 1, duration: 0.333)) { scale = 0.62; offsetY = 0 } completion: {
+            if !isPresented { reset() }   // back to the open start values, without animation
+        }
+        withAnimation(.timingCurve(0.17, 0, 0.41, 1, duration: 0.133)) { opacity = 0 }
+        withAnimation(.timingCurve(0.17, 0, 0.83, 1, duration: 0.183)) { overlay = 0 }
+    }
+}
+
+extension View {
+    func bogDialog&lt;D: View&gt;(isPresented: Binding&lt;Bool&gt;, @ViewBuilder dialog: @escaping () -&gt; D) -&gt; some View {
+        modifier(BOGDialogPresenter(isPresented: isPresented, dialog: dialog))
+    }
+}
+
+// Usage
+// @State private var showDialog = false
+// MyScreen()
+//     .bogDialog(isPresented: $showDialog) { MyDialogCard(onClose: { showDialog = false }) }</code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="ios">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="ios">Copy code</button></div>
+      </section>
+
+      <!-- Android -->
+      <section class="motion-pane" id="motion-android" data-pane="android" hidden>
+        <p>A host composable that draws the overlay and the dialog above your screen and runs each property as its own <code>Animatable</code> (different durations and easings).</p>
+        <pre><code data-snippet="android">import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+
+// Component Motion Guidelines › Dialog - Open / Close
+private val OpenEasing = CubicBezierEasing(0.33f, 0f, 0.09f, 1f)
+private val CloseScaleEasing = CubicBezierEasing(0.33f, 0f, 0.06f, 1f)
+private val CloseFadeEasing = CubicBezierEasing(0.17f, 0f, 0.41f, 1f)
+private val CloseOverlayEasing = CubicBezierEasing(0.17f, 0f, 0.83f, 1f)
+private val OverlayColor = Color(0xAD0F0F10)   // Support / Overlay canvas (#0F0F10 @ 68%)
+
+@Composable
+fun BogDialogHost(visible: Boolean, onDismiss: () -&gt; Unit, dialog: @Composable () -&gt; Unit) {
+    var shown by remember { mutableStateOf(visible) }
+    // Resting (closed) values = where the open animation starts
+    val scale = remember { Animatable(0.6f) }
+    val offsetY = remember { Animatable(70f) }   // dp
+    val alpha = remember { Animatable(0f) }
+    val overlay = remember { Animatable(0f) }
+
+    LaunchedEffect(visible) {
+        if (visible) {
+            shown = true
+            coroutineScope {
+                launch { scale.animateTo(1f, tween(333, easing = OpenEasing)) }
+                launch { offsetY.animateTo(0f, tween(500, easing = OpenEasing)) }
+                launch { alpha.animateTo(1f, tween(117, easing = OpenEasing)) }
+                launch { overlay.animateTo(1f, tween(117, easing = OpenEasing)) }
+            }
+        } else if (shown) {
+            coroutineScope {
+                launch { scale.animateTo(0.62f, tween(333, easing = CloseScaleEasing)) }
+                launch { offsetY.animateTo(0f, tween(333, easing = CloseScaleEasing)) }   // only moves if closed mid-open
+                launch { alpha.animateTo(0f, tween(133, easing = CloseFadeEasing)) }
+                launch { overlay.animateTo(0f, tween(183, easing = CloseOverlayEasing)) }
+            }
+            shown = false
+            scale.snapTo(0.6f); offsetY.snapTo(70f)
+        }
+    }
+    if (!shown) return
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .drawBehind { drawRect(OverlayColor, alpha = OverlayColor.alpha * overlay.value) }
+            .clickable(remember { MutableInteractionSource() }, indication = null, onClick = onDismiss)
+            .padding(16.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            Modifier
+                .graphicsLayer {
+                    scaleX = scale.value; scaleY = scale.value
+                    translationY = offsetY.value * density
+                    this.alpha = alpha.value
+                }
+                .pointerInput(Unit) { detectTapGestures { } },   // taps on the dialog don't dismiss it
+        ) { dialog() }
+    }
+}
+// Compose follows the system "Remove animations" setting (animator duration scale 0) automatically.
+
+// Usage
+// var showDialog by remember { mutableStateOf(false) }
+// Box { MyScreen(); BogDialogHost(showDialog, { showDialog = false }) { MyDialogCard() } }</code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="android">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="android">Copy code</button></div>
+      </section>
+
+      <!-- Web -->
+      <section class="motion-pane" id="motion-web" data-pane="web" hidden>
+        <p>Built into <code>modal.css</code> + <code>bog-ui.js</code>: <code>BOG.openModal()</code> / <code>BOG.closeModal()</code> (and the <code>data-modal-open</code> / <code>data-modal-close</code> attributes) run it, for every layout. Under <code>prefers-reduced-motion: reduce</code> it shows and hides instantly. The CSS:</p>
+        <pre><code data-snippet="web">/* closed = start of open */
+.bog-modal { background: transparent; }
+.bog-modal__dialog { opacity: 0; scale: 0.6; translate: 0 70px; }
+
+/* open */
+.bog-modal[data-open] {
+  background-color: var(--support-overlay-canvas);
+  transition: background-color 117ms cubic-bezier(0.33, 0, 0.09, 1);
+}
+.bog-modal[data-open] .bog-modal__dialog {
+  opacity: 1; scale: 1; translate: 0 0;
+  transition: scale 333ms cubic-bezier(0.33, 0, 0.09, 1),
+              translate 500ms cubic-bezier(0.33, 0, 0.09, 1),
+              opacity 117ms cubic-bezier(0.33, 0, 0.09, 1);
+}
+
+/* closing (bog-ui.js sets data-closing, then hides the modal when the transitions end) */
+.bog-modal[data-closing] { transition: background-color 183ms cubic-bezier(0.17, 0, 0.83, 1); }
+.bog-modal[data-closing] .bog-modal__dialog {
+  scale: 0.62; translate: 0 0;
+  transition: scale 333ms cubic-bezier(0.33, 0, 0.06, 1),
+              translate 333ms cubic-bezier(0.33, 0, 0.06, 1),
+              opacity 133ms cubic-bezier(0.17, 0, 0.41, 1);
+}</code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="web">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="web">Copy code</button></div>
+      </section>
+    </div>
+
     <h2>Layouts</h2>
     <div class="panel" style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start;background:#0f0f10ad" id="static"></div>
 
@@ -73,6 +329,63 @@
   const CASES = [["Standard", {layout: "standard"}], ["Standard · Dual", {layout: "standard", dual: 1}], ["Minimal", {layout: "minimal"}], ["Cover · Image", {layout: "cover", dual: 1}], ["Cover · Illustration", {layout: "cover", ill: 1}], ["Destructive", {layout: "standard", dual: 1, neg: 1}]];
   document.getElementById("demo").innerHTML = CASES.map(([n], i) => `<button type="button" class="bog-btn" data-type="neutral" data-size="medium" data-modal-open="m${i}">${n}</button>`).join("") +
     CASES.map(([, o], i) => `<div class="bog-modal" id="m${i}" hidden>${dialog(o)}</div>`).join("");
+  // ---- Motion section ----
+  // Slow motion: stretch the modal transitions that start on this tap / key (next tick, after bog-ui.js)
+  const slow = document.getElementById("motion-slow");
+  function slowModals() {
+    if (!slow.checked) return;
+    setTimeout(() => document.querySelectorAll("#demo .bog-modal:not([hidden])").forEach((m) => {
+      const d = m.querySelector(".bog-modal__dialog");
+      m.getAnimations().concat(d.getAnimations()).forEach((a) => { a.playbackRate = 0.1; });
+    }));
+  }
+  document.addEventListener("click", slowModals);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") slowModals(); });
+
+  // Timelines: [label, start, length, kind]
+  const timeline = (id, rows, max) => {
+    const pct = (ms) => (ms / max * 100).toFixed(2) + "%";
+    document.getElementById(id).innerHTML = rows.map(([n, d, l, k]) =>
+      `<span>${n}</span><div class="motion-tl__track"><span class="motion-tl__bar" data-kind="${k}" style="left:${pct(d)};width:${pct(l)}">${l} ms</span></div>`).join("") +
+      `<span></span><div class="motion-tl__axis">${Array.from({ length: 11 }, (_, i) => `<span>${i * max / 10}</span>`).join("")}</div>`;
+  };
+  timeline("motion-tl-open", [["Dialog · Scale 60 → 100%", 0, 333, "move"], ["Dialog · Position Y +70 → 0", 0, 500, "move"], ["Dialog · Opacity", 0, 117, "fade"], ["Overlay · Opacity", 0, 117, "fade"]], 500);
+  timeline("motion-tl-close", [["Dialog · Scale 100 → 62%", 0, 333, "move"], ["Dialog · Opacity", 0, 133, "fade"], ["Overlay · Opacity", 0, 183, "fade"]], 500);
+
+  // Tabs, opened from the URL hash (#motion-ios, #motion-android, …) so links can be shared
+  const tabs = document.querySelectorAll(".motion-tabs [data-tab]");
+  function openTab(name) {
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+    document.querySelectorAll(".motion-pane").forEach((p) => { p.hidden = p.dataset.pane !== name; });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => { openTab(t.dataset.tab); history.replaceState(null, "", "#motion-" + t.dataset.tab); }));
+  const fromHash = location.hash.match(/^#motion-(design|ios|android|web)$/);
+  if (fromHash) { openTab(fromHash[1]); document.getElementById("motion").scrollIntoView(); }
+
+  // Copy buttons
+  const SPEC = `Modal Dialog · Open / Close motion (all layouts)
+Open:  https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=3068-9229
+Close: https://www.figma.com/design/LCAlFnhOdhc9q4LDoajuhw/Component-Motion-Guidelines?node-id=3070-10148
+All tracks start at 0 ms. Scale from the center. Units: px = pt = dp.
+OPEN (500 ms), easing cubic-bezier(0.33, 0, 0.09, 1)
+  Dialog   Scale       60 → 100%   333 ms
+  Dialog   Position Y  +70 → 0     500 ms
+  Dialog   Opacity     0 → 100%    117 ms
+  Overlay  Opacity     0 → 100%    117 ms
+CLOSE (333 ms)
+  Dialog   Scale       100 → 62%   333 ms  cubic-bezier(0.33, 0, 0.06, 1)
+  Dialog   Opacity     100 → 0%    133 ms  cubic-bezier(0.17, 0, 0.41, 1)
+  Overlay  Opacity     100 → 0%    183 ms  cubic-bezier(0.17, 0, 0.83, 1)
+Overlay at 100% = Support / Overlay canvas (#0F0F10 @ 68%).
+Reduce Motion: show and hide instantly.`;
+  function copy(btn, text) {
+    navigator.clipboard.writeText(text).then(() => { const was = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = was; }, 1200); });
+  }
+  document.querySelectorAll("[data-copy-link]").forEach((b) => b.addEventListener("click", () =>
+    copy(b, location.href.split("#")[0] + "#motion-" + b.dataset.copyLink)));
+  document.querySelectorAll("[data-copy]").forEach((b) => b.addEventListener("click", () =>
+    copy(b, b.dataset.copy === "spec" ? SPEC : document.querySelector(`[data-snippet="${b.dataset.copy}"]`).textContent)));
+
   document.getElementById("static").innerHTML = CASES.map(([n, o]) => `<div style="width:343px"><p style="color:#fff;margin:0 0 8px;font-size:13px">${n}</p><div class="bog-modal" data-open style="position:static;padding:0;background:none">${dialog(o)}</div></div>`).join("");
 
 </script>

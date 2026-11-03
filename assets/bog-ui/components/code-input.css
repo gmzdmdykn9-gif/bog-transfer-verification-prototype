@@ -10,18 +10,18 @@
        <span class="bog-code__cell"></span><span class="bog-code__cell"></span>
      </div>
 
-   Passcode (typed on a .bog-keypad, digits hidden as dots)
+   Passcode (typed on a .bog-numpad — Keyboard Numeric; digits hidden as dots)
      <div class="bog-code" data-size="large" data-mask data-active id="passcode"> …4 cells, no input… </div>
-     <div class="bog-keypad" data-for="passcode">…</div>
+     <div class="bog-numpad" data-for="passcode">…</div>   (.bog-keypad still works but is deprecated)
 
    Sizes      data-size  medium (56×68, OTP) · large (62×80, passcode)
    Options    data-mask                 show dots instead of digits
-              data-active               always outline the next cell (use with a keypad)
+              data-active               always outline the next cell (use with a numpad)
               data-validation="error"   red cells + shake (clear it on the next digit)
               data-state="loading"      cells pulse while the code is checked
    Events     "codechange"  (detail.value) on every digit
               "codecomplete" (detail.value) when all cells are filled
-   JS         BOG.setCode(el, "12")  sets the value (used by the keypad)
+   JS         BOG.setCode(el, "12")  sets the value (used by the numpad)
    ========================================================================== */
 
 .bog-code {

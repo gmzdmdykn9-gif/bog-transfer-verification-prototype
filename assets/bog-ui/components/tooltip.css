@@ -1,0 +1,182 @@
+/* ==========================================================================
+   BOG UI — Tooltip
+   Figma: Tooltip (41120:93), _Tooltip trigger (41129:7201) — page 40699:20459
+
+   Tap-to-open (needs bog-ui.js) — the tooltip can live anywhere in the page
+     <button type="button" class="bog-tooltip-trigger" data-tooltip="tip-fee" aria-label="More info"></button>
+     <div class="bog-tooltip" id="tip-fee" role="tooltip" data-position="bottom" data-alignment="center">
+       Fee is 1% of the amount
+     </div>
+     Any element can be a trigger: <button class="bog-btn" data-tooltip="tip-fee">…</button>,
+     incl. the Text Input info button: <button type="button" class="bog-field__info" data-tooltip="tip-fee">.
+     Shortcut without a tooltip element: data-tooltip-text="Fee is 1%" (+ optional
+     data-tooltip-position / data-tooltip-alignment on the trigger).
+
+   Static (mockups, no JS) — wrap trigger + tooltip in an anchor, add data-open
+     <span class="bog-tooltip-anchor">
+       <span class="bog-tooltip-trigger"></span>
+       <span class="bog-tooltip" role="tooltip" data-position="top" data-alignment="left" data-open>Tooltip</span>
+     </span>
+
+   Attributes on .bog-tooltip (Figma variant properties)
+     data-position   bottom (default) | top   — Position: tooltip below / above the trigger
+     data-alignment  left | center (default) | right | left-center | right-center
+                     left / right: arrow 16px from that edge, tooltip extends the other way.
+                     left-center: tooltip sits LEFT of the trigger (arrow points right);
+                     right-center: tooltip sits RIGHT of the trigger (arrow points left).
+                     data-position is ignored for the two -center values (Figma only has them with Top).
+     data-open       shown (set by bog-ui.js, or by hand for static mockups)
+   Trigger (_Tooltip trigger): .bog-tooltip-trigger = 16px info icon, 24px tap area.
+     trigger=Placeholder: put any <span class="bog-icon" style="--icon:url(…)"></span> inside.
+   bog-ui.js: tap a [data-tooltip] trigger → opens next to it, flips/shifts to stay inside the
+   .bog-sheet-host (phone frame) or the viewport; tap outside / Escape / same trigger closes.
+   One open at a time. Events on the tooltip: "tooltipopen", "tooltipclose" (detail.trigger).
+   JS: BOG.openTooltip(tooltipOrId, trigger), BOG.closeTooltip().
+   ========================================================================== */
+
+.bog-tooltip {
+  --_gap: 10px;              /* Figma: body 10px from the 16px trigger, arrow tip 4px */
+  --_arrow-w: 8px;
+  --_arrow-h: 6px;
+  --_arrow-inset: var(--spacing-padding-default);   /* arrow 16px from the aligned edge */
+  --_max-width: 280px;       /* not in Figma (text hugs); keeps long copy readable */
+  --_ax: calc(50% - var(--_arrow-w) / 2);           /* arrow left (top/bottom) */
+  --_ay: calc(50% - var(--_arrow-h) / 2);           /* arrow top (left-/right-center) */
+
+  position: absolute;
+  z-index: 1200;
+  display: block;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: var(--_max-width);
+  margin: 0;
+  padding: var(--spacing-padding-small) var(--spacing-padding-default);
+  border-radius: var(--radius-small);
+  background: var(--layer-inverse-01);
+  box-shadow: var(--shadow-30);
+  color: var(--text-inverse-primary);
+  font-family: var(--font-family-bog);
+  font-size: var(--body-small-size);
+  line-height: var(--body-small-line-height);
+  font-weight: var(--body-small-weight);
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: break-word;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  scale: 0.92;
+  transform-origin: var(--_origin, top center);
+  transition: opacity 140ms ease, scale 160ms ease, visibility 0s linear 160ms;
+}
+.bog-tooltip[data-open] {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  scale: 1;
+  transition: opacity 140ms ease, scale 200ms cubic-bezier(0.2, 0.9, 0.3, 1.2), visibility 0s;
+}
+
+/* ---- Arrow (Figma "Arrow" vector, 8×6, same fill as the body) ------- */
+.bog-tooltip::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--_arrow-h) * -1);
+  left: var(--_arrow-x, var(--_ax));
+  width: var(--_arrow-w);
+  height: var(--_arrow-h);
+  background-color: var(--layer-inverse-01);
+  -webkit-mask: url("../icons/tooltip-arrow.svg") center / contain no-repeat;
+          mask: url("../icons/tooltip-arrow.svg") center / contain no-repeat;
+}
+.bog-tooltip[data-alignment="left"]  { --_ax: var(--_arrow-inset); }
+.bog-tooltip[data-alignment="right"] { --_ax: calc(100% - var(--_arrow-inset) - var(--_arrow-w)); }
+
+/* Position=Top: tooltip above, arrow at the bottom pointing down */
+.bog-tooltip[data-position="top"] { --_origin: bottom center; }
+.bog-tooltip[data-position="top"]::before { top: auto; bottom: calc(var(--_arrow-h) * -1); rotate: 180deg; }
+
+/* Left-Center: tooltip left of the trigger, arrow on the right pointing right */
+.bog-tooltip:is([data-alignment="left-center"], [data-alignment="right-center"])::before {
+  top: var(--_arrow-y, var(--_ay));
+  bottom: auto;
+}
+.bog-tooltip[data-alignment="left-center"]::before {
+  left: auto;
+  right: calc(var(--_arrow-w) * -1 + 1px);
+  rotate: 90deg;
+}
+/* Right-Center: tooltip right of the trigger, arrow on the left pointing left */
+.bog-tooltip[data-alignment="right-center"]::before {
+  left: calc(var(--_arrow-w) * -1 + 1px);
+  rotate: -90deg;
+}
+/* scale-in origin = arrow side */
+.bog-tooltip[data-alignment="left"]  { --_origin: top left; }
+.bog-tooltip[data-alignment="right"] { --_origin: top right; }
+.bog-tooltip[data-position="top"][data-alignment="left"]  { --_origin: bottom left; }
+.bog-tooltip[data-position="top"][data-alignment="right"] { --_origin: bottom right; }
+.bog-tooltip[data-alignment="left-center"]  { --_origin: center right; }
+.bog-tooltip[data-alignment="right-center"] { --_origin: center left; }
+
+/* ---- Static placement inside .bog-tooltip-anchor (no JS) ------------ */
+.bog-tooltip-anchor {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+}
+.bog-tooltip-anchor > .bog-tooltip {
+  top: calc(100% + var(--_gap));
+  left: 50%;
+  translate: -50% 0;
+}
+/* arrow centre sits on the trigger centre: 16px inset + 4px half-arrow */
+.bog-tooltip-anchor > .bog-tooltip[data-alignment="left"]  { left: calc(50% - var(--_arrow-inset) - var(--_arrow-w) / 2); translate: none; }
+.bog-tooltip-anchor > .bog-tooltip[data-alignment="right"] { left: auto; right: calc(50% - var(--_arrow-inset) - var(--_arrow-w) / 2); translate: none; }
+.bog-tooltip-anchor > .bog-tooltip[data-position="top"] { top: auto; bottom: calc(100% + var(--_gap)); }
+.bog-tooltip-anchor > .bog-tooltip[data-alignment="left-center"] {
+  top: 50%; bottom: auto; left: auto; right: calc(100% + var(--_gap)); translate: 0 -50%;
+}
+.bog-tooltip-anchor > .bog-tooltip[data-alignment="right-center"] {
+  top: 50%; bottom: auto; left: calc(100% + var(--_gap)); right: auto; translate: 0 -50%;
+}
+
+/* ---- _Tooltip trigger (16px info icon, 24px round tap area) --------- */
+.bog-tooltip-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-sizing: border-box;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--icon-primary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.bog-tooltip-trigger:not(:has(> .bog-icon))::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: currentColor;
+  -webkit-mask: url("../icons/info.svg") center / contain no-repeat;
+          mask: url("../icons/info.svg") center / contain no-repeat;
+}
+.bog-tooltip-trigger::after {          /* Figma "Tap Area" 24×24 */
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: var(--radius-full);
+  background: var(--layer-alpha-0);
+}
+.bog-tooltip-trigger:focus-visible { outline: 2px solid var(--border-selected); outline-offset: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bog-tooltip, .bog-tooltip[data-open] { scale: 1; transition: opacity 120ms ease, visibility 0s; }
+}

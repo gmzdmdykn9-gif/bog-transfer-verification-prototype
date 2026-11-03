@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sticky Bar — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="sticky-bar"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Sticky Bar</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">The bottom action area of a page or sheet: a fade from transparent to the surface color, an optional slot (Feedback, balances…), optional helper text, and one or two buttons (stacked, or an Icon Button + Button row), above the iOS home-indicator area. Page and Overlay placements, Themed and Static Black; Sticky Bar Amount adds a row of quick-amount buttons.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-sticky-bar" data-placement="page"&gt;
+  &lt;div class="bog-sticky-bar__slot"&gt;…optional: Feedback, balances…&lt;/div&gt;
+  &lt;span class="bog-inline-message" data-size="small" data-icon="false"&gt;Message text&lt;/span&gt;
+  &lt;div class="bog-sticky-bar__buttons"&gt;
+    &lt;button class="bog-btn" data-type="primary" data-width="fill"&gt;Primary&lt;/button&gt;
+    &lt;button class="bog-btn" data-type="neutral" data-width="fill"&gt;Secondary&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Button Layout=Row --&gt;
+&lt;div class="bog-sticky-bar__buttons" data-layout="row"&gt;
+  &lt;button class="bog-icon-btn" data-type="neutral" aria-label="More"&gt;&lt;span class="bog-icon"&gt;&lt;/span&gt;&lt;/button&gt;
+  &lt;button class="bog-btn" data-type="primary" data-width="fill"&gt;Primary&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- Sticky Bar Amount (Set value=False) --&gt;
+&lt;div class="bog-sticky-bar__amounts"&gt;
+  &lt;button class="bog-btn" data-type="neutral" data-size="small"&gt;10 ₾&lt;/button&gt;
+  &lt;button class="bog-btn" data-type="neutral" data-size="small"&gt;50 ₾&lt;/button&gt;
+  &lt;button class="bog-btn" data-type="neutral" data-size="small"&gt;100 ₾&lt;/button&gt;
+  &lt;button class="bog-btn" data-type="neutral" data-size="small"&gt;Total&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+
+
+    <table>
+      <tr><th>Attribute (on .bog-sticky-bar)</th><th>Values</th><th>Figma</th></tr>
+      <tr><td><code>data-placement</code></td><td><code>page</code> (default) · <code>overlay</code> (inside a Bottom Sheet / Modal surface)</td><td>Placement</td></tr>
+      <tr><td><code>data-appearance</code></td><td><code>themed</code> (default) · <code>black</code> — use <code>data-appearance="inverse"</code> on the buttons and Inline Message inside</td><td>Appearance = Static Black - BETA</td></tr>
+      <tr><td><code>data-home-indicator="false"</code></td><td>16px bottom padding instead of the 34px home-indicator area</td><td>Home indicator = False</td></tr>
+      <tr><td><code>data-position</code></td><td><code>sticky</code> (default; put it last in the scrolling container) · <code>fixed</code></td><td>—</td></tr>
+      <tr><td><code>.bog-sticky-bar__buttons data-layout="row"</code></td><td>Icon Button + Button side by side</td><td>Button Layout = Row</td></tr>
+    </table>
+    <p>Optional parts: <code>.bog-sticky-bar__slot</code> (Slot — e.g. an inline <code>.bog-feedback</code>), the helper text (<code>.bog-inline-message</code>, small, no icon), the second button (Secondary action). The fade runs from transparent to the surface color over the top 20%, so content scrolls softly under the bar.</p>
+
+    <h2>Try it</h2>
+    <div class="bog-sheet-host" style="position:relative;width:375px;height:700px;border-radius:24px;box-shadow:0 0 0 8px #1b1c1d;overflow:hidden;background:var(--background-background-01)">
+      <div style="height:100%;overflow-y:auto;display:flex;flex-direction:column">
+        <header class="bog-nav-bar" data-platform="ios" data-sticky data-scroll-effect>
+          <div class="bog-nav-bar__status"></div>
+          <div class="bog-nav-bar__header">
+            <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Back"><span class="bog-icon" data-icon="chevron-left"></span></button>
+            <div class="bog-nav-bar__title"><h1 class="bog-nav-bar__heading">Top up</h1></div>
+          </div>
+        </header>
+        <div class="bog-list" style="flex:1 0 auto" id="demo-list"></div>
+        <div class="bog-sticky-bar">
+          <div class="bog-sticky-bar__slot"><div class="bog-feedback" data-status="info" role="status"><div class="bog-feedback__text"><p class="bog-feedback__desc">Transfers between your own accounts are free</p></div></div></div>
+          <span class="bog-inline-message" data-size="small" data-icon="false">Commission 0.00 ₾</span>
+          <div class="bog-sticky-bar__amounts" id="demo-amounts">
+            <button class="bog-btn" data-type="neutral" data-size="small">10 ₾</button>
+            <button class="bog-btn" data-type="neutral" data-size="small">50 ₾</button>
+            <button class="bog-btn" data-type="neutral" data-size="small">100 ₾</button>
+            <button class="bog-btn" data-type="neutral" data-size="small">Total</button>
+          </div>
+          <div class="bog-sticky-bar__buttons" data-layout="row">
+            <button class="bog-icon-btn" data-type="neutral" aria-label="More"><span class="bog-icon"></span></button>
+            <button class="bog-btn" data-type="primary" data-width="fill">Transfer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Sticky Bar — Placement × Appearance × Button Layout</h2>
+    <div class="panel"><table id="matrix"></table></div>
+
+    <h2>Home indicator = False</h2>
+    <div class="panel"><table id="nohi"></table></div>
+
+    <h2>Optional parts</h2>
+    <div class="panel"><table id="parts"></table></div>
+
+    <h2>Sticky Bar Amount</h2>
+    <div class="panel"><table id="amount"></table></div>
+
+<script>
+
+const helper = (inv) => `<span class="bog-inline-message" data-size="small" data-icon="false"${inv ? ' data-appearance="inverse"' : ""}>Message text</span>`;
+const inv = (b) => (b ? ' data-appearance="inverse"' : "");
+const stacked = (b, two) => `<div class="bog-sticky-bar__buttons"><button class="bog-btn" data-type="primary" data-width="fill"${inv(b)}>Primary</button>${two ? `<button class="bog-btn" data-type="neutral" data-width="fill"${inv(b)}>Secondary</button>` : ""}</div>`;
+const row = (b) => `<div class="bog-sticky-bar__buttons" data-layout="row"><button class="bog-icon-btn" data-type="neutral"${inv(b)} aria-label="More"><span class="bog-icon"></span></button><button class="bog-btn" data-type="primary" data-width="fill"${inv(b)}>Primary</button></div>`;
+const bar = (o = {}) => `<div class="bog-sticky-bar"${o.pl === "overlay" ? ' data-placement="overlay"' : ""}${o.black ? ' data-appearance="black"' : ""}${o.noHi ? ' data-home-indicator="false"' : ""}>${o.slot || ""}${o.noHelper ? "" : helper(o.black)}${o.buttons || (o.row ? row(o.black) : stacked(o.black, o.two))}</div>`;
+// Content behind the bar so the fade is visible
+const stripes = (dark) => `<div style="height:60px;background:repeating-linear-gradient(0deg,${dark ? "#5a5c5f" : "#d7d9db"} 0 10px,transparent 10px 20px)"></div>`;
+const cell = (html, dark, ov) => `<td style="min-width:375px;width:375px;padding:0;background:${dark ? (ov ? "#313335" : "#1b1c1d") : "#fff"};outline:1px dashed #e5e6e7"><div style="position:relative">${stripes(dark)}${html.replace('class="bog-sticky-bar"', 'class="bog-sticky-bar" style="position:relative;margin-top:-60px"')}</div></td>`;
+
+let m = "<tr><th></th><th>Page · Themed</th><th>Page · Static Black</th><th>Overlay · Themed</th><th>Overlay · Static Black</th></tr>";
+for (const [name, o] of [["Stacked", {}], ["Stacked + Secondary action", { two: 1 }], ["Row", { row: 1 }]]) {
+  m += `<tr><th>${name}</th>${cell(bar(o))}${cell(bar({ ...o, black: 1 }), 1)}${cell(bar({ ...o, pl: "overlay" }))}${cell(bar({ ...o, pl: "overlay", black: 1 }), 1, 1)}</tr>`;
+}
+document.getElementById("matrix").innerHTML = m;
+
+let n = "<tr><th></th><th>Themed</th><th>Static Black</th></tr>";
+for (const [name, o] of [["Stacked", { noHi: 1 }], ["Row", { noHi: 1, row: 1 }]]) n += `<tr><th>${name}</th>${cell(bar(o))}${cell(bar({ ...o, black: 1 }), 1)}</tr>`;
+document.getElementById("nohi").innerHTML = n;
+
+const fb = `<div class="bog-sticky-bar__slot"><div class="bog-feedback" data-status="warning" role="status"><div class="bog-feedback__text"><p class="bog-feedback__desc">Small description goes here</p></div></div></div>`;
+const slotPh = `<div class="bog-sticky-bar__slot"><div style="height:24px;border:1px dashed #9747ff;border-radius:4px;color:#9747ff;font:500 11px/22px var(--font-family-bog);text-align:center">Slot</div></div>`;
+document.getElementById("parts").innerHTML = [
+  ["Button only (Helper text = False)", bar({ noHelper: 1 })],
+  ["Slot", bar({ slot: slotPh })],
+  ["Slot = Feedback", bar({ slot: fb, two: 1 })],
+].map(([t, h]) => `<tr><th>${t}</th>${cell(h)}</tr>`).join("");
+
+const amounts = `<div class="bog-sticky-bar__amounts"><button class="bog-btn" data-type="neutral" data-size="small">10 ₾</button><button class="bog-btn" data-type="neutral" data-size="small">50 ₾</button><button class="bog-btn" data-type="neutral" data-size="small">100 ₾</button><button class="bog-btn" data-type="neutral" data-size="small">Total</button></div>`;
+const transfer = `<div class="bog-sticky-bar__buttons"><button class="bog-btn" data-type="primary" data-width="fill">Transfer</button></div>`;
+let a = "<tr><th></th><th>Set value = False</th><th>Set value = True</th></tr>";
+for (const [name, o] of [["Page", {}], ["Overlay", { pl: "overlay" }], ["Page · Home indicator = False", { noHi: 1 }], ["Overlay · Home indicator = False", { pl: "overlay", noHi: 1 }]]) {
+  a += `<tr><th>${name}</th>${cell(bar({ ...o, slot: slotPh, buttons: amounts }))}${cell(bar({ ...o, slot: slotPh, buttons: transfer }))}</tr>`;
+}
+document.getElementById("amount").innerHTML = a;
+
+document.getElementById("demo-list").innerHTML = Array.from({ length: 14 }, (_, i) => `<button type="button" class="bog-list-item"><span class="bog-icon-holder" data-size="40"><span class="bog-icon"></span></span><span class="bog-list-item__content"><span class="bog-list-item__label">Account ${i + 1}</span><span class="bog-list-item__secondary">GE00BG0000000000000${i}</span></span><span class="bog-list-item__end"><span class="bog-list-item__value">${(i * 40 + 120).toFixed(2)} ₾</span></span></button>`).join("");
+
+</script>
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

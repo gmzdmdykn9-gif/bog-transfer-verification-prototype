@@ -322,3 +322,26 @@
 .bog-field[data-state="skeleton"] .bog-field__message::before { display: none; }
 
 @keyframes bog-spin { to { transform: rotate(360deg); } }
+
+/* ---- Motion: Default ⇄ Active, Error (bog-ui.js) ---------------------------
+   Figma: Component Motion Guidelines › Input Active (2274:961), Input Error (2274:2662),
+   Message → Error (3090:12182). Shared by every .bog-field (Text, Number, Currency, Password, Phone).
+   bog-ui.js runs it with the Web Animations API; these rules only set pivots and the helper layers. */
+.bog-field__label,
+.bog-field__text > * { transform-origin: left center; }
+/* While the label animates, its font-size transition is off (the motion scales it instead) */
+.bog-field[data-moving] .bog-field__label { transition: none; }
+/* Drawn caret for the focus motion (the real caret is hidden meanwhile) */
+.bog-field__caret {
+  position: absolute;
+  width: 2px;
+  border-radius: 1px;
+  pointer-events: none;
+}
+/* Copies of the outgoing placeholder / message while they animate out */
+.bog-field__ghost {
+  position: absolute;
+  margin: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}

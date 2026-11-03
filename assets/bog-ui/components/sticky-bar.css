@@ -1,0 +1,124 @@
+/* ==========================================================================
+   BOG UI — Sticky Bar
+   Figma: Sticky Bar page (46272:32125)
+     Sticky Bar (46589:9729)         Source=BOG Design × Placement Page / Overlay × Appearance Themed / Static Black - BETA
+                                     × Home indicator True / False × Button Layout Stacked / Row
+                                     booleans: Slot (off), Helper text (on), Secondary action (off)
+     Sticky Bar Amount (51842:12963) Placement Page / Overlay × Set value False / True × Home indicator True / False
+                                     booleans: Slot (on), Helper text (on), Total (on)
+   Not built: "iOS Liquid Glass" variants.
+
+   The bottom action area of a page or sheet: a fade from transparent to the surface color (0 → 20%),
+   optional slot, optional helper text, 1–2 buttons, and the iOS home-indicator area.
+
+   Markup
+     <div class="bog-sticky-bar">
+       <div class="bog-sticky-bar__slot">…Feedback, balances, anything…</div>               optional (Slot)
+       <span class="bog-inline-message" data-size="small" data-icon="false">Message text</span>  optional (Helper text)
+       <div class="bog-sticky-bar__buttons">
+         <button class="bog-btn" data-type="primary" data-width="fill">Primary</button>
+         <button class="bog-btn" data-type="neutral" data-width="fill">Secondary</button>   optional (Secondary action)
+       </div>
+     </div>
+     Button Layout=Row: <div class="bog-sticky-bar__buttons" data-layout="row">
+         <button class="bog-icon-btn" data-type="neutral" aria-label="…"><span class="bog-icon"></span></button>
+         <button class="bog-btn" data-type="primary" data-width="fill">Primary</button></div>
+     Sticky Bar Amount (Set value=False): <div class="bog-sticky-bar__amounts">
+         <button class="bog-btn" data-type="neutral" data-size="small">10 ₾</button> …50 ₾ · 100 ₾…
+         <button class="bog-btn" data-type="neutral" data-size="small">Total</button></div>   last one hugs (Total)
+       Set value=True: a single primary Button in .bog-sticky-bar__buttons instead.
+
+   Attributes (on .bog-sticky-bar)
+     data-placement        page (default) | overlay — overlay = inside a Bottom Sheet / Modal surface      Placement
+     data-appearance       themed (default) | black (Static Black - BETA). In black use
+                           data-appearance="inverse" on the Buttons, Icon Buttons and Inline Message.  Appearance
+     data-home-indicator   "false": 16px bottom padding instead of the 34px home-indicator area          Home indicator
+     data-position         sticky (default: sticks to the bottom of its scroll container) | fixed (bottom of the viewport / .bog-sheet-host frame)
+   ========================================================================== */
+
+.bog-sticky-bar {
+  --_from: var(--sticky-bar-container-page-layer-01);
+  --_to: var(--sticky-bar-container-page-layer-02);
+  --_handle: var(--layer-inverse-01);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  padding: var(--spacing-padding-large) 0 max(34px, env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, var(--_from) 0%, var(--_to) 20%);
+  font-family: var(--font-family-bog);
+  pointer-events: none;          /* the transparent fade doesn't block taps on the content behind it */
+}
+.bog-sticky-bar > * { pointer-events: auto; }
+.bog-sticky-bar[data-placement="overlay"] {
+  --_from: var(--sticky-bar-container-overlay-layer-01);
+  --_to: var(--sticky-bar-container-overlay-layer-02);
+}
+.bog-sticky-bar[data-appearance="black"] {
+  --_from: var(--sticky-bar-container-page-layer-black-01);
+  --_to: var(--sticky-bar-container-page-layer-black-02);
+  --_handle: var(--layer-white);
+}
+.bog-sticky-bar[data-appearance="black"][data-placement="overlay"] {
+  --_from: var(--sticky-bar-container-overlay-layer-black-01);
+  --_to: var(--sticky-bar-container-overlay-layer-black-02);
+}
+.bog-sticky-bar[data-position="fixed"] { position: fixed; left: 0; right: 0; }
+
+/* ---- Slot: 16px top + sides ------------------------------------------- */
+.bog-sticky-bar__slot {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-padding-default) var(--spacing-padding-default) 0;
+}
+
+/* ---- Helper text: centered Inline Message, 16px above ----------------- */
+.bog-sticky-bar > .bog-inline-message {
+  align-self: center;
+  justify-content: center;
+  max-width: calc(100% - 2 * var(--spacing-padding-default));
+  margin-top: var(--spacing-padding-default);
+  text-align: center;
+}
+
+/* ---- Buttons: 16px top + sides, 8px apart ------------------------------ */
+.bog-sticky-bar__buttons,
+.bog-sticky-bar__amounts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-button-gap);
+  margin-top: var(--spacing-layout-padding-sides);
+  padding: 0 var(--spacing-padding-default);
+}
+.bog-sticky-bar__buttons[data-layout="row"] { flex-direction: row; align-items: center; }
+.bog-sticky-bar__buttons[data-layout="row"] > .bog-btn { flex: 1 1 0; min-width: 0; }
+.bog-sticky-bar__buttons > .bog-icon-btn { flex: none; }
+
+/* Sticky Bar Amount: 44px row, 6px top/bottom, quick-amount chips share the width, last one (Total) hugs */
+.bog-sticky-bar__amounts {
+  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  height: 44px;
+  padding-block: var(--spacing-padding-m-small);
+}
+.bog-sticky-bar__amounts > .bog-btn { flex: 1 1 0; min-width: 0; }
+.bog-sticky-bar__amounts > .bog-btn:last-child:not(:first-child) { flex: none; }
+
+/* ---- Home indicator: 34px area, 144×5 handle 8px from the bottom ------- */
+.bog-sticky-bar::after {
+  content: "";
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  width: 144px;
+  height: 5px;
+  margin-left: -72px;
+  border-radius: 100px;
+  background: var(--_handle);
+}
+.bog-sticky-bar[data-home-indicator="false"] { padding-bottom: max(var(--spacing-padding-default), env(safe-area-inset-bottom)); }
+.bog-sticky-bar[data-home-indicator="false"]::after { display: none; }

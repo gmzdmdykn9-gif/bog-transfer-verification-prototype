@@ -6,10 +6,10 @@
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>სხვასთან გადარიცხვა — BOG prototype</title>
-<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=1793603364">
-<link rel="stylesheet" href="assets/app.css?v=1793615511">
-<script src="assets/bog-ui/bog-ui.js?v=1793603364" defer></script>
-<script src="assets/app.js?v=1793611259" defer></script>
+<link rel="stylesheet" href="assets/bog-ui/bog-ui.css?v=1793716370">
+<link rel="stylesheet" href="assets/app.css?v=1793716370">
+<script src="assets/bog-ui/bog-ui.js?v=1793716370" defer></script>
+<script src="assets/app.js?v=1793716370" defer></script>
 </head>
 <body>
 <div class="app" id="app">
@@ -21,22 +21,22 @@
     </header>
     <main class="screen__body">
       <p class="start__lead">აირჩიე სცენარი. გაიხსნება „სხვასთან გადარიცხვა“ — შეიყვანე თანხა და დააჭირე „შემდეგი“.</p>
-      <label class="bog-toggle-row">
-        <span class="bog-toggle-row__main">
-          <span class="bog-toggle-row__text">
-            <span class="bog-toggle-row__label">ვერიფიკაცია Bottom Sheet-ში</span>
-            <span class="bog-toggle-row__desc">ნაბიჯები გაიხსნება ეკრანზე ზემოდან, არა ცალკე გვერდად</span>
+      <label class="bog-toggle">
+        <span class="bog-toggle__row">
+          <span class="bog-toggle__text">
+            <span class="bog-toggle__title">ვერიფიკაცია Bottom Sheet-ში</span>
+            <span class="bog-toggle__desc">ნაბიჯები გაიხსნება ეკრანზე ზემოდან, არა ცალკე გვერდად</span>
           </span>
-          <input type="checkbox" role="switch" class="bog-toggle" id="sheet-mode">
+          <input type="checkbox" role="switch" class="bog-toggle__input" id="sheet-mode">
         </span>
       </label>
-      <label class="bog-toggle-row">
-        <span class="bog-toggle-row__main">
-          <span class="bog-toggle-row__text">
-            <span class="bog-toggle-row__label">Current Design System</span>
-            <span class="bog-toggle-row__desc">SMS კოდი — ახალი OTP Verification კომპონენტი, Onboarding-ის უჯრების ნაცვლად</span>
+      <label class="bog-toggle">
+        <span class="bog-toggle__row">
+          <span class="bog-toggle__text">
+            <span class="bog-toggle__title">Current Design System</span>
+            <span class="bog-toggle__desc">SMS კოდი — ახალი OTP Verification კომპონენტი, Onboarding-ის უჯრების ნაცვლად</span>
           </span>
-          <input type="checkbox" role="switch" class="bog-toggle" id="ds-mode">
+          <input type="checkbox" role="switch" class="bog-toggle__input" id="ds-mode">
         </span>
       </label>
       <div class="bog-list-group">
@@ -301,13 +301,13 @@
       </div>
       <!-- Current Design System: Mobile Components › OTP Verification -->
       <div class="bog-otp ds-current" id="otp-ds" data-timer="30">
-        <div class="bog-radio-group" role="radiogroup" aria-labelledby="otp-ds-to">
-          <span class="bog-radio-group__label" id="otp-ds-to">სად გამოგიგზავნოთ ვერიფიკაციის კოდი?</span>
-          <div class="bog-radio-group__options" data-horizontal>
-            <label class="bog-radio"><input type="radio" class="bog-radio__input" name="otp-ds-to" value="sms" checked><span class="bog-radio__control"></span><span class="bog-radio__label">SMS</span></label>
-            <label class="bog-radio"><input type="radio" class="bog-radio__input" name="otp-ds-to" value="email"><span class="bog-radio__control"></span><span class="bog-radio__label">ელფოსტა</span></label>
+        <fieldset class="bog-radio-group" data-direction="horizontal" data-deselectable="false">
+          <legend class="bog-radio-group__label" id="otp-ds-to">სად გამოგიგზავნოთ ვერიფიკაციის კოდი?</legend>
+          <div class="bog-radio-group__options">
+            <label class="bog-radio"><span class="bog-radio__row"><input type="radio" class="bog-radio__input" name="otp-ds-to" value="sms" checked><span class="bog-radio__text"><span class="bog-radio__title">SMS</span></span></span></label>
+            <label class="bog-radio"><span class="bog-radio__row"><input type="radio" class="bog-radio__input" name="otp-ds-to" value="email"><span class="bog-radio__text"><span class="bog-radio__title">ელფოსტა</span></span></span></label>
           </div>
-        </div>
+        </fieldset>
         <div class="bog-otp__form">
           <div class="bog-field" id="otp-ds-field">
             <label class="bog-field__box"><span class="bog-field__text">
@@ -420,20 +420,20 @@
       <header class="bog-result-page__nav">
         <button type="button" class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="დახურვა" data-result-done><span class="bog-icon" data-icon="close"></span></button>
       </header>
-      <main class="bog-result-page__body">
+      <div class="bog-result-page__main">
         <div class="bog-result" data-status="success">
           <span class="bog-result__icon"></span>
           <div class="bog-result__text">
-            <h1 class="bog-result__title">გადარიცხვა შესრულდა</h1>
+            <h2 class="bog-result__title">გადარიცხვა შესრულდა</h2>
             <p class="bog-result__desc">თანხა ჩაირიცხა მიმღების ანგარიშზე</p>
           </div>
           <div class="bog-result__amount">
-            <span class="bog-result__label">გადარიცხული თანხა</span>
-            <div class="bog-amount" data-size="large"><span class="bog-amount__main"><span class="bog-amount__value" id="result-amount">0.00</span><span class="bog-amount__currency">₾</span></span></div>
-            <span class="bog-result__label">მიმღები: მიხეილ გოგიბერიძე</span>
+            <p class="bog-result__amount-title">გადარიცხული თანხა</p>
+            <div class="bog-amount" data-size="large" data-align="center"><span class="bog-amount__main"><span class="bog-amount__value" id="result-amount">0.00</span><span class="bog-amount__currency">₾</span></span></div>
+            <p class="bog-result__support">მიმღები: მიხეილ გოგიბერიძე</p>
           </div>
         </div>
-      </main>
+      </div>
       <footer class="bog-result-page__bar">
         <button type="button" class="bog-btn" data-type="primary" data-width="fill" data-result-done>დასრულება</button>
         <button type="button" class="bog-btn" data-type="neutral" data-width="fill" id="result-new">ახალი გადარიცხვა</button>

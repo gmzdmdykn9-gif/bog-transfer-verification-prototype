@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tabs — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+<style>.demo-panel{padding:24px 4px;color:var(--text-secondary);font-size:14px}.demo-log{margin:16px 0 0;font-size:12px;color:var(--support-static-02)}</style>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="tabs"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Tabs</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Switch between views of the same screen: Fixed (equal-width) or Wrapped (hug, scrolling) tabs with a sliding orange indicator, keyboard support and tab panels.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-tabs" role="tablist" aria-label="Accounts"&gt;
+  &lt;button type="button" class="bog-tab" role="tab" aria-selected="true"  aria-controls="p-cards" id="t-cards"&gt;Cards&lt;/button&gt;
+  &lt;button type="button" class="bog-tab" role="tab" aria-selected="false" aria-controls="p-deposits" id="t-deposits"&gt;Deposits&lt;/button&gt;
+  &lt;button type="button" class="bog-tab" role="tab" aria-selected="false" disabled&gt;Loans&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class="bog-tab-panel" role="tabpanel" id="p-cards" aria-labelledby="t-cards"&gt;…&lt;/div&gt;
+&lt;div class="bog-tab-panel" role="tabpanel" id="p-deposits" aria-labelledby="t-deposits" hidden&gt;…&lt;/div&gt;
+
+&lt;!-- Type=Wrapped: tabs hug their label and the row scrolls sideways --&gt;
+&lt;div class="bog-tabs" role="tablist" data-type="wrapped"&gt;…&lt;/div&gt;
+
+&lt;!-- Skeleton tab --&gt;
+&lt;div class="bog-tab" data-state="skeleton"&gt;&lt;span class="bog-skeleton-wave"&gt;Tab 1&lt;/span&gt;&lt;/div&gt;
+
+&lt;script&gt;
+  document.querySelector(".bog-tabs").addEventListener("tabchange", e =&gt; console.log(e.detail.index, e.detail.value));
+  BOG.selectTab(tabsElementOrId, 1);   // select from code
+&lt;/script&gt;</code></pre>
+
+
+    <h2>Try it</h2>
+    <p class="lead">Click a tab or focus one and use ← → Home End. The indicator slides, the matching panel shows and <code>tabchange</code> fires.</p>
+    <div class="panel" style="display:flex;gap:40px;flex-wrap:wrap;align-items:flex-start">
+      <div style="width:375px">
+        <h3 style="margin:0 0 12px">Fixed</h3>
+        <div class="bog-tabs" role="tablist" aria-label="Products" id="demo-fixed">
+          <button type="button" class="bog-tab" role="tab" aria-selected="true" aria-controls="dp1" id="dt1">Cards</button>
+          <button type="button" class="bog-tab" role="tab" aria-selected="false" aria-controls="dp2" id="dt2">Deposits</button>
+          <button type="button" class="bog-tab" role="tab" aria-selected="false" aria-controls="dp3" id="dt3">Loans</button>
+        </div>
+        <div class="bog-tab-panel demo-panel" role="tabpanel" id="dp1" aria-labelledby="dt1">💳 Cards panel</div>
+        <div class="bog-tab-panel demo-panel" role="tabpanel" id="dp2" aria-labelledby="dt2" hidden>🏦 Deposits panel</div>
+        <div class="bog-tab-panel demo-panel" role="tabpanel" id="dp3" aria-labelledby="dt3" hidden>📄 Loans panel</div>
+      </div>
+      <div style="width:375px">
+        <h3 style="margin:0 0 12px">Wrapped (scrolls)</h3>
+        <div class="bog-tabs" role="tablist" aria-label="Categories" data-type="wrapped" id="demo-wrapped">
+          <button type="button" class="bog-tab" role="tab" aria-selected="true">All</button>
+          <button type="button" class="bog-tab" role="tab" aria-selected="false">Transfers</button>
+          <button type="button" class="bog-tab" role="tab" aria-selected="false">Payments</button>
+          <button type="button" class="bog-tab" role="tab" aria-selected="false" disabled>Cards</button>
+          <button type="button" class="bog-tab" role="tab" aria-selected="false">Deposits</button>
+          <button type="button" class="bog-tab" role="tab" aria-selected="false">Loans</button>
+          <button type="button" class="bog-tab" role="tab" aria-selected="false">Insurance</button>
+          <button type="button" class="bog-tab" role="tab" aria-selected="false">Investments</button>
+        </div>
+        <p class="demo-log" id="log">Event: —</p>
+      </div>
+    </div>
+
+    <h2>Tabs — Type × number of tabs</h2>
+    <p class="lead">Figma's "Tab 3 / Tab 4 / Tab 5" booleans: just add or remove tabs. Width 375 like the Figma frame.</p>
+    <div class="panel"><table id="types"></table></div>
+
+    <h2>_Tab item — states</h2>
+    <div class="panel"><table id="states"></table></div>
+
+<script>
+
+  const tab = (label, a = "") => `<button type="button" class="bog-tab" role="tab"${a}>${label}</button>`;
+  const row = (n, type) => `<div class="bog-tabs" role="tablist"${type ? ' data-type="wrapped"' : ""} style="width:375px">` +
+    Array.from({ length: n }, (_, i) => tab("Tab", ` aria-selected="${i === 0}"`)).join("") + "</div>";
+  document.getElementById("types").innerHTML = "<tr><th></th><th>Type=Fixed</th><th>Type=Wrapped</th></tr>" +
+    [2, 3, 4, 5].map(n => `<tr><th>${n} tabs</th><td style="min-width:375px">${row(n)}</td><td style="min-width:375px">${row(n, 1)}</td></tr>`).join("");
+  const S = [
+    ["Default", ' aria-selected="false"'], ["Pressed", ' aria-selected="false" data-state="pressed"'],
+    ["Selected", ' aria-selected="true"'], ["Selected · Pressed", ' aria-selected="true" data-state="pressed"'],
+    ["Disabled", ' aria-selected="false" disabled']];
+  const one = h => `<div role="tablist" style="display:flex;width:58px">${h}</div>`;
+  document.getElementById("states").innerHTML = "<tr>" + S.map(([n]) => `<th>${n}</th>`).join("") + "<th>Skeleton</th></tr><tr>" +
+    S.map(([, a]) => `<td style="min-width:90px">${one(tab("Tab", a))}</td>`).join("") +
+    `<td style="min-width:90px">${one('<div class="bog-tab" data-state="skeleton"><span class="bog-skeleton-wave">Tab 1</span></div>')}</td></tr>`;
+  const log = document.getElementById("log");
+  document.addEventListener("tabchange", e => { log.textContent = `Event: tabchange · index ${e.detail.index} · value "${e.detail.value}"`; });
+
+</script>
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

@@ -1,22 +1,33 @@
 /* ==========================================================================
-   BOG UI — Keyboard Numeric
-   Figma: Mobile Components › Keyboards Numeric (64769:662) · _Keyboard Pad (64775:736)
+   BOG UI — Keyboard Numeric (replaces the old .bog-keypad)
+   Figma: Mobile Components › Keyboards Numeric page (64769:662) · Keyboard Numeric (64781:8649)
+          _Keyboard Pad - Themed (64775:736) · - White Static (64803:8803)
+          - Black Static (64803:9260) · - Invert (64803:9652)
 
    <div class="bog-numpad" data-for="pin">
      <button type="button" class="bog-numpad__key" data-key="1">1</button> … 9
-     <button type="button" class="bog-numpad__key" data-key="biometric" aria-label="Face ID"></button>     or <span class="bog-numpad__key"></span> (empty)
+     <button type="button" class="bog-numpad__key" data-key="biometric" aria-label="Face ID"></button>     Pad=True
+       or <button … data-key="dot" aria-label="Decimal point"></button>                                  Dot pad
+       or <span class="bog-numpad__key"></span>                                                           Pad=False (empty)
      <button type="button" class="bog-numpad__key" data-key="0">0</button>
      <button type="button" class="bog-numpad__key" data-key="back" aria-label="Delete"></button>
    </div>
 
-   data-for          id of a PIN code Input (.bog-pin) or a Code Input (.bog-code); bog-ui.js types into it
-   Biometric key     Face ID icon; data-biometric="fingerprint" on .bog-numpad for the fingerprint icon.
-                     Tapping it fires "numpadbiometric" on .bog-numpad.
-   Pad Pressed       on :active (or data-state="pressed")
-   Desktop number keys and Backspace work too. Dot pad and Static / Invert appearances aren't built yet.
+   data-for          id of a PIN code Input (.bog-pin), a Code Input (.bog-code), or any field with an
+                     <input> (e.g. Currency Input) / an <input> itself; bog-ui.js types into it.
+                     The Dot pad types "." into inputs (once); PIN / Code ignore it (digits only).
+   data-appearance   (default) Themed · "white" White Static (on dark/photo) · "black" Black Static
+                     (on light/photo) · "invert" (or "inverse") Invert — dark keyboard in light theme
+   data-biometric    "fingerprint" swaps the Face ID icon for the fingerprint icon.
+                     Tapping the biometric pad fires "numpadbiometric" on .bog-numpad.
+   Pad Pressed       on :active (or data-state="pressed" on a key)
+   Desktop number keys, "." / "," and Backspace work too.
    ========================================================================== */
 
 .bog-numpad {
+  --_fg: var(--text-primary);
+  --_icon: var(--icon-primary);
+  --_pressed: var(--button-secondary-grey-pressed);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--spacing-gap-medium) var(--spacing-gap-default);
@@ -25,18 +36,28 @@
   padding: var(--spacing-padding-medium) var(--spacing-padding-medium) var(--spacing-padding-default);
   font-family: var(--font-family-bog);
 }
+.bog-numpad[data-appearance="white"]  { --_fg: var(--text-white-primary);   --_icon: var(--icon-white);           --_pressed: var(--button-white-ghost-pressed); }
+.bog-numpad[data-appearance="black"]  { --_fg: var(--text-black);           --_icon: var(--icon-black);           --_pressed: var(--button-black-ghost-pressed); }
+.bog-numpad:is([data-appearance="invert"], [data-appearance="inverse"]) {
+  --_fg: var(--text-inverse-primary);
+  --_icon: var(--icon-inverse-primary);
+  --_pressed: var(--layer-inverse-alpha-pressed-01);
+}
+
+/* Pad: 56 tall, radius 16, transparent; Text pads 8px / icon pads 12px vertical padding */
 .bog-numpad__key {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   height: 56px;
   margin: 0;
-  padding: 0;
+  padding: var(--spacing-padding-small) 0;
   border: 0;
   border-radius: var(--radius-default);
   background: transparent;
-  color: var(--text-primary);
+  color: var(--_fg);
   font: inherit;
   font-size: var(--heading-medium-semibold-size);
   line-height: var(--heading-medium-semibold-line-height);
@@ -48,19 +69,21 @@
   transition: background-color 80ms ease;
 }
 .bog-numpad__key:active,
-.bog-numpad__key[data-state="pressed"] { background: var(--button-secondary-grey-pressed); }
+.bog-numpad__key[data-state="pressed"] { background: var(--_pressed); }
 .bog-numpad__key:focus-visible { outline: 2px solid var(--border-selected); outline-offset: -2px; }
-span.bog-numpad__key { cursor: default; }
+span.bog-numpad__key { cursor: default; background: transparent; }
 
-/* Icon pads: Face ID / fingerprint / backspace (24px, icon color) */
-.bog-numpad__key:is([data-key="biometric"], [data-key="back"])::before {
+/* Icon pads: Face ID / fingerprint / dot / backspace (24px icon) */
+.bog-numpad__key:is([data-key="biometric"], [data-key="dot"], [data-key="back"]) { padding: var(--spacing-padding-medium) 0; }
+.bog-numpad__key:is([data-key="biometric"], [data-key="dot"], [data-key="back"])::before {
   content: "";
   width: 24px;
   height: 24px;
-  background-color: var(--icon-primary);
-  -webkit-mask: var(--_icon) center / contain no-repeat;
-          mask: var(--_icon) center / contain no-repeat;
+  background-color: var(--_icon);
+  -webkit-mask: var(--_mask) center / contain no-repeat;
+          mask: var(--_mask) center / contain no-repeat;
 }
-.bog-numpad__key[data-key="biometric"] { --_icon: url("../icons/face-id-24.svg"); }
-.bog-numpad[data-biometric="fingerprint"] .bog-numpad__key[data-key="biometric"] { --_icon: url("../icons/fingerprint-24.svg"); }
-.bog-numpad__key[data-key="back"] { --_icon: url("../icons/backspace-fill-24.svg"); }
+.bog-numpad__key[data-key="biometric"] { --_mask: url("../icons/face-id-24.svg"); }
+.bog-numpad[data-biometric="fingerprint"] .bog-numpad__key[data-key="biometric"] { --_mask: url("../icons/fingerprint-24.svg"); }
+.bog-numpad__key[data-key="dot"] { --_mask: url("../icons/dot-24.svg"); }
+.bog-numpad__key[data-key="back"] { --_mask: url("../icons/backspace-fill-24.svg"); }

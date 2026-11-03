@@ -6,6 +6,7 @@
 <title>Checkbox — BOG UI</title>
 <link rel="stylesheet" href="../bog-ui.css">
 <link rel="stylesheet" href="docs.css">
+<script src="theme.js"></script>
 <script src="../bog-ui.js" defer></script>
 <script src="components.js" defer></script>
 </head>
@@ -33,6 +34,39 @@
   …checkboxes…
 &lt;/fieldset&gt;</code></pre>
 
+    <h2>Try it</h2>
+    <p class="lead">Tick the options. The box turns orange and the check draws itself along its path while it grows in with a small overshoot; unticking shrinks it away. Tick some but not all and "All notifications" turns indeterminate — its dash grows out from the centre.</p>
+    <div class="panel"><div id="demo" style="width:343px"></div>
+      <label style="display:inline-flex;gap:6px;align-items:center;margin-top:16px;font-size:12px"><input type="checkbox" id="cb-slow"> Slow motion (×10)</label></div>
+
+    <h2 id="motion">Motion</h2>
+    <p class="lead">Same speeds as Radio Button. Ticking turns the box orange in 250 ms while the check grows from nothing to full size in 333 ms, overshooting a little before it settles — and its path draws on, short leg then long leg, in 250 ms. Unticking shrinks the check away in 150 ms while the box empties. The indeterminate dash grows out from its centre.
+      <strong>BOG UI proposal</strong> — there is no Checkbox guide in Component Motion Guidelines yet. Timings and curves are the <a href="radio.html#motion">Radio Button</a> ones; check them with design.</p>
+    <div class="panel">
+      <div class="motion-tabs" role="tablist">
+        <button role="tab" data-tab="design" aria-selected="true">Designers</button>
+        <button role="tab" data-tab="ios">iOS · SwiftUI</button>
+        <button role="tab" data-tab="android">Android · Compose</button>
+        <button role="tab" data-tab="web">Web</button>
+      </div>
+      <section class="motion-pane" data-pane="design" id="motion-design"></section>
+      <section class="motion-pane" data-pane="ios" hidden>
+        <p>A checkbox view: the box colour and the mark's scale each get their own animation, so each runs with its own curve.</p>
+        <pre><code data-snippet="ios"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="ios">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="ios">Copy code</button></div>
+      </section>
+      <section class="motion-pane" data-pane="android" hidden>
+        <p>A composable with <code>animate*AsState</code> values for the box colour and the mark scale. <code>ToggleableState.Indeterminate</code> shows the dash.</p>
+        <pre><code data-snippet="android"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="android">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="android">Copy code</button></div>
+      </section>
+      <section class="motion-pane" data-pane="web" hidden>
+        <p>Checked ↔ unchecked colour and scale are CSS transitions in <code>checkbox.css</code>; the check's path draw and the moves in and out of Indeterminate run in <code>bog-ui.js</code> on every change; if you set <code>.indeterminate</code> in code, call <code>BOG.checkboxSync()</code> afterwards.</p>
+        <pre><code data-snippet="web"></code></pre>
+        <div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="web">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="web">Copy code</button></div>
+      </section>
+    </div>
+
     <h2>Checkbox</h2>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div class="panel"><table id="cb-light"></table></div>
@@ -59,6 +93,233 @@
   document.getElementById("lbl-dark").innerHTML = L(true);
   const grp = st => `<fieldset class="bog-checkbox-group" style="width:320px"${st ? ` data-state="${st}"` : ""}><legend class="bog-checkbox-group__label">Group Label (optional)</legend>${lbl({checked: 1})}${lbl({st: st === "error" ? "error" : ""})}</fieldset>`;
   document.getElementById("groups").innerHTML = grp("") + grp("error");
+
+  // Try it: a parent that is checked, unchecked or indeterminate from its children
+  const opt = (name, on) => `<label class="bog-checkbox"><input type="checkbox" class="bog-checkbox__input" data-child${on ? " checked" : ""}><span class="bog-checkbox__text"><span class="bog-checkbox__label">${name}</span></span></label>`;
+  const demo = document.getElementById("demo");
+  demo.innerHTML = '<fieldset class="bog-checkbox-group"><legend class="bog-checkbox-group__label">Notifications</legend>' +
+    '<label class="bog-checkbox"><input type="checkbox" class="bog-checkbox__input" id="cb-all" data-indeterminate><span class="bog-checkbox__text"><span class="bog-checkbox__label">All notifications</span><span class="bog-checkbox__desc">Payments, transfers and offers</span></span></label>' +
+    '<div style="display:flex;flex-direction:column;gap:16px;padding-left:32px">' + opt("Payments", 1) + opt("Transfers", 0) + opt("Offers", 0) + "</div></fieldset>";
+  const all = document.getElementById("cb-all"), kids = [...demo.querySelectorAll("[data-child]")];
+  demo.addEventListener("change", (e) => {   // runs before bog-ui.js animates the changes
+    if (e.target === all) kids.forEach((k) => { k.checked = all.checked; });
+    const n = kids.filter((k) => k.checked).length;
+    all.checked = n === kids.length;
+    all.indeterminate = n > 0 && n < kids.length;
+  });
+  document.getElementById("cb-slow").addEventListener("change", (e) => { demo.style.setProperty("--bog-checkbox-slow", e.target.checked ? "10" : "1"); });
+
+  // ---- Motion handoff ----
+  const timeline = (rows, max) => {
+    const pct = (ms) => (ms / max * 100).toFixed(2) + "%";
+    return `<div class="motion-tl">${rows.map(([n, bars]) => `<span>${n}</span><div class="motion-tl__track">${bars.map(([st, l]) =>
+      `<span class="motion-tl__bar" style="left:${pct(st)};width:${pct(l)}">${l}</span>`).join("")}</div>`).join("")}` +
+      `<span></span><div class="motion-tl__axis">${Array.from({ length: 11 }, (_, i) => `<span>${i * max / 10}</span>`).join("")}</div></div>`;
+  };
+  const spec = (rows) => `<table class="motion-spec"><thead><tr><th>Layer</th><th>Property</th><th>Keyframes</th><th>Timing</th><th>Easing (cubic-bezier)</th></tr></thead><tbody>${rows.map((r) =>
+    `<tr>${r.map((c, i) => `<td>${i === 4 ? `<code>${c}</code>` : c}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  const SPEC_ON = [
+    ["Box", "Color", "Support/support_02 → Icon/accent (filled)", "0–250 ms", "0.33, 0, 0.67, 1"],
+    ["Check", "Scale", "0 → 100%", "0–333 ms", "0.33, 0, 0, 1.7"],
+    ["Check", "Path draw (trim end)", "0 → 100% · start → corner → end", "0–250 ms", "0.33, 0, 0.13, 1"]
+  ];
+  const SPEC_OFF = [
+    ["Check", "Scale", "100% → 0", "0–150 ms", "0.33, 0, 0.67, 1"],
+    ["Box", "Color", "Icon/accent → Support/support_02", "0–250 ms", "0.33, 0, 0.67, 1"],
+    ["Box", "Fill", "filled → outline", "at 150 ms", "—"]
+  ];
+  const SPEC_IND = [
+    ["Box", "Color", "as Check", "0–250 ms", "0.33, 0, 0.67, 1"],
+    ["Dash", "Scale X (from centre)", "0 → 100%", "0–333 ms", "0.33, 0, 0, 1.7"]
+  ];
+  const SPEC_SWAP = [
+    ["Old mark (dash or check)", "Scale", "100% → 0 (dash: X only)", "0–150 ms", "0.33, 0, 0.67, 1"],
+    ["New mark (check or dash)", "Scale", "0 → 100% (dash: X only)", "150–483 ms", "0.33, 0, 0, 1.7"],
+    ["New check only", "Path draw", "0 → 100%", "150–400 ms", "0.33, 0, 0.13, 1"]
+  ];
+  document.getElementById("motion-design").innerHTML =
+    "<p>Same speeds as <a href=\"radio.html#motion\">Radio Button</a>: the box behaves like the radio ring and the mark like the dot. The box is the 20 px rounded square; the check is 10×7 and the dash 10×1.4, both scaling from their centre.</p>" +
+    "<h3>Check (off → on)</h3>" +
+    "<p>The box fills at once and its colour runs from grey to orange while the check grows in (same as radio Select). At the same time the check's path draws on: the short leg reaches the corner at about 40% of the path, then the long leg runs to the end. One curve over the whole path.</p>" +
+    timeline([["Box · Color", [[0, 250]]], ["Check · Scale", [[0, 333]]], ["Check · Path draw", [[0, 250]]]], 500) + spec(SPEC_ON) +
+    "<h3>Uncheck (on → off)</h3>" +
+    "<p>Same as radio Deselect. The fill stays until the check has shrunk, so it doesn't vanish on white.</p>" +
+    timeline([["Check · Scale", [[0, 150]]], ["Box · Color", [[0, 250]]]], 500) + spec(SPEC_OFF) +
+    "<h3>Off → Indeterminate</h3>" +
+    timeline([["Box · Color", [[0, 250]]], ["Dash · Scale X", [[0, 333]]]], 500) + spec(SPEC_IND) +
+    "<p>Indeterminate → Off mirrors the Uncheck: the dash shrinks to its centre in 150 ms while the box empties.</p>" +
+    "<h3>Indeterminate ↔ Checked</h3>" +
+    "<p>The box stays filled. The old mark shrinks away, then the new one grows in. No morph between the two shapes.</p>" +
+    timeline([["Old mark · Scale", [[0, 150]]], ["New mark · Scale", [[150, 333]]], ["Check · Path draw", [[150, 250]]]], 500) + spec(SPEC_SWAP) +
+    "<h3>Rules</h3><ul>" +
+      "<li>The 1.7 in the scale curve overshoots: the mark grows to about 117% and comes back. Don't clamp it.</li>" +
+      "<li>Don't reuse the overshoot curve for the exit — shrinking with it would flip the mark below 0.</li>" +
+      "<li>The path only draws on the way in. Unticking doesn't erase it — the check just shrinks.</li>" +
+      "<li>Path: 10×7 tick, centre line (0.85, 2.93) → (3.96, 6.04) → (9.15, 0.85), 1.71 stroke, round caps and join.</li>" +
+      "<li>A parent checkbox that becomes indeterminate because of its children animates too.</li>" +
+      "<li>Error and Inverse use the same timings with their own colours; read-only, disabled and skeleton don't animate.</li>" +
+      "<li>Reduce Motion / Remove animations on: switch instantly.</li>" +
+    "</ul>" +
+    '<div class="motion-actions"><button class="bog-btn" data-type="secondary" data-size="small" data-copy-link="design">Copy link</button><button class="bog-btn" data-type="neutral" data-size="small" data-copy="spec">Copy spec as text</button></div>';
+  const SPEC_TEXT = ["Checkbox motion (BOG UI proposal — Radio Button speeds, no Figma guide yet)",
+    "CHECK", ...SPEC_ON.map((r) => "  " + r.join("  ·  ")),
+    "UNCHECK", ...SPEC_OFF.map((r) => "  " + r.join("  ·  ")),
+    "OFF → INDETERMINATE", ...SPEC_IND.map((r) => "  " + r.join("  ·  ")),
+    "INDETERMINATE ↔ CHECKED", ...SPEC_SWAP.map((r) => "  " + r.join("  ·  ")),
+    "Read-only, disabled, skeleton: no motion. Reduce Motion: instant."].join("\n");
+
+  const CODE = {
+    web: `<!-- Built in: checkbox.css + bog-ui.js animate every .bog-checkbox__input. -->
+<input type="checkbox" class="bog-checkbox__input" aria-label="Payments">
+
+/* checkbox.css — Off ↔ On */
+.bog-checkbox__input::after {               /* Box: outline + fill layer — Uncheck */
+  mask: url(checkbox-box.svg) center / 100% 100% no-repeat,
+        url(checkbox-fill.svg) center / 0% 0% no-repeat;
+  background-color: var(--_line);
+  transition: background-color 250ms cubic-bezier(0.33, 0, 0.67, 1),
+              mask-size 0s 150ms;           /* fill drops after the check has shrunk */
+}
+.bog-checkbox__input:checked::after {       /* Box — Check */
+  background-color: var(--_fill);
+  mask-size: 100% 100%, 100% 100%;
+  transition: background-color 250ms cubic-bezier(0.33, 0, 0.67, 1);
+}
+.bog-checkbox__input::before {              /* Check — Uncheck */
+  scale: 0;
+  transition: scale 150ms cubic-bezier(0.33, 0, 0.67, 1);
+}
+.bog-checkbox__input:checked::before {      /* Check — Check */
+  scale: 1;
+  transition: scale 333ms cubic-bezier(0.33, 0, 0, 1.7);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bog-checkbox__input::before, .bog-checkbox__input::after { transition: none; }
+}
+
+// bog-ui.js — path draw on every tick: a clip band that follows the tick's
+// centre line, start → corner (≈40% of the path) → end
+input.animate(DRAW_KEYFRAMES, { duration: 250, easing: "cubic-bezier(0.33, 0, 0.13, 1)", pseudoElement: "::before" });
+
+// Indeterminate set in code — animate it
+parent.indeterminate = true;
+BOG.checkboxSync();`,
+    ios: `import SwiftUI
+
+enum CheckboxValue { case off, on, mixed }
+
+struct BOGCheckbox: View {
+    let value: CheckboxValue
+    @Environment(\\.accessibilityReduceMotion) private var reduceMotion
+
+    private var filled: Bool { value != .off }
+    private func mark(_ shown: Bool) -> Animation? {
+        if reduceMotion { return nil }
+        return shown ? .timingCurve(0.33, 0, 0, 1.7, duration: 0.333)   // Select
+                     : .timingCurve(0.33, 0, 0.67, 1, duration: 0.15)   // Deselect
+    }
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 6, style: .continuous)       // Box
+                .fill(filled ? Color("Icon/accent") : .clear)
+                .animation(reduceMotion ? nil : filled ? nil : .linear(duration: 0).delay(0.15), value: filled)
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .strokeBorder(filled ? Color("Icon/accent") : Color("Support/support_02"), lineWidth: 1.77)
+                .animation(reduceMotion ? nil : .timingCurve(0.33, 0, 0.67, 1, duration: 0.25), value: filled)
+            CheckPath()                                                 // Check
+                .trim(from: 0, to: value == .on ? 1 : 0)                // path draw
+                .stroke(Color("Icon/inverse_primary"), style: StrokeStyle(lineWidth: 1.71, lineCap: .round, lineJoin: .round))
+                .frame(width: 10, height: 7)
+                .animation(reduceMotion ? nil : value == .on
+                    ? .timingCurve(0.33, 0, 0.13, 1, duration: 0.25) : .linear(duration: 0).delay(0.15), value: value)
+                .scaleEffect(value == .on ? 1 : 0)
+                .animation(mark(value == .on), value: value)
+            Capsule()                                                   // Dash
+                .fill(Color("Icon/inverse_primary"))
+                .frame(width: 10, height: 1.43)
+                .scaleEffect(x: value == .mixed ? 1 : 0, y: 1)
+                .animation(mark(value == .mixed), value: value)
+        }
+        .frame(width: 20, height: 20)
+        .padding(2)
+    }
+}
+
+struct CheckPath: Shape {                                               // 10×7 tick, centre line
+    func path(in r: CGRect) -> Path {
+        Path { p in
+            p.move(to: CGPoint(x: 0.85, y: 2.93))
+            p.addLine(to: CGPoint(x: 3.96, y: 6.04))
+            p.addLine(to: CGPoint(x: 9.15, y: 0.85))
+        }
+    }
+}
+// Indeterminate ↔ checked: delay the incoming mark by 0.15 s so the old one shrinks first.`,
+    android: `import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.state.ToggleableState
+
+private val SelectEasing = CubicBezierEasing(0.33f, 0f, 0f, 1.7f)
+private val StandardEasing = CubicBezierEasing(0.33f, 0f, 0.67f, 1f)
+private val DrawEasing = CubicBezierEasing(0.33f, 0f, 0.13f, 1f)
+
+@Composable
+fun BOGCheckbox(state: ToggleableState, onClick: () -> Unit) {
+    val filled = state != ToggleableState.Off
+    val on = state == ToggleableState.On
+    val mixed = state == ToggleableState.Indeterminate
+
+    val box by animateColorAsState(if (filled) BOG.iconAccent else BOG.supportSupport02, tween(250, easing = StandardEasing), label = "box")
+    val fill by animateFloatAsState(if (filled) 1f else 0f, if (filled) tween(0) else tween(0, delayMillis = 150), label = "fill")
+    val check by animateFloatAsState(if (on) 1f else 0f,
+        if (on) tween(333, easing = SelectEasing) else tween(150, easing = StandardEasing), label = "check")
+    val draw by animateFloatAsState(if (on) 1f else 0f,
+        if (on) tween(250, easing = DrawEasing) else tween(0, delayMillis = 150), label = "draw")
+    val dash by animateFloatAsState(if (mixed) 1f else 0f,
+        if (mixed) tween(333, easing = SelectEasing) else tween(150, easing = StandardEasing), label = "dash")
+
+    Box(
+        Modifier.size(24.dp).toggleable(value = on, role = Role.Checkbox, onValueChange = { onClick() }).padding(2.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(Modifier.matchParentSize().border(1.77.dp, box, RoundedCornerShape(6.dp)))
+        Box(Modifier.matchParentSize().graphicsLayer { alpha = fill }.background(box, RoundedCornerShape(6.dp)))
+        Canvas(Modifier.size(10.dp, 7.dp).graphicsLayer { scaleX = check; scaleY = check }) {   // Check, path draw
+            val tick = Path().apply {
+                moveTo(0.85.dp.toPx(), 2.93.dp.toPx()); lineTo(3.96.dp.toPx(), 6.04.dp.toPx()); lineTo(9.15.dp.toPx(), 0.85.dp.toPx())
+            }
+            val measure = PathMeasure().apply { setPath(tick, false) }
+            val drawn = Path().also { measure.getSegment(0f, measure.length * draw, it, true) }
+            drawPath(drawn, BOG.iconInversePrimary, style = Stroke(1.71.dp.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+        }
+        Box(Modifier.size(10.dp, 1.43.dp).graphicsLayer { scaleX = dash }.background(BOG.iconInversePrimary, CircleShape))
+    }
+}
+
+// Indeterminate ↔ checked: delay the incoming mark by 150 ms so the old one shrinks first.
+// Compose follows the system "Remove animations" setting (animator duration scale 0) automatically.`
+  };
+  document.querySelectorAll("[data-snippet]").forEach((c) => { c.textContent = CODE[c.dataset.snippet]; });
+
+  const tabs = document.querySelectorAll(".motion-tabs [data-tab]");
+  function openTab(name) {
+    tabs.forEach((t) => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+    document.querySelectorAll(".motion-pane").forEach((p) => { p.hidden = p.dataset.pane !== name; });
+  }
+  tabs.forEach((t) => t.addEventListener("click", () => { openTab(t.dataset.tab); history.replaceState(null, "", "#motion-" + t.dataset.tab); }));
+  const fromHash = location.hash.match(/^#motion-(design|ios|android|web)$/);
+  if (fromHash) { openTab(fromHash[1]); document.getElementById("motion").scrollIntoView(); }
+  function copy(btn, text) {
+    navigator.clipboard.writeText(text).then(() => { const was = btn.textContent; btn.textContent = "Copied"; setTimeout(() => { btn.textContent = was; }, 1200); });
+  }
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("[data-copy-link]"), code = e.target.closest("[data-copy]");
+    if (link) copy(link, location.href.split("#")[0] + "#motion-" + link.dataset.copyLink);
+    if (code) copy(code, code.dataset.copy === "spec" ? SPEC_TEXT : CODE[code.dataset.copy]);
+  });
 </script>
   </main>
 </div>

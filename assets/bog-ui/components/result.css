@@ -1,60 +1,120 @@
 /* ==========================================================================
-   BOG UI — Result Page + Result Status
-   Figma: Mobile Components › Result Page (55279:42698)
-     Result Page  Type=System (55348:18363) · Type=Custom (55348:18362)
-     Result Status  Success / Warning / Negative / Info (55282:3925)
+   BOG UI — Result Page (+ Result Status, Result Custom)
+   Figma: Result Page (55279:42698) · Motion: Component Motion Guidelines (417:443)
 
-   Result Status (the centered block)
-     <div class="bog-result" data-status="success">
-       <span class="bog-result__icon"></span>                        Type=Custom: put a .bog-illustration here instead
-       <div class="bog-result__text">
-         <h1 class="bog-result__title">Success</h1>
-         <p class="bog-result__desc">Description</p>                  optional
-       </div>
-       <div class="bog-result__amount">                               optional "Amount"
-         <span class="bog-result__label">Title text</span>             optional
-         <div class="bog-amount" data-size="large"><span class="bog-amount__main"><span class="bog-amount__value">1,000.00</span><span class="bog-amount__currency">₾</span></span></div>
-         <span class="bog-result__label">Support text</span>           optional
-       </div>
-       <button class="bog-btn" data-type="neutral" data-size="small">Button</button>   optional "Action"
-       <div class="bog-feedback" …>…</div>                             optional "Feedback"
-     </div>
-     data-status  success (default) | warning | negative | info
-
-   Result Page (full screen: close button, centered status, sticky bar)
+   Result Page — a full screen: close button, the result in the middle, sticky actions
      <section class="bog-result-page">
-       <header class="bog-result-page__nav"><button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Close"><span class="bog-icon" data-icon="close"></span></button></header>
-       <main class="bog-result-page__body"> ….bog-result… </main>
+       <header class="bog-result-page__nav">
+         <button class="bog-icon-btn" data-type="neutral" data-size="small" aria-label="Close"><span class="bog-icon" data-icon="close"></span></button>
+       </header>
+       <div class="bog-result-page__main">
+         …Result Status or Result Custom…
+       </div>
        <footer class="bog-result-page__bar">
-         <span class="bog-inline-message" data-icon="false">Message text</span>  optional helper text
+         <p class="bog-result-page__helper">Message text</p>                       optional
          <button class="bog-btn" data-type="primary" data-width="fill">Primary</button>
          <button class="bog-btn" data-type="neutral" data-width="fill">Secondary</button>   optional
        </footer>
      </section>
+
+   Result Status — status icon, title, description, amount, action
+     <div class="bog-result" data-status="success">          success | warning | negative | info | pending
+       <span class="bog-result__icon"></span>
+       <div class="bog-result__text">
+         <h2 class="bog-result__title">Success</h2>
+         <p class="bog-result__desc">Description</p>                              optional
+       </div>
+       <div class="bog-result__amount">                                           optional
+         <p class="bog-result__amount-title">Title text</p>
+         <div class="bog-amount" data-size="large" data-align="center">…</div>
+         <p class="bog-result__support">Support text</p>
+       </div>
+       <div class="bog-result__action"><button class="bog-btn" data-type="neutral" data-size="small">Button</button></div>
+       <div class="bog-result__extra">…Feedback or any slot…</div>             optional
+     </div>
+
+   Result Custom — any visual instead of the status icon
+     <div class="bog-result" data-status="custom">
+       <div class="bog-result__visual"><span class="bog-card-art" data-size="128"></span></div>
+       …same text / amount / action…
+     </div>
+
+   Motion: bog-ui.js plays the load-in when the page is shown (BOG.resultIn(page)),
+   or set data-animate on .bog-result-page to play it on load.
    ========================================================================== */
 
-/* ---- Result Status --------------------------------------------------- */
+/* ---- Page ---------------------------------------------------------------- */
+.bog-result-page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--layer-layer-01);
+  color: var(--text-primary);
+  font-family: var(--font-family-bog);
+}
+.bog-result-page__nav {
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: 44px;
+  padding: 0 var(--spacing-padding-medium);
+}
+.bog-result-page__nav .bog-icon-btn { margin: 0 var(--spacing-padding-x-small); }
+.bog-result-page__main {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 0 var(--spacing-padding-default);
+  overflow-y: auto;
+}
+/* Sticky actions: page gradient on top, helper, stacked buttons, home indicator space */
+.bog-result-page__bar {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--spacing-gap-small);
+  padding: var(--spacing-padding-large) var(--spacing-padding-default) 34px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), var(--layer-layer-01) 20%);
+}
+.bog-result-page__helper {
+  margin: 0 0 calc(var(--spacing-padding-default) - var(--spacing-gap-small));
+  padding-top: var(--spacing-padding-default);
+  color: var(--text-secondary);
+  font-size: var(--label-small-size);
+  line-height: var(--label-small-line-height);
+  font-weight: var(--label-small-weight);
+  text-align: center;
+}
+
+/* ---- Result Status / Custom ---------------------------------------------- */
 .bog-result {
   --_bg: var(--status-success-02);
-  --_fg: var(--icon-on-primary);
+  --_ic: var(--icon-inverse-primary);
   --_glyph: url("../icons/check-24.svg");
   --_gs: 24px;
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-gap-large);
   box-sizing: border-box;
-  width: 100%;
+  max-width: 343px;
+  padding-top: var(--spacing-padding-2x-large);
   font-family: var(--font-family-bog);
   text-align: center;
 }
-.bog-result[data-status="warning"]  { --_bg: var(--status-warning-02); --_fg: var(--icon-black); --_glyph: url("../icons/glyph-alert-48.svg"); --_gs: 44px; }
-.bog-result[data-status="negative"] { --_bg: var(--status-error-02);   --_glyph: url("../icons/glyph-alert-48.svg"); --_gs: 44px; }
-.bog-result[data-status="info"]     { --_bg: var(--status-info-02);    --_glyph: url("../icons/glyph-info-48.svg");  --_gs: 44px; }
+.bog-result[data-status="warning"]  { --_bg: var(--status-warning-02); --_ic: var(--icon-black); --_glyph: url("../icons/glyph-alert-48.svg"); --_gs: 48px; }
+.bog-result[data-status="negative"] { --_bg: var(--status-error-02);   --_ic: var(--icon-inverse-primary); --_glyph: url("../icons/glyph-alert-48.svg"); --_gs: 48px; }
+.bog-result[data-status="info"]     { --_bg: var(--status-info-02);    --_ic: var(--icon-white); --_glyph: url("../icons/glyph-info-48.svg"); --_gs: 48px; }
+.bog-result[data-status="pending"]  { --_bg: var(--status-neutral-02); --_ic: var(--icon-secondary); }
 
-/* Status + text: 16px apart, 16px side padding */
-.bog-result__icon,
-.bog-result > .bog-illustration { margin-bottom: calc(var(--spacing-gap-default) - var(--spacing-gap-large)); }
+/* Status icon: 64px high-contrast circle with the glyph on top */
 .bog-result__icon {
   position: relative;
   flex: none;
@@ -66,20 +126,42 @@
 .bog-result__icon::after {
   content: "";
   position: absolute;
-  inset: 0;
-  background-color: var(--_fg);
-  -webkit-mask: var(--_glyph) center / var(--_gs) no-repeat;
-          mask: var(--_glyph) center / var(--_gs) no-repeat;
+  top: calc(50% - var(--_gs) / 2);
+  left: calc(50% - var(--_gs) / 2);
+  width: var(--_gs);
+  height: var(--_gs);
+  background-color: var(--_ic);
+  -webkit-mask: var(--_glyph) center / contain no-repeat;
+          mask: var(--_glyph) center / contain no-repeat;
 }
+/* Pending: a spinning ring instead of a glyph */
+.bog-result[data-status="pending"] .bog-result__icon { background: none; }
+.bog-result[data-status="pending"] .bog-result__icon::after {
+  inset: 6px;
+  width: auto;
+  height: auto;
+  -webkit-mask: none;
+          mask: none;
+  border: 4px solid var(--status-neutral-02);
+  border-top-color: var(--icon-accent);
+  border-radius: 50%;
+  background: none;
+  animation: bog-result-spin 900ms linear infinite;
+}
+@keyframes bog-result-spin { to { rotate: 360deg; } }
+.bog-result__visual { display: flex; flex: none; justify-content: center; }
+
+/* Icon / visual + text sit 16px apart; the rest of the blocks 24px apart */
 .bog-result__text {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-gap-small);
   box-sizing: border-box;
   width: 100%;
-  padding-inline: var(--spacing-padding-default);
+  margin-top: calc(var(--spacing-gap-default) - var(--spacing-gap-large));
+  padding: 0 var(--spacing-padding-default);
 }
-.bog-result .bog-result__title {
+.bog-result__title {
   margin: 0;
   color: var(--text-primary);
   font-size: var(--title-large-size);
@@ -94,62 +176,16 @@
   line-height: var(--body-medium-line-height);
   font-weight: var(--body-medium-weight);
 }
-.bog-result__amount {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--spacing-gap-2x-small);
-  width: 100%;
-}
-.bog-result__label {
+.bog-result__amount { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-gap-2x-small); width: 100%; }
+.bog-result[data-status="custom"] .bog-result__amount { gap: var(--spacing-gap-x-small); }
+.bog-result__amount .bog-amount { gap: 0; }
+.bog-result__amount-title,
+.bog-result__support {
+  margin: 0;
   color: var(--text-secondary);
   font-size: var(--body-small-size);
   line-height: var(--body-small-line-height);
   font-weight: var(--body-small-weight);
 }
-.bog-result > .bog-feedback { align-self: stretch; text-align: left; }
-
-/* ---- Result Page ----------------------------------------------------- */
-.bog-result-page {
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-  height: 100%;
-  background: var(--background-background-01);
-  font-family: var(--font-family-bog);
-}
-.bog-result-page__nav {
-  display: flex;
-  flex: none;
-  align-items: center;
-  height: 44px;
-  padding: env(safe-area-inset-top) var(--spacing-padding-medium) 0;
-}
-.bog-result-page__nav > .bog-icon-btn { margin-inline: var(--spacing-padding-x-small); }
-/* Status centered in the space left between the nav bar and the sticky bar */
-.bog-result-page__body {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  justify-content: center;
-  min-height: 0;
-  overflow-y: auto;
-  padding: var(--spacing-padding-2x-large) var(--spacing-padding-default) var(--spacing-padding-default);
-  overscroll-behavior: contain;
-}
-.bog-result-page__body > .bog-result { margin-block: auto; }
-.bog-result-page__bar {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  align-items: stretch;
-  gap: var(--spacing-button-gap);
-  padding: var(--spacing-padding-default) var(--spacing-padding-default) max(var(--spacing-padding-small), env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom, transparent, var(--background-background-01) 20%);
-}
-.bog-result-page__bar > .bog-inline-message {
-  align-self: center;
-  justify-content: center;
-  margin-bottom: var(--spacing-gap-small);
-  text-align: center;
-}
+.bog-result__action { display: flex; flex-direction: column; align-items: center; gap: var(--spacing-gap-small); width: 100%; }
+.bog-result__extra { width: 100%; text-align: left; }

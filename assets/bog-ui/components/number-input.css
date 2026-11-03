@@ -29,3 +29,18 @@
 }
 .bog-number-input:has(.bog-field__input[readonly]) .bog-number-input__stepper { display: none; }
 .bog-number-input:has(.bog-field__input[readonly]) .bog-field__box { padding-right: var(--spacing-padding-default); }
+
+/* ---- Motion: value roll on − / + -----------------------------------------
+   Figma: Component Motion Guidelines › Numeric Stepper (LCAlFnhOdhc9q4LDoajuhw, 354:8782).
+   bog-ui.js lays the old and new value over the input and animates them:
+     old value  translateY 0 → 3.75px, 167ms · opacity 1 → 0, 83ms
+     new value  translateY -3.75px → 0, 167ms · opacity 0 → 1, 83ms · both delayed 33ms
+     easing     cubic-bezier(0.33, 0, 0.25, 1)
+   + moves the digits down; − mirrors it (up). Only digits that change roll (12 → 13: just the last one).
+   The tapped − / + button also scales 100% → 90% (167ms, same easing) → 100% (167ms,
+   cubic-bezier(0.44, 0, 0.30, 2.08), slight overshoot). Figma 362:9475.
+   All of it is off under prefers-reduced-motion. */
+.bog-number-input .bog-field__text { position: relative; }
+.bog-number-input[data-rolling] .bog-field__input { color: transparent; }
+.bog-number-input__roll { position: absolute; pointer-events: none; white-space: pre; }
+.bog-number-input__roll > span { position: absolute; inset: 0; }

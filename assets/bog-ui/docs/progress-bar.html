@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Progress Bar — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="progress-bar"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Progress Bar</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Read-only bar toward a known end (savings goal, spending limit, steps of a short flow). Single or Segmented, 5 types, Thin / Thick.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;!-- Single: set --value (and aria-valuenow); the fill animates --&gt;
+&lt;div class="bog-progress" data-type="accent" data-size="thin" role="progressbar"
+     aria-valuemin="0" aria-valuemax="100" aria-valuenow="40" style="--value: 40%"&gt;
+  &lt;span class="bog-progress__bar"&gt;&lt;/span&gt;
+  &lt;div class="bog-progress__labels"&gt;                 &lt;!-- optional (Text) --&gt;
+    &lt;div class="bog-progress__start"&gt;
+      &lt;span class="bog-progress__label"&gt;400.00 ₾&lt;/span&gt;
+      &lt;span class="bog-progress__helper"&gt;Saved&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="bog-progress__end"&gt;
+      &lt;span class="bog-progress__label"&gt;1,000.00 ₾&lt;/span&gt;
+      &lt;span class="bog-progress__helper"&gt;Goal&lt;/span&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Segmented: 2–10 segments, reached ones get data-state="filled" --&gt;
+&lt;div class="bog-progress" data-progress="segmented" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="2"&gt;
+  &lt;span class="bog-progress__bar"&gt;
+    &lt;span class="bog-progress__segment" data-state="filled"&gt;&lt;/span&gt;
+    &lt;span class="bog-progress__segment" data-state="filled"&gt;&lt;/span&gt;
+    &lt;span class="bog-progress__segment"&gt;&lt;/span&gt;
+    &lt;span class="bog-progress__segment"&gt;&lt;/span&gt;
+  &lt;/span&gt;
+&lt;/div&gt;
+
+data-progress   single (default) | segmented
+data-type       accent (default) | positive | warning | negative | neutral-inverse
+data-size       thin (default, 4px) | thick (8px)
+data-state      skeleton
+data-material   ultrathin  (iOS Ultrathin material behind the rail)</code></pre>
+
+
+    <h2>Try it</h2>
+    <p class="lead">The fill animates when <code>--value</code> changes (Single) or when a segment gets <code>data-state="filled"</code> (Segmented).</p>
+    <div class="panel" style="display:grid;gap:20px;width:375px;box-sizing:border-box">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="bog-btn" data-type="neutral" data-size="small" data-step="-10">− 10 %</button>
+        <button class="bog-btn" data-type="neutral" data-size="small" data-step="10">+ 10 %</button>
+        <button class="bog-btn" data-type="ghost" data-size="small" data-step="reset">Reset</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap" id="pb-types">
+        <button type="button" class="bog-chip" data-type="filter" aria-pressed="true" data-t="accent">Accent</button>
+        <button type="button" class="bog-chip" data-type="filter" aria-pressed="false" data-t="positive">Positive</button>
+        <button type="button" class="bog-chip" data-type="filter" aria-pressed="false" data-t="warning">Warning</button>
+        <button type="button" class="bog-chip" data-type="filter" aria-pressed="false" data-t="negative">Negative</button>
+        <button type="button" class="bog-chip" data-type="filter" aria-pressed="false" data-t="neutral-inverse">Neutral-inverse</button>
+      </div>
+      <div class="bog-progress" id="pb-single" role="progressbar" aria-valuemin="0" aria-valuemax="1000" aria-valuenow="400" style="--value: 40%">
+        <span class="bog-progress__bar"></span>
+        <div class="bog-progress__labels">
+          <div class="bog-progress__start"><span class="bog-progress__label" id="pb-amount">400.00 ₾</span><span class="bog-progress__helper">Saved</span></div>
+          <div class="bog-progress__end"><span class="bog-progress__label">1,000.00 ₾</span><span class="bog-progress__helper">Goal</span></div>
+        </div>
+      </div>
+      <div class="bog-progress" id="pb-seg" data-progress="segmented" data-size="thick" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="2">
+        <span class="bog-progress__bar"></span>
+        <div class="bog-progress__labels">
+          <div class="bog-progress__start"><span class="bog-progress__label" id="pb-seg-label">Step 2 of 5</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>Variants</h2>
+    <div class="panel"><table id="pb-matrix"></table></div>
+
+    <h2>Labels, skeleton, iOS Ultrathin</h2>
+    <div class="panel"><table id="pb-extra"></table></div>
+
+<script>
+
+const TYPES = [["Accent","accent"],["Positive","positive"],["Warning","warning"],["Negative","negative"],["Neutral-inverse","neutral-inverse"]];
+const labels = (l = true, h = true) => `<div class="bog-progress__labels"><div class="bog-progress__start">${l ? '<span class="bog-progress__label">Progress label</span>' : ''}${h ? '<span class="bog-progress__helper">Helper text</span>' : ''}</div><div class="bog-progress__end">${l ? '<span class="bog-progress__label">Progress label</span>' : ''}${h ? '<span class="bog-progress__helper">Helper text</span>' : ''}</div></div>`;
+const single = (t, s, extra = "", lab = labels()) => `<div class="bog-progress" data-type="${t}" data-size="${s}" ${extra} role="progressbar" style="--value: 28%"><span class="bog-progress__bar"></span>${lab}</div>`;
+const segs = (n, done) => Array.from({length: n}, (_, i) => `<span class="bog-progress__segment"${i < done ? ' data-state="filled"' : ''}></span>`).join("");
+const segmented = (t, s, extra = "", lab = labels(), n = 10, done = 4) => `<div class="bog-progress" data-progress="segmented" data-type="${t}" data-size="${s}" ${extra} role="progressbar"><span class="bog-progress__bar">${segs(n, done)}</span>${lab}</div>`;
+const cell = h => `<td><div style="min-width:280px;width:280px">${h}</div></td>`;
+const head = cols => "<tr><th></th>" + cols.map(c => `<th>${c}</th>`).join("") + "</tr>";
+const COLS = [["Single · Thin", (t) => single(t, "thin")], ["Single · Thick", (t) => single(t, "thick")], ["Segmented · Thin", (t) => segmented(t, "thin")], ["Segmented · Thick", (t) => segmented(t, "thick")]];
+document.getElementById("pb-matrix").innerHTML = head(COLS.map(c => c[0])) + TYPES.map(([n, t]) => `<tr><th>${n}</th>${COLS.map(c => cell(c[1](t))).join("")}</tr>`).join("");
+
+const EXTRA = [
+  ["No labels (Text off)", single("accent", "thin", "", ""), segmented("accent", "thin", "", "", 4, 2)],
+  ["Label only", single("positive", "thin", "", labels(true, false)), segmented("positive", "thin", "", labels(true, false), 3, 3)],
+  ["Helper only", single("warning", "thick", "", labels(false, true)), segmented("warning", "thick", "", labels(false, true), 5, 4)],
+  ["Skeleton", single("accent", "thin", 'data-state="skeleton"'), segmented("accent", "thick", 'data-state="skeleton"', labels(), 4, 2)],
+  ["iOS Ultrathin", single("accent", "thin", 'data-material="ultrathin"'), segmented("accent", "thick", 'data-material="ultrathin"', labels(), 4, 2)],
+  ["0 % / 100 %", single("accent", "thick", "", "").replace("28%", "0%"), single("positive", "thick", "", "").replace("28%", "100%")],
+];
+document.getElementById("pb-extra").innerHTML = head(["Single", "Segmented"]) + EXTRA.map(([n, a, b]) => `<tr><th>${n}</th>${cell(a)}${cell(b)}</tr>`).join("");
+
+// Try it
+const pb = document.getElementById("pb-single"), seg = document.getElementById("pb-seg");
+seg.querySelector(".bog-progress__bar").innerHTML = segs(5, 2);
+let val = 40;
+const render = () => {
+  pb.style.setProperty("--value", val + "%");
+  pb.setAttribute("aria-valuenow", val * 10);
+  document.getElementById("pb-amount").textContent = (val * 10).toFixed(2) + " ₾";
+  const done = Math.round(val / 20);
+  seg.querySelectorAll(".bog-progress__segment").forEach((s, i) => i < done ? s.setAttribute("data-state", "filled") : s.removeAttribute("data-state"));
+  seg.setAttribute("aria-valuenow", done);
+  document.getElementById("pb-seg-label").textContent = `Step ${done} of 5`;
+};
+document.querySelectorAll("[data-step]").forEach(b => b.addEventListener("click", () => {
+  const s = b.dataset.step; val = s === "reset" ? 0 : Math.min(100, Math.max(0, val + Number(s))); render();
+}));
+document.querySelectorAll("#pb-types [data-t]").forEach(b => b.addEventListener("click", () => {
+  pb.dataset.type = seg.dataset.type = b.dataset.t;
+  document.querySelectorAll("#pb-types [data-t]").forEach(x => x.setAttribute("aria-pressed", x === b));
+}));
+
+</script>
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

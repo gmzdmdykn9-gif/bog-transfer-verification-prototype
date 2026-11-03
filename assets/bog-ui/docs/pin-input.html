@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PIN code Input — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="pin-input"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>PIN code Input</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Title, helper text and four dots for a PIN or passcode, typed on a Keyboard Numeric. Default, Filled and Error (red helper and dots).</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-pin" id="pin"&gt;
+  &lt;div class="bog-pin__text"&gt;
+    &lt;p class="bog-pin__title"&gt;Enter your PIN&lt;/p&gt;
+    &lt;p class="bog-pin__helper"&gt;Please enter your 4-digit code&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="bog-pin__dots"&gt;&lt;span class="bog-pin__dot"&gt;&lt;/span&gt;&lt;span class="bog-pin__dot"&gt;&lt;/span&gt;&lt;span class="bog-pin__dot"&gt;&lt;/span&gt;&lt;span class="bog-pin__dot"&gt;&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class="bog-numpad" data-for="pin"&gt;
+  &lt;button type="button" class="bog-numpad__key" data-key="1"&gt;1&lt;/button&gt; … 9
+  &lt;button type="button" class="bog-numpad__key" data-key="biometric" aria-label="Face ID"&gt;&lt;/button&gt;
+  &lt;button type="button" class="bog-numpad__key" data-key="0"&gt;0&lt;/button&gt;
+  &lt;button type="button" class="bog-numpad__key" data-key="back" aria-label="Delete"&gt;&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+    <p>PIN: <code>data-validation="error"</code> (put the error text in the helper), events <code>pinchange</code> / <code>pincomplete</code>, <code>BOG.setPin(el, value)</code>. Numpad: <code>data-for</code> = a <code>.bog-pin</code> or <code>.bog-code</code>, <code>data-biometric="fingerprint"</code>, event <code>numpadbiometric</code>. Not built yet: White / Black Static and Invert appearances, Dot pad.</p>
+
+    <h2>Try it</h2>
+    <div class="panel"><div style="width:343px;display:flex;flex-direction:column;gap:16px">
+      <div class="bog-pin" id="demo-pin"><div class="bog-pin__text"><p class="bog-pin__title">Enter your PIN</p><p class="bog-pin__helper" id="demo-helper">Please enter your 4-digit code (0000 = wrong)</p></div><div class="bog-pin__dots"><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span></div></div>
+      <div class="bog-numpad" data-for="demo-pin"><button type="button" class="bog-numpad__key" data-key="1">1</button><button type="button" class="bog-numpad__key" data-key="2">2</button><button type="button" class="bog-numpad__key" data-key="3">3</button><button type="button" class="bog-numpad__key" data-key="4">4</button><button type="button" class="bog-numpad__key" data-key="5">5</button><button type="button" class="bog-numpad__key" data-key="6">6</button><button type="button" class="bog-numpad__key" data-key="7">7</button><button type="button" class="bog-numpad__key" data-key="8">8</button><button type="button" class="bog-numpad__key" data-key="9">9</button><button type="button" class="bog-numpad__key" data-key="biometric" aria-label="Face ID"></button><button type="button" class="bog-numpad__key" data-key="0">0</button><button type="button" class="bog-numpad__key" data-key="back" aria-label="Delete"></button></div>
+    </div></div>
+
+    <h2>PIN states</h2>
+    <div class="panel"><div style="display:grid;grid-template-columns:repeat(3,264px);gap:24px">
+      <div><div class="row-label"><code>Default</code></div><div class="bog-pin"><div class="bog-pin__text"><p class="bog-pin__title">Enter your PIN</p><p class="bog-pin__helper">Please enter your 4-digit code</p></div><div class="bog-pin__dots"><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span></div></div></div>
+      <div><div class="row-label"><code>Filled</code></div><div class="bog-pin"><div class="bog-pin__text"><p class="bog-pin__title">Enter your PIN</p><p class="bog-pin__helper">Please enter your 4-digit code</p></div><div class="bog-pin__dots"><span class="bog-pin__dot" data-filled></span><span class="bog-pin__dot" data-filled></span><span class="bog-pin__dot" data-filled></span><span class="bog-pin__dot" data-filled></span></div></div></div>
+      <div><div class="row-label"><code>Error</code></div><div class="bog-pin" data-validation="error"><div class="bog-pin__text"><p class="bog-pin__title">Enter your PIN</p><p class="bog-pin__helper">Invalid PIN. Please try again</p></div><div class="bog-pin__dots"><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span><span class="bog-pin__dot"></span></div></div></div>
+    </div></div>
+  </main>
+</div>
+<script>
+  const pin = document.getElementById("demo-pin"), helper = document.getElementById("demo-helper");
+  pin.addEventListener("pinchange", () => { helper.textContent = "Please enter your 4-digit code (0000 = wrong)"; });
+  pin.addEventListener("pincomplete", e => setTimeout(() => {
+    if (e.detail.value === "0000") { BOG.setPin(pin, ""); pin.setAttribute("data-validation", "error"); helper.textContent = "Invalid PIN. Please try again"; }
+    else { helper.textContent = "PIN accepted"; setTimeout(() => BOG.setPin(pin, ""), 800); }
+  }, 300));
+  document.querySelector(".bog-numpad").addEventListener("numpadbiometric", () => BOG.toast({ status: "info", title: "Face ID" }));
+</script>
+</body>
+</html>

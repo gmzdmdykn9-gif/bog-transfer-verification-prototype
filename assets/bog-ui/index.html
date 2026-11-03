@@ -3,16 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BOG UI — Components</title>
+<title>BOG UI — Mobile components</title>
 <link rel="stylesheet" href="bog-ui.css">
 <link rel="stylesheet" href="docs/docs.css">
+<script src="docs/theme.js"></script>
 <script src="docs/components.js"></script>
 </head>
 <body>
+  <header class="docs-top" id="bog-top" data-current="components"></header>
   <div class="home">
-    <h1>BOG UI</h1>
-    <p class="lead">HTML/CSS components coded from the Figma file <em>Mobile Components – SwiftUI – Compose</em>. Pick a component to see every variant and the markup to copy into a prototype.</p>
+    <h1>Mobile components</h1>
+    <p class="lead">HTML/CSS components coded from the Figma file <em>Mobile Components – SwiftUI – Compose</em>. Pick a component to see every variant and the markup to copy into a prototype. Components marked with <span class="docs-m" style="display:inline-flex;margin:0 2px;vertical-align:-3px" role="img" aria-label="the motion mark"><svg class="docs-motion-icon" viewBox="0 0 22 11" aria-hidden="true" focusable="false"><circle cx="5.5" cy="5.5" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.3"/><circle cx="11" cy="5.5" r="4.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.6"/><circle cx="16.5" cy="5.5" r="4.5" fill="currentColor" stroke="currentColor" stroke-width="1.6"/></svg></span> also carry their motion guidelines.</p>
 
+    <section class="news" aria-labelledby="news-title">
+      <h2 id="news-title">What's new</h2>
+      <div class="news__grid" id="news"></div>
+    </section>
+
+    <div class="home__bar">
+      <h2 class="home__section">All components</h2>
+      <div class="home__tools">
+        <input type="search" class="docs-search" id="search" placeholder="Search components" aria-label="Search components" autocomplete="off">
+        <div class="docs-sort" data-sort-switch id="sort"></div>
+      </div>
+    </div>
     <div class="cards" id="cards"></div>
 
     <section class="setup">
@@ -22,10 +36,38 @@
     </section>
   </div>
 <script>
-  document.getElementById("cards").innerHTML = window.BOG_COMPONENTS.map(function (c) {
-    return '<a class="card" href="docs/' + c.page + '">' +
-      '<div class="card__preview" aria-hidden="true">' + c.preview.replace(/ASSETS\//g, "assets/") + '</div>' +
-      '<div class="card__body"><h2>' + c.name + '</h2><p>' + c.desc + '</p></div></a>';
+  // All components, sorted by name or by last update (shared with the sidebar), filtered by the search
+  const search = document.getElementById("search");
+  function renderCards() {
+    document.getElementById("sort").innerHTML = BOG_SORT.html();
+    const list = BOG_SORT.list(BOG_SORT.get()).filter(function (c) { return BOG_MATCH(c, search.value); });
+    if (!list.length) {
+      document.getElementById("cards").innerHTML = '<p class="cards__empty">No components match “' + search.value.replace(/[&<>"]/g, "") + '”</p>';
+      return;
+    }
+    document.getElementById("cards").innerHTML = list.map(function (c) {
+      return '<a class="card" href="docs/' + c.page + '">' +
+        '<div class="card__preview" aria-hidden="true">' + c.preview.replace(/ASSETS\//g, "assets/") + (c.motion ? window.BOG_MOTION_BADGE : "") + '</div>' +
+        '<div class="card__body"><h2>' + c.name + '</h2><p>' + c.desc + '</p>' +
+        '<time class="card__date" datetime="' + c.updated + '">Updated ' + BOG_DATE(c.updated) + '</time></div></a>';
+    }).join("");
+  }
+  renderCards();
+  BOG_SORT.onChange(renderCards);
+  search.addEventListener("input", renderCards);
+  search.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { search.value = ""; renderCards(); }
+    if (e.key === "Enter") { const first = document.querySelector("#cards .card"); if (first) location.href = first.getAttribute("href"); }
+  });
+
+  // What's new: the latest 6 updates
+  const KIND = { motion: ["beta", "Motion"], design: ["new", "Design"], component: ["availability", "Component"] };
+  const day = BOG_DATE;
+  document.getElementById("news").innerHTML = window.BOG_UPDATES.slice(0, 6).map(function (u) {
+    const k = KIND[u.kind] || KIND.component;
+    return '<a class="news__item" href="' + u.page + '">' +
+      '<span class="news__meta"><span class="bog-feature-badge" data-type="' + k[0] + '">' + k[1] + '</span><time datetime="' + u.date + '">' + day(u.date) + '</time></span>' +
+      '<strong class="news__title">' + u.title + '</strong><span class="news__text">' + u.text + '</span></a>';
   }).join("");
 </script>
 </body>

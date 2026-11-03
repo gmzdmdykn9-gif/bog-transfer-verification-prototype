@@ -4,7 +4,7 @@
    Built from library parts: Radio Button Group (optional), Text Input, Inline Message, Button (Ghost, Small).
 
    <div class="bog-otp" data-timer="35">
-     <div class="bog-radio-group" role="radiogroup">…SMS / Email…</div>            optional "Selector"
+     <fieldset class="bog-radio-group">…SMS / Email rows…</fieldset>          optional "Selector" (Radio Button Group)
      <div class="bog-otp__form">
        <div class="bog-field">
          <label class="bog-field__box"><span class="bog-field__text">

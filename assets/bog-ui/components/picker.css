@@ -160,18 +160,21 @@
   visibility: hidden;
   transition: visibility 0s 280ms;
 }
-.bog-picker[data-expanded] .bog-picker__expand {
+.bog-picker:is([data-expanded], [data-collapsing]) .bog-picker__expand {
   grid-template-rows: 1fr;
   margin-top: calc(var(--spacing-gap-default) - var(--spacing-gap-small));
   opacity: 1;
 }
-.bog-picker[data-expanded] .bog-picker__expand > .bog-picker__chips {
+.bog-picker:is([data-expanded], [data-collapsing]) .bog-picker__expand > .bog-picker__chips {
   visibility: visible;
   transition: visibility 0s;
 }
 @media (prefers-reduced-motion: reduce) {
   .bog-picker__expand, .bog-picker__expand > .bog-picker__chips { transition: none; }
 }
+/* While bog-ui.js runs the Select / Minimize motion it sizes the card itself */
+.bog-picker[data-moving] :is(.bog-picker__expand, .bog-picker__expand > .bog-picker__chips) { transition: none; }
+.bog-picker[data-moving] .bog-picker__box { overflow: hidden; }
 
 .bog-currency-chip {
   position: relative;
@@ -203,7 +206,7 @@
   background-color: var(--chip-selected);
 }
 /* Check icon on the selected chip */
-.bog-currency-chip[aria-pressed="true"]::before {
+.bog-currency-chip:is([aria-pressed="true"], [data-unchecking])::before {
   content: "";
   order: 9;
   width: 12px;
@@ -213,6 +216,8 @@
           mask: url("../icons/check-12.svg") center / contain no-repeat;
 }
 .bog-currency-chip:disabled { color: var(--text-disabled); cursor: default; }
+/* Chip on / off motion (bog-ui.js animates width; the check keeps its spot while it un-draws) */
+.bog-currency-chip[data-moving] { overflow: hidden; }
 .bog-currency-chip:disabled .bog-flag { opacity: 0.5; }
 
 /* ---- Helper / error message below the card ---------------------------- */

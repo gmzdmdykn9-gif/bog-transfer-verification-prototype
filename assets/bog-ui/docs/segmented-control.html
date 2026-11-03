@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Segmented Control — BOG UI</title>
+<link rel="stylesheet" href="../bog-ui.css">
+<link rel="stylesheet" href="docs.css">
+<script src="../bog-ui.js" defer></script>
+<script src="components.js" defer></script>
+</head>
+<body>
+<div class="docs">
+  <aside class="docs-nav">
+    <a class="docs-nav__brand" href="../index.html">BOG UI</a>
+    <nav id="bog-nav" data-current="segmented-control"></nav>
+  </aside>
+  <main class="docs-main">
+    <header><h1>Segmented Control</h1><a class="figma" id="figma-link" href="#" target="_blank" rel="noopener">Open in Figma ↗</a></header>
+    <p class="lead">Single-select switch between 2–6 options (text or icons) with a sliding thumb. Large or Small.</p>
+
+    <h2>Usage</h2>
+    <pre><code>&lt;div class="bog-segmented" role="radiogroup" aria-label="Period"&gt;
+  &lt;label class="bog-segmented__item"&gt;&lt;input type="radio" name="period" value="week" checked&gt;&lt;span&gt;Week&lt;/span&gt;&lt;/label&gt;
+  &lt;label class="bog-segmented__item"&gt;&lt;input type="radio" name="period" value="month"&gt;&lt;span&gt;Month&lt;/span&gt;&lt;/label&gt;
+  &lt;label class="bog-segmented__item"&gt;&lt;input type="radio" name="period" value="year"&gt;&lt;span&gt;Year&lt;/span&gt;&lt;/label&gt;
+&lt;/div&gt;
+
+&lt;!-- Only icon --&gt;
+&lt;div class="bog-segmented" data-type="icon" role="radiogroup" aria-label="View"&gt;
+  &lt;label class="bog-segmented__item"&gt;&lt;input type="radio" name="view" value="list" checked aria-label="List"&gt;
+    &lt;span class="bog-icon" style="--icon: url(../icons/list-view-16.svg)"&gt;&lt;/span&gt;&lt;/label&gt;
+  &lt;label class="bog-segmented__item"&gt;&lt;input type="radio" name="view" value="grid" aria-label="Grid"&gt;
+    &lt;span class="bog-icon" style="--icon: url(../icons/dashboard-16.svg)"&gt;&lt;/span&gt;&lt;/label&gt;
+&lt;/div&gt;
+&lt;!-- data-size="small" · data-material="ultrathin" · data-state="skeleton" · disabled on an input --&gt;
+&lt;!-- Listen: el.addEventListener("segmentchange", e =&gt; e.detail.value / e.detail.index) --&gt;</code></pre>
+
+    <h2>Try it</h2>
+    <p class="lead">Click a segment or focus one and use the arrow keys: the white thumb slides to the selection. Each change fires the native <code>change</code> event and <code>segmentchange</code> on the control.</p>
+    <div class="panel"><div style="width:343px;max-width:100%;display:flex;flex-direction:column;gap:16px;align-items:flex-start" id="demo"></div>
+      <p id="demo-log" style="margin:12px 0 0;font-family:var(--font-family-bog);font-size:var(--label-small-size);color:var(--text-secondary)">Events appear here.</p></div>
+
+    <h2>iOS Ultrathin material</h2>
+    <p class="lead">The "iOS Ultrathin" option adds a blurred, translucent white layer under the control, for use over photos.</p>
+    <div class="panel" style="background:linear-gradient(135deg,var(--status-accent-02),var(--layer-inverse-01))"><div style="width:343px;max-width:100%" id="demo-ultra"></div></div>
+
+    <h2>Variants</h2>
+    <div class="panel"><table id="matrix"></table></div>
+
+<script>
+
+  let n = 0;
+  const seg = (labels, o = {}) => { const name = "seg" + (n++); const sel = o.sel ?? 0; return `<div class="bog-segmented"${o.size ? ` data-size="${o.size}"` : ""}${o.icon ? ' data-type="icon"' : ""}${o.mat ? ` data-material="${o.mat}"` : ""}${o.state ? ` data-state="${o.state}"` : ""} role="radiogroup" aria-label="${o.label || "Options"}">` + labels.map((l, i) => `<label class="bog-segmented__item"><input type="radio" name="${name}" value="${String(l).toLowerCase()}"${i === sel ? " checked" : ""}${(o.dis || []).includes(i) ? " disabled" : ""}${o.icon ? ` aria-label="${l}"` : ""}>` + (o.icon ? `<span class="bog-icon" style="--icon: url(../icons/${l === "List" ? "list-view-16" : "dashboard-16"}.svg)"></span>` : `<span>${l}</span>`) + `</label>`).join("") + `</div>`; };
+  const L = k => Array.from({length: k}, () => "Label");
+  const demo = document.getElementById("demo");
+  demo.innerHTML = seg(["Week", "Month", "Year"], {label: "Period"}) + seg(["All", "Income", "Expenses", "Transfers"], {size: "small", label: "Type"}) + seg(["List", "Grid"], {icon: 1, label: "View"});
+  document.getElementById("demo-ultra").innerHTML = seg(["Cards", "Accounts", "Deposits"], {mat: "ultrathin"});
+  demo.addEventListener("segmentchange", e => { document.getElementById("demo-log").textContent = `segmentchange → value "${e.detail.value}", index ${e.detail.index}`; });
+  const td = (h, w = 320) => `<td style="width:${w}px;min-width:${w}px">${h}</td>`;
+  const rows = [];
+  for (const k of [2, 3, 4, 5, 6]) rows.push(`<tr><th>${k} segments</th>${td(seg(L(k)))}${td(seg(L(k), {size: "small"}))}</tr>`);
+  rows.push(`<tr><th>Skeleton</th>${td(seg(L(3), {state: "skeleton"}))}${td(seg(L(3), {size: "small", state: "skeleton"}))}</tr>`);
+  rows.push(`<tr><th>Disabled segment *</th>${td(seg(L(3), {dis: [2]}))}${td(seg(L(3), {size: "small", dis: [2]}))}</tr>`);
+  rows.push(`<tr><th>All disabled *</th>${td(seg(L(3), {dis: [0, 1, 2]}))}${td(seg(L(3), {size: "small", dis: [0, 1, 2]}))}</tr>`);
+  document.getElementById("matrix").innerHTML = `<tr><th></th><th>Type=Default · Large</th><th>Type=Default · Small</th></tr>` + rows.join("")
+    + `<tr><th>Only icon</th>${td(seg(["List", "Grid"], {icon: 1}))}${td(seg(["List", "Grid"], {icon: 1, sel: 1}))}</tr>`
+    + `<tr><th>Only icon · Skeleton</th>${td(seg(["List", "Grid"], {icon: 1, state: "skeleton"}))}<td></td></tr>`
+    + `<tr><td colspan="3" style="font-size:12px;color:var(--text-secondary)">* Not drawn in Figma — disabled segments use Text/Icon disabled colors.</td></tr>`;
+
+</script>
+  </main>
+</div>
+<script>
+
+</script>
+</body>
+</html>

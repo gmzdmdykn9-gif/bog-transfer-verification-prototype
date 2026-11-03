@@ -1,0 +1,142 @@
+/* ==========================================================================
+   BOG UI — Search Input (BOG Design source; iOS Liquid Glass excluded)
+   Figma: Search input page (11564:39458) — component set "Search input" (16112:42515)
+     Placement=Page | Overlay · Size=Small | Large · State=Default | Active | Typing | Filled · Skeleton
+
+   Built on Text Input (.bog-field), so the clear button, disabled and loading work the same way.
+     <div class="bog-field bog-search">
+       <label class="bog-field__box">
+         <span class="bog-field__text">
+           <span class="bog-search__icon"></span>
+           <input class="bog-field__input" type="search" placeholder="Search" enterkeyhint="search">
+         </span>
+         <button type="button" class="bog-field__clear" aria-label="Clear"></button>
+       </label>
+       <button type="button" class="bog-search__cancel">Cancel</button>         optional
+     </div>
+
+   The placeholder text IS the visible "Search" label (no floating label).
+   States follow real interaction: Default → Active (focused, empty: Cancel slides in)
+   → Typing (focused, has value: clear shows) → Filled (blurred, has value: clear stays, Cancel hides).
+   Cancel (bog-ui.js) empties the field, blurs it and fires "searchcancel" on .bog-search.
+
+   Attributes on .bog-search
+     data-size        small (default, 40px) | large (56px)
+     data-placement   page (default, grey fill) | overlay — white fill + Surface-1 shadow, for use on images/colored areas
+     data-state       skeleton | loading  (active | typing | filled force a look, for static mockups)
+   Attributes on the input
+     disabled         (not drawn in Figma — uses Text Input's disabled colors)
+   ========================================================================== */
+
+.bog-search {
+  --_shadow: 0 0 #0000;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+}
+.bog-search[data-placement="overlay"] {
+  --_box-bg: var(--layer-layer-05);
+  --_shadow: var(--shadow-elevation-surface-1);
+}
+/* Active / Typing: no shadow, the 1.6px border takes over */
+.bog-search[data-placement="overlay"]:is(:focus-within, [data-state="active"], [data-state="typing"]) { --_shadow: 0 0 #0000; }
+
+/* ---- Container: Small 40px (2/12 padding) · Large 56px (2/16 padding) ---- */
+.bog-search .bog-field__box {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--size-default);
+  padding: var(--spacing-padding-2x-small) var(--spacing-padding-medium);
+  box-shadow: inset 0 0 0 var(--_border-w) var(--_border), var(--_shadow);
+}
+.bog-search[data-size="large"] .bog-field__box {
+  height: var(--input-container-height);
+  padding: var(--spacing-padding-2x-small) var(--spacing-padding-default);
+}
+
+/* "InputText": search icon + value, 8px gap */
+.bog-search .bog-field__text {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-gap-small);
+  padding: 0;
+}
+.bog-search__icon {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background-color: var(--_icon);
+  -webkit-mask: url("../icons/search-16.svg") center / contain no-repeat;
+          mask: url("../icons/search-16.svg") center / contain no-repeat;
+}
+
+/* Value is always visible; the placeholder is the "Search" label */
+.bog-search .bog-field__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: var(--body-large-line-height);
+  opacity: 1;
+  -webkit-appearance: none;
+          appearance: none;
+}
+.bog-search .bog-field__input::-webkit-search-decoration,
+.bog-search .bog-field__input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+.bog-search .bog-field__input::placeholder { color: var(--_label); }   /* Default: Text/secondary */
+.bog-search:is(:focus-within, [data-state="active"]) .bog-field__input::placeholder { color: var(--_placeholder); } /* Active: Text/placeholder */
+
+/* ---- Clear: 20px (12px icon + 4px padding), 32px tap area; shows whenever there is a value ---- */
+.bog-search .bog-field__clear {
+  --_mask: url("../icons/close-12.svg");
+  width: 20px;
+  height: 20px;
+  padding: var(--spacing-padding-x-small);
+}
+.bog-search .bog-field__clear::before { width: 12px; height: 12px; }
+.bog-search .bog-field__clear::after { content: ""; position: absolute; inset: -6px; }
+.bog-search:is(:has(.bog-field__input:not(:placeholder-shown)), [data-state="typing"], [data-state="filled"]) .bog-field__clear { display: block; }
+.bog-search:has(.bog-field__input:is(:disabled, [readonly])) .bog-field__clear { display: none; }
+
+/* ---- Cancel: Label/Medium, Text/secondary; slides in while focused (16px gap) ---- */
+.bog-search__cancel {
+  flex: none;
+  box-sizing: border-box;
+  max-width: 0;
+  height: var(--size-default);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: var(--label-medium-size);
+  line-height: var(--label-medium-line-height);
+  font-weight: var(--label-medium-weight);
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: max-width 200ms ease, padding 200ms ease, opacity 150ms ease, visibility 0s 200ms;
+}
+.bog-search[data-size="large"] .bog-search__cancel { height: var(--input-container-height); }
+.bog-search:is(:focus-within, [data-state="active"], [data-state="typing"]):not(:has(.bog-field__input:disabled)) .bog-search__cancel {
+  max-width: 120px;
+  padding-left: var(--spacing-gap-default);
+  opacity: 1;
+  visibility: visible;
+  transition: max-width 200ms ease, padding 200ms ease, opacity 150ms 50ms ease, visibility 0s;
+}
+.bog-search__cancel:active { opacity: 0.6; }
+.bog-search__cancel:focus-visible { outline: 2px solid var(--text-accent); outline-offset: 2px; }
+
+/* Loading keeps the search icon (the base rule hides everything but .bog-field__text) */
+.bog-search[data-state="loading"] .bog-search__cancel,
+.bog-search[data-state="loading"] .bog-field__box > .bog-field__clear { display: none; }
+
+/* Skeleton: plain Support/skeleton_background block, no shadow, no Cancel */
+.bog-search[data-state="skeleton"] .bog-search__cancel { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .bog-search__cancel { transition: none !important; }
+}
